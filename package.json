@@ -1,0 +1,70 @@
+{
+  "name": "beignet",
+  "version": "0.0.1",
+  "description": "A self-custodial, JS Bitcoin wallet management library.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "env mocha --exit -r ts-node/register 'tests/**/*.ts'",
+    "test:wallet": "env mocha --exit -r ts-node/register 'tests/wallet.test.ts'",
+    "test:electrum": "env mocha --exit -r ts-node/register 'tests/electrum.test.ts'",
+    "test:derivation": "env mocha --exit -r ts-node/register 'tests/derivation.test.ts'",
+    "test:storage": "env mocha --exit -r ts-node/register 'tests/storage.test.ts'",
+    "example": "ts-node example",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:check": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --fix --ext .js,.jsx,.ts,.tsx",
+    "build": "tsc",
+    "docs:markdown": "npx typedoc --plugin typedoc-plugin-markdown --out docs/markdown src/index.ts",
+    "docs:html": "npx typedoc --out docs/html",
+    "docs": "npm run build && npm run docs:markdown && npm run docs:html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coreyphillips/beignet.git"
+  },
+  "keywords": [
+    "Bitcoin",
+    "wallet"
+  ],
+  "types": "dist/types/index.d.ts",
+  "author": "Synonym",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/coreyphillips/beignet/issues"
+  },
+  "homepage": "https://github.com/coreyphillips/beignet#readme",
+  "dependencies": {
+    "@bitcoinerlab/secp256k1": "^1.0.5",
+    "bech32": "^2.0.0",
+    "bip21": "^2.0.3",
+    "bip32": "^4.0.0",
+    "bip39": "^3.1.0",
+    "bitcoin-address-validation": "^2.2.3",
+    "bitcoin-units": "^0.3.0",
+    "bitcoinjs-lib": "^6.1.3",
+    "build": "^0.1.4",
+    "ecpair": "^2.1.0",
+    "lodash.clonedeep": "^4.5.0",
+    "net": "^1.0.2",
+    "npm": "^9.8.1",
+    "rn-electrum-client": "https://github.com/synonymdev/react-native-electrum-client",
+    "run": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.0",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^20.4.10",
+    "@typescript-eslint/eslint-plugin": "^5.6.0",
+    "@typescript-eslint/parser": "^5.6.0",
+    "chai": "^4.3.4",
+    "eslint": "^8.4.1",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "mocha": "10.1.0",
+    "prettier": "^3.0.2",
+    "ts-node": "^10.4.0",
+    "typedoc": "^0.24.8",
+    "typedoc-plugin-markdown": "^3.15.4",
+    "typescript": "^4.5.3"
+  }
+}

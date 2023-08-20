@@ -1,0 +1,30 @@
+[beignet](../README.md) / IGenerateAddressesResponse
+
+# Interface: IGenerateAddressesResponse
+
+## Table of contents
+
+### Properties
+
+- [addresses](IGenerateAddressesResponse.md#addresses)
+- [changeAddresses](IGenerateAddressesResponse.md#changeaddresses)
+
+## Properties
+
+### addresses
+
+• **addresses**: [`IAddresses`](IAddresses.md)
+
+#### Defined in
+
+[types/wallet.ts:249](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L249)
+
+___
+
+### changeAddresses
+
+• **changeAddresses**: [`IAddresses`](IAddresses.md)
+
+#### Defined in
+
+[types/wallet.ts:250](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L250)

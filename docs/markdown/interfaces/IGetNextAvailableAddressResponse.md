@@ -1,0 +1,52 @@
+[beignet](../README.md) / IGetNextAvailableAddressResponse
+
+# Interface: IGetNextAvailableAddressResponse
+
+## Table of contents
+
+### Properties
+
+- [addressIndex](IGetNextAvailableAddressResponse.md#addressindex)
+- [changeAddressIndex](IGetNextAvailableAddressResponse.md#changeaddressindex)
+- [lastUsedAddressIndex](IGetNextAvailableAddressResponse.md#lastusedaddressindex)
+- [lastUsedChangeAddressIndex](IGetNextAvailableAddressResponse.md#lastusedchangeaddressindex)
+
+## Properties
+
+### addressIndex
+
+• **addressIndex**: [`IAddress`](IAddress.md)
+
+#### Defined in
+
+[types/wallet.ts:260](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L260)
+
+___
+
+### changeAddressIndex
+
+• **changeAddressIndex**: [`IAddress`](IAddress.md)
+
+#### Defined in
+
+[types/wallet.ts:262](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L262)
+
+___
+
+### lastUsedAddressIndex
+
+• **lastUsedAddressIndex**: [`IAddress`](IAddress.md)
+
+#### Defined in
+
+[types/wallet.ts:261](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L261)
+
+___
+
+### lastUsedChangeAddressIndex
+
+• **lastUsedChangeAddressIndex**: [`IAddress`](IAddress.md)
+
+#### Defined in
+
+[types/wallet.ts:263](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L263)

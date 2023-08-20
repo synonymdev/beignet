@@ -14,7 +14,7 @@ A self-custodial, JS Bitcoin wallet management library.
   - [Run Tests](#run-tests)
   - [Run Example Project](#run-example-project)
 2. [Implementation](#implementation)
-3. [Advanved Usage](#advanced-usage)
+3. [Advanced Usage](#advanced-usage)
 3. [Documentation](#documentation)
 4. [Support](#support)
 
@@ -23,7 +23,7 @@ A self-custodial, JS Bitcoin wallet management library.
 ### Clone the Repository
 
 ```bash
-git clone git@github.com:coreyphillips/beignet.git && cd beignet
+git clone git@github.com:synonymdev/beignet.git && cd beignet
 ```
 
 ### Install Dependencies & Build

@@ -68,7 +68,6 @@ import {
 	addressTypes,
 	defaultAddressContent,
 	defaultFeesShape,
-	defaultWalletData,
 	getAddressTypeContent
 } from '../shapes';
 import { err, ok, Result } from '../utils';
@@ -97,7 +96,6 @@ export class Wallet {
 	};
 	public electrum: Electrum;
 	public exchangeRates: IExchangeRates;
-	public header: IHeader;
 	public onMessage?: TOnMessage;
 	public transaction: Transaction;
 	public feeEstimates: IFees;
@@ -126,7 +124,6 @@ export class Wallet {
 		this.getData = storage?.getData ?? getDataFallback;
 		this.setData = storage?.setData;
 		this.exchangeRates = {};
-		this.header = { ...defaultWalletData.header };
 		this.transaction = new Transaction({
 			wallet: this,
 			mnemonic: this.mnemonic,
@@ -146,6 +143,7 @@ export class Wallet {
 		try {
 			let walletName = params?.walletName;
 			if (!walletName) {
+				// If no name is provided, use the sha256 hash of the mnemonic + passphrase to generate a unique wallet name when getting/setting data.
 				const str = `${params.mnemonic}${params.passphrase}`;
 				walletName = getSha256(str);
 				console.log('Wallet Name:', walletName);
@@ -164,6 +162,24 @@ export class Wallet {
 			// @ts-ignore
 			return err(e);
 		}
+	}
+
+	public async switchNetwork(
+		network: EAvailableNetworks,
+		servers?: TServer | TServer[]
+	): Promise<Result<Wallet>> {
+		this.network = network;
+		const params: IWallet = {
+			...this,
+			mnemonic: this.mnemonic,
+			network,
+			servers,
+			storage: {
+				getData: this.getData,
+				setData: this.setData
+			}
+		};
+		return Wallet.create(params);
 	}
 
 	/**
@@ -1378,7 +1394,7 @@ export class Wallet {
 	}
 
 	/**
-	 * Retrieves and sets UTXO's for the current wallet.
+	 * Retrieves and sets UTXO's for the current wallet from Electrum.
 	 * @param {boolean} scanAllAddresses
 	 * @returns {Promise<Result<IGetUtxosResponse>>}
 	 */
@@ -1402,6 +1418,10 @@ export class Wallet {
 		return ok({ utxos, balance });
 	}
 
+	/**
+	 * Returns the current wallet's UTXO's from storage.
+	 * @returns {IUtxo[]}
+	 */
 	listUtxos(): IUtxo[] {
 		return this.data.utxos;
 	}

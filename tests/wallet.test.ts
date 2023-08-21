@@ -30,7 +30,9 @@ before(async function () {
 	wallet = res.value;
 });
 
-describe('Wallet Library', async () => {
+describe('Wallet Library', async function () {
+	this.timeout(20000); // Set timeout to 20 seconds
+
 	it('Should successfully create a wallet.', () => {
 		expect(wallet).not.to.be.null;
 	});
@@ -177,5 +179,22 @@ describe('Wallet Library', async () => {
 		expect(getUtxosRes.value.utxos.length).to.equal(1);
 		expect(getUtxosRes.value.balance).to.equal(1000);
 		expect(getUtxosRes.value).to.deep.equal(expectedResult);
+	});
+
+	it('Should successfully switch to mainnet from testnet', async () => {
+		const switchRes: Result<Wallet> = await wallet.switchNetwork(
+			EAvailableNetworks.mainnet
+		);
+		expect(switchRes.isErr()).to.equal(false);
+		if (switchRes.isErr()) return;
+		it('Should successfully create a wallet.', () => {
+			expect(switchRes).not.to.be.null;
+		});
+		const address = wallet.getAddress({
+			addressType: EAddressType.p2wpkh,
+			changeAddress: false,
+			index: '0'
+		});
+		expect(address).to.equal('bc1qreygjcarrm68vjg4fkx04qj70g04c5ttjyfkpj');
 	});
 });

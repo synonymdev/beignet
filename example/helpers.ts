@@ -1,4 +1,4 @@
-import fs from 'fs/promises';
+import { promises as fs } from 'fs';
 import { TGetData, TSetData, IWalletData } from '../src';
 import { err, Result, ok } from '../src';
 import { getDefaultWalletData } from '../src';

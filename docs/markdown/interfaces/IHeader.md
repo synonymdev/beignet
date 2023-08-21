@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[types/electrum.ts:65](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/electrum.ts#L65)
+[types/electrum.ts:65](https://github.com/synonymdev/beignet/blob/8f99086/src/types/electrum.ts#L65)
 
 ___
 
@@ -28,7 +28,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:64](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/electrum.ts#L64)
+[types/electrum.ts:64](https://github.com/synonymdev/beignet/blob/8f99086/src/types/electrum.ts#L64)
 
 ___
 
@@ -38,4 +38,4 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:66](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/electrum.ts#L66)
+[types/electrum.ts:66](https://github.com/synonymdev/beignet/blob/8f99086/src/types/electrum.ts#L66)

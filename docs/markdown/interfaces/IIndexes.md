@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[types/wallet.ts:271](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L271)
+[types/wallet.ts:271](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L271)
 
 ___
 
@@ -29,7 +29,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:272](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L272)
+[types/wallet.ts:272](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L272)
 
 ___
 
@@ -39,7 +39,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:273](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L273)
+[types/wallet.ts:273](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L273)
 
 ___
 
@@ -49,4 +49,4 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:274](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L274)
+[types/wallet.ts:274](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L274)

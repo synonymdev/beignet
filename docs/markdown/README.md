@@ -170,7 +170,7 @@ beignet
 
 #### Defined in
 
-[types/electrum.ts:124](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/electrum.ts#L124)
+[types/electrum.ts:124](https://github.com/synonymdev/beignet/blob/8f99086/src/types/electrum.ts#L124)
 
 ___
 
@@ -186,7 +186,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:131](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/electrum.ts#L131)
+[types/electrum.ts:131](https://github.com/synonymdev/beignet/blob/8f99086/src/types/electrum.ts#L131)
 
 ___
 
@@ -200,7 +200,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:347](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L347)
+[types/wallet.ts:347](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L347)
 
 ___
 
@@ -216,7 +216,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:419](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L419)
+[types/wallet.ts:419](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L419)
 
 ___
 
@@ -234,7 +234,7 @@ Represents a result that can be successful (Ok) or contain an error (Err).
 
 #### Defined in
 
-[utils/result.ts:4](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/result.ts#L4)
+[utils/result.ts:4](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/result.ts#L4)
 
 ___
 
@@ -253,7 +253,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:440](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L440)
+[types/wallet.ts:440](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L440)
 
 ___
 
@@ -263,7 +263,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:7](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L7)
+[types/wallet.ts:7](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L7)
 
 ___
 
@@ -273,7 +273,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:6](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L6)
+[types/wallet.ts:6](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L6)
 
 ___
 
@@ -289,7 +289,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:38](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L38)
+[types/wallet.ts:38](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L38)
 
 ___
 
@@ -299,7 +299,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:13](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L13)
+[types/wallet.ts:13](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L13)
 
 ___
 
@@ -309,7 +309,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:5](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L5)
+[types/wallet.ts:5](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L5)
 
 ___
 
@@ -319,7 +319,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:9](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/electrum.ts#L9)
+[types/electrum.ts:9](https://github.com/synonymdev/beignet/blob/8f99086/src/types/electrum.ts#L9)
 
 ___
 
@@ -329,7 +329,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:362](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L362)
+[types/wallet.ts:362](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L362)
 
 ___
 
@@ -339,7 +339,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:354](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L354)
+[types/wallet.ts:354](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L354)
 
 ___
 
@@ -349,7 +349,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:376](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L376)
+[types/wallet.ts:376](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L376)
 
 ___
 
@@ -359,7 +359,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:358](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L358)
+[types/wallet.ts:358](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L358)
 
 ___
 
@@ -389,7 +389,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:159](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L159)
+[types/wallet.ts:159](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L159)
 
 ___
 
@@ -399,7 +399,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:10](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L10)
+[types/wallet.ts:10](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L10)
 
 ___
 
@@ -409,7 +409,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:11](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L11)
+[types/wallet.ts:11](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L11)
 
 ___
 
@@ -419,7 +419,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:9](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L9)
+[types/wallet.ts:9](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L9)
 
 ___
 
@@ -429,7 +429,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:12](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L12)
+[types/wallet.ts:12](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L12)
 
 ___
 
@@ -439,7 +439,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:8](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L8)
+[types/wallet.ts:8](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L8)
 
 ___
 
@@ -458,7 +458,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:403](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L403)
+[types/wallet.ts:403](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L403)
 
 ___
 
@@ -468,7 +468,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:427](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L427)
+[types/wallet.ts:427](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L427)
 
 ___
 
@@ -499,7 +499,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:422](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L422)
+[types/wallet.ts:422](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L422)
 
 ___
 
@@ -517,7 +517,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:325](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L325)
+[types/wallet.ts:325](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L325)
 
 ___
 
@@ -527,7 +527,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:25](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/electrum.ts#L25)
+[types/electrum.ts:25](https://github.com/synonymdev/beignet/blob/8f99086/src/types/electrum.ts#L25)
 
 ___
 
@@ -546,7 +546,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:19](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/electrum.ts#L19)
+[types/electrum.ts:19](https://github.com/synonymdev/beignet/blob/8f99086/src/types/electrum.ts#L19)
 
 ___
 
@@ -577,7 +577,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:162](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L162)
+[types/wallet.ts:162](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L162)
 
 ___
 
@@ -587,7 +587,7 @@ ___
 
 #### Defined in
 
-[types/transaction.ts:36](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/transaction.ts#L36)
+[types/transaction.ts:36](https://github.com/synonymdev/beignet/blob/8f99086/src/types/transaction.ts#L36)
 
 ___
 
@@ -604,7 +604,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:447](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L447)
+[types/wallet.ts:447](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L447)
 
 ___
 
@@ -614,7 +614,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:114](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/electrum.ts#L114)
+[types/electrum.ts:114](https://github.com/synonymdev/beignet/blob/8f99086/src/types/electrum.ts#L114)
 
 ___
 
@@ -632,7 +632,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:410](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L410)
+[types/wallet.ts:410](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L410)
 
 ___
 
@@ -652,7 +652,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:53](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/electrum.ts#L53)
+[types/electrum.ts:53](https://github.com/synonymdev/beignet/blob/8f99086/src/types/electrum.ts#L53)
 
 ___
 
@@ -669,7 +669,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:40](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/electrum.ts#L40)
+[types/electrum.ts:40](https://github.com/synonymdev/beignet/blob/8f99086/src/types/electrum.ts#L40)
 
 ___
 
@@ -683,7 +683,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:36](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/electrum.ts#L36)
+[types/electrum.ts:36](https://github.com/synonymdev/beignet/blob/8f99086/src/types/electrum.ts#L36)
 
 ___
 
@@ -693,7 +693,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:157](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L157)
+[types/wallet.ts:157](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L157)
 
 ## Variables
 
@@ -703,7 +703,7 @@ ___
 
 #### Defined in
 
-[utils/electrum.ts:14](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/electrum.ts#L14)
+[utils/electrum.ts:14](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/electrum.ts#L14)
 
 ___
 
@@ -718,7 +718,7 @@ If connection was lost this will try to reconnect in the specified interval
 
 #### Defined in
 
-[utils/electrum.ts:135](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/electrum.ts#L135)
+[utils/electrum.ts:135](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/electrum.ts#L135)
 
 ___
 
@@ -753,7 +753,7 @@ ___
 
 #### Defined in
 
-[utils/exchange-rate.ts:5](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/exchange-rate.ts#L5)
+[utils/exchange-rate.ts:5](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/exchange-rate.ts#L5)
 
 ## Functions
 
@@ -769,7 +769,7 @@ Returns an array of all available networks from the networks object.
 
 #### Defined in
 
-[utils/wallet.ts:204](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/wallet.ts#L204)
+[utils/wallet.ts:204](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/wallet.ts#L204)
 
 ___
 
@@ -793,7 +793,7 @@ y
 
 #### Defined in
 
-[utils/transaction.ts:142](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/transaction.ts#L142)
+[utils/transaction.ts:142](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/transaction.ts#L142)
 
 ___
 
@@ -823,7 +823,7 @@ An Err result containing the given error.
 
 #### Defined in
 
-[utils/result.ts:74](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/result.ts#L74)
+[utils/result.ts:74](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/result.ts#L74)
 
 ___
 
@@ -853,7 +853,7 @@ Derivation Path Data
 
 #### Defined in
 
-[utils/wallet.ts:69](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/wallet.ts#L69)
+[utils/wallet.ts:69](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/wallet.ts#L69)
 
 ___
 
@@ -877,7 +877,7 @@ Result<IFormattedPeerData>
 
 #### Defined in
 
-[utils/electrum.ts:59](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/electrum.ts#L59)
+[utils/electrum.ts:59](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/electrum.ts#L59)
 
 ___
 
@@ -901,7 +901,7 @@ Extends bip39's generateMnemonic function.
 
 #### Defined in
 
-[utils/helpers.ts:152](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/helpers.ts#L152)
+[utils/helpers.ts:152](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/helpers.ts#L152)
 
 ___
 
@@ -924,7 +924,7 @@ Get address for a given scriptPubKey.
 
 #### Defined in
 
-[utils/helpers.ts:16](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/helpers.ts#L16)
+[utils/helpers.ts:16](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/helpers.ts#L16)
 
 ___
 
@@ -946,7 +946,7 @@ Returns the address type from the specified derivation path.
 
 #### Defined in
 
-[utils/derivation-path.ts:149](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/derivation-path.ts#L149)
+[utils/derivation-path.ts:149](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/derivation-path.ts#L149)
 
 ___
 
@@ -968,7 +968,7 @@ ___
 
 #### Defined in
 
-[utils/transaction.ts:172](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/transaction.ts#L172)
+[utils/transaction.ts:172](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/transaction.ts#L172)
 
 ___
 
@@ -994,7 +994,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:159](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/types/wallet.ts#L159)
+[types/wallet.ts:159](https://github.com/synonymdev/beignet/blob/8f99086/src/types/wallet.ts#L159)
 
 ___
 
@@ -1017,7 +1017,7 @@ Returns the default port for the given network and protocol.
 
 #### Defined in
 
-[utils/electrum.ts:22](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/electrum.ts#L22)
+[utils/electrum.ts:22](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/electrum.ts#L22)
 
 ___
 
@@ -1033,7 +1033,7 @@ Returns the default wallet data object.
 
 #### Defined in
 
-[utils/wallet.ts:28](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/wallet.ts#L28)
+[utils/wallet.ts:28](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/wallet.ts#L28)
 
 ___
 
@@ -1049,7 +1049,7 @@ keyof [`IWalletData`](interfaces/IWalletData.md)[]
 
 #### Defined in
 
-[utils/wallet.ts:36](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/wallet.ts#L36)
+[utils/wallet.ts:36](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/wallet.ts#L36)
 
 ___
 
@@ -1065,7 +1065,7 @@ Returns the exchange rate for the given currency
 
 #### Defined in
 
-[utils/exchange-rate.ts:45](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/exchange-rate.ts#L45)
+[utils/exchange-rate.ts:45](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/exchange-rate.ts#L45)
 
 ___
 
@@ -1092,7 +1092,7 @@ Returns the highest used index from the provided txHashes.
 
 #### Defined in
 
-[utils/wallet.ts:129](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/wallet.ts#L129)
+[utils/wallet.ts:129](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/wallet.ts#L129)
 
 ___
 
@@ -1118,7 +1118,7 @@ Result<IKeyDerivationPath>
 
 #### Defined in
 
-[utils/helpers.ts:98](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/helpers.ts#L98)
+[utils/helpers.ts:98](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/helpers.ts#L98)
 
 ___
 
@@ -1145,7 +1145,7 @@ Parses a key derivation path in string format Ex: "m/84'/0'/0'/0/0" and returns 
 
 #### Defined in
 
-[utils/derivation-path.ts:22](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/derivation-path.ts#L22)
+[utils/derivation-path.ts:22](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/derivation-path.ts#L22)
 
 ___
 
@@ -1174,7 +1174,7 @@ Parses a key derivation path object and returns it in string format. Ex: "m/84'/
 
 #### Defined in
 
-[utils/derivation-path.ts:81](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/derivation-path.ts#L81)
+[utils/derivation-path.ts:81](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/derivation-path.ts#L81)
 
 ___
 
@@ -1196,7 +1196,7 @@ Returns last value between hyphens in a string.
 
 #### Defined in
 
-[utils/wallet.ts:45](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/wallet.ts#L45)
+[utils/wallet.ts:45](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/wallet.ts#L45)
 
 ___
 
@@ -1222,7 +1222,7 @@ Promise<Result<IFormattedPeerData[]>>
 
 #### Defined in
 
-[utils/electrum.ts:96](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/electrum.ts#L96)
+[utils/electrum.ts:96](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/electrum.ts#L96)
 
 ___
 
@@ -1245,7 +1245,7 @@ Returns the protocol for the given network and default port.
 
 #### Defined in
 
-[utils/electrum.ts:39](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/electrum.ts#L39)
+[utils/electrum.ts:39](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/electrum.ts#L39)
 
 ___
 
@@ -1269,7 +1269,7 @@ Get scriptHash for a given address
 
 #### Defined in
 
-[utils/helpers.ts:127](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/helpers.ts#L127)
+[utils/helpers.ts:127](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/helpers.ts#L127)
 
 ___
 
@@ -1291,7 +1291,7 @@ Get sha256 hash of a given string.
 
 #### Defined in
 
-[utils/helpers.ts:32](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/helpers.ts#L32)
+[utils/helpers.ts:32](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/helpers.ts#L32)
 
 ___
 
@@ -1318,7 +1318,7 @@ Returns if the provided string is a valid Bech32m encoded string (taproot/p2tr a
 
 #### Defined in
 
-[utils/wallet.ts:182](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/wallet.ts#L182)
+[utils/wallet.ts:182](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/wallet.ts#L182)
 
 ___
 
@@ -1346,7 +1346,7 @@ Returns the keys of a given object.
 
 #### Defined in
 
-[utils/wallet.ts:56](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/wallet.ts#L56)
+[utils/wallet.ts:56](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/wallet.ts#L56)
 
 ___
 
@@ -1376,7 +1376,7 @@ An Ok result containing the given value.
 
 #### Defined in
 
-[utils/result.ts:67](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/result.ts#L67)
+[utils/result.ts:67](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/result.ts#L67)
 
 ___
 
@@ -1397,7 +1397,7 @@ ___
 
 #### Defined in
 
-[utils/transaction.ts:60](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/transaction.ts#L60)
+[utils/transaction.ts:60](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/transaction.ts#L60)
 
 ___
 
@@ -1427,7 +1427,7 @@ Sum a specific value in an array of objects.
 
 #### Defined in
 
-[utils/wallet.ts:213](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/wallet.ts#L213)
+[utils/wallet.ts:213](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/wallet.ts#L213)
 
 ___
 
@@ -1449,7 +1449,7 @@ Removes outputs that are below the dust limit.
 
 #### Defined in
 
-[utils/transaction.ts:284](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/transaction.ts#L284)
+[utils/transaction.ts:284](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/transaction.ts#L284)
 
 ___
 
@@ -1473,7 +1473,7 @@ Sets RBF for the provided psbt.
 
 #### Defined in
 
-[utils/transaction.ts:24](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/transaction.ts#L24)
+[utils/transaction.ts:24](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/transaction.ts#L24)
 
 ___
 
@@ -1501,7 +1501,7 @@ Shuffles a given array.
 
 #### Defined in
 
-[utils/wallet.ts:241](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/wallet.ts#L241)
+[utils/wallet.ts:241](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/wallet.ts#L241)
 
 ___
 
@@ -1531,7 +1531,7 @@ If no address is provided, it will attempt to validate the address for all avail
 
 #### Defined in
 
-[utils/helpers.ts:45](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/helpers.ts#L45)
+[utils/helpers.ts:45](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/helpers.ts#L45)
 
 ___
 
@@ -1553,4 +1553,4 @@ Attempts to validate the provided mnemonic.
 
 #### Defined in
 
-[utils/helpers.ts:165](https://github.com/coreyphillips/beignet/blob/f8e8e28/src/utils/helpers.ts#L165)
+[utils/helpers.ts:165](https://github.com/synonymdev/beignet/blob/8f99086/src/utils/helpers.ts#L165)

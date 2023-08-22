@@ -7,7 +7,7 @@ export const getData: TGetData = async <K extends keyof IWalletData>(
 	key: string
 ): Promise<Result<IWalletData[K]>> => {
 	try {
-		const data = await fs.readFile(`walletData/${key}.json`, 'utf8');
+		const data = await fs.readFile(`example/walletData/${key}.json`, 'utf8');
 		const walletData: IWalletData[K] = JSON.parse(data);
 		if (walletData) return ok(walletData);
 		const defaultWalletData = getDefaultWalletData();
@@ -23,13 +23,13 @@ export const setData: TSetData = async <K extends keyof IWalletData>(
 	value: IWalletData[K]
 ): Promise<Result<boolean>> => {
 	try {
-		await fs.writeFile(
-			`walletData/${key}.json`,
-			JSON.stringify(value, null, 2)
-		);
+		const dir = 'example/walletData';
+		// Ensure that the directory exists
+		await fs.mkdir(dir, { recursive: true });
+
+		await fs.writeFile(`${dir}/${key}.json`, JSON.stringify(value, null, 2));
 		return ok(true);
 	} catch (e) {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		return err(e);
 	}

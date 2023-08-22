@@ -90,8 +90,8 @@ const server: TServer = {
 	protocol: EProtocol.ssl,
 };
 
-// Use testnet (Defaults to mainnet)
-const network = ENetworks.testnet;
+// Use a specific network (Defaults to mainnet)
+const network = ENetworks.mainnet;
 
 // Use a specific address type. (Defaults to EAddressType.p2wpkh)
 const addressType = EAddressType.p2sh;

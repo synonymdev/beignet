@@ -83,7 +83,7 @@ const mnemonic = generateMnemonic();
 const passphrase = 'passphrase';
 
 // Connect to custom electrum server
-const server: TServer = {
+const servers: TServer = {
 	host: '35.233.47.252',
 	ssl: 18484,
 	tcp: 18483,
@@ -121,7 +121,7 @@ const storage: TStorage = {
 const createWalletRes = new Wallet({
 	mnemonic,
 	passphrase,
-	electrumOptions: { server },
+	electrumOptions: { servers },
 	network,
 	onMessage,
 	storage

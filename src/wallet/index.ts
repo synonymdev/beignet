@@ -42,7 +42,9 @@ import {
 	TServer,
 	TSetupTransactionResponse,
 	TWalletDataKeys,
-	TGetData
+	TGetData,
+	ICustomGetAddress,
+	ICustomGetScriptHash
 } from '../types';
 import {
 	getAddressTypeFromPath,
@@ -99,6 +101,10 @@ export class Wallet {
 	public onMessage?: TOnMessage;
 	public transaction: Transaction;
 	public feeEstimates: IFees;
+	private customGetAddress?: (
+		data: ICustomGetAddress
+	) => Promise<Result<IGetAddressResponse>>; // For use with Bitkit.
+	private customGetScriptHash?: (data: ICustomGetScriptHash) => Promise<string>; // For use with Bitkit.
 	private constructor({
 		mnemonic,
 		passphrase,
@@ -107,7 +113,9 @@ export class Wallet {
 		addressType = EAddressType.p2wpkh,
 		storage,
 		electrumOptions,
-		onMessage
+		onMessage,
+		customGetAddress,
+		customGetScriptHash
 	}: IWallet) {
 		if (!mnemonic) throw new Error('No mnemonic specified.');
 		if (!validateMnemonic(mnemonic)) throw new Error('Invalid mnemonic.');
@@ -137,6 +145,8 @@ export class Wallet {
 			network: this.network,
 			servers: electrumOptions?.servers
 		});
+		if (customGetAddress) this.customGetAddress = customGetAddress;
+		if (customGetScriptHash) this.customGetScriptHash = customGetScriptHash;
 	}
 
 	static async create(params: IWallet): Promise<Result<Wallet>> {
@@ -327,10 +337,26 @@ export class Wallet {
 	 * @returns {IGetAddressResponse}
 	 * @private
 	 */
-	private _getAddress(
+	private async _getAddress(
 		path: string,
 		addressType: EAddressType
-	): IGetAddressResponse {
+	): Promise<IGetAddressResponse> {
+		if (this.customGetAddress) {
+			const data = {
+				path,
+				type: addressType,
+				selectedNetwork: this.electrum.getElectrumNetwork(this.network)
+			};
+			const res = await this.customGetAddress(data);
+			if (res.isErr()) {
+				return {
+					address: '',
+					path,
+					publicKey: ''
+				};
+			}
+			return res.value;
+		}
 		const keyPair = this.root.derivePath(path);
 		let address;
 		switch (addressType) {
@@ -377,11 +403,11 @@ export class Wallet {
 	 * @param {EAddressType} [addressType]
 	 * @returns {string}
 	 */
-	getAddress({
+	public async getAddress({
 		index,
 		changeAddress = false,
 		addressType = this.addressType
-	}: IGetAddress = {}): string {
+	}: IGetAddress = {}): Promise<string> {
 		try {
 			if (index === undefined) {
 				const addressIndex = this.data.addressIndex[addressType];
@@ -397,11 +423,10 @@ export class Wallet {
 				return '';
 			}
 			const path = pathRes.value;
-			const res = this._getAddress(path, addressType);
+			const res = await this._getAddress(path, addressType);
 			if (!res?.address) return '';
 			return res.address;
 		} catch (e) {
-			// @ts-ignore
 			return '';
 		}
 	}
@@ -412,10 +437,10 @@ export class Wallet {
 	 * @param {EAddressType} addressType
 	 * @returns {Promise<Result<string>>}
 	 */
-	public getAddressByPath({
+	public async getAddressByPath({
 		path,
 		addressType
-	}: IGetAddressByPath): Result<IGetAddressResponse> {
+	}: IGetAddressByPath): Promise<Result<IGetAddressResponse>> {
 		if (!path) {
 			return err('No path specified');
 		}
@@ -425,7 +450,7 @@ export class Wallet {
 			addressType = res.value;
 		}
 		try {
-			const getAddressRes = this._getAddress(path, addressType);
+			const getAddressRes = await this._getAddress(path, addressType);
 			if (!getAddressRes?.address) return err('Unable to get address.');
 			return ok(getAddressRes);
 		} catch (e) {
@@ -463,10 +488,43 @@ export class Wallet {
 	public async getAddressBalance(
 		address: string
 	): Promise<Result<IGetAddressBalanceRes>> {
-		const scriptHash = getScriptHash({ address, network: this.network });
+		const scriptHash = await this.getScriptHash({
+			address,
+			network: this.network
+		});
 		const res = await this.electrum.getAddressBalance(scriptHash);
 		if (res.error) return err('Unable to get address balance at this time.');
 		return ok({ unconfirmed: res.unconfirmed, confirmed: res.confirmed });
+	}
+
+	/**
+	 * Get scriptHash for a given address
+	 * @param {string} address
+	 * @param {EAvailableNetworks} network
+	 * @returns {Promise<string>}
+	 */
+	public async getScriptHash({
+		address,
+		network
+	}: {
+		address: string;
+		network: EAvailableNetworks;
+	}): Promise<string> {
+		if (this.customGetScriptHash) {
+			const selectedNetwork = this.electrum.getElectrumNetwork(network);
+			return await this.customGetScriptHash({ address, selectedNetwork });
+		}
+		return getScriptHash({ address, network });
+	}
+
+	/**
+	 * Returns private key for the provided path.
+	 * @param path
+	 * @returns {string}
+	 */
+	getPrivateKey(path: string): string {
+		const keyPair = this.root.derivePath(path);
+		return keyPair.toWIF();
 	}
 
 	/**
@@ -548,7 +606,7 @@ export class Wallet {
 					if (address.isErr()) {
 						throw address.error;
 					}
-					const scriptHash = getScriptHash({
+					const scriptHash = await this.getScriptHash({
 						address: address.value.address,
 						network: this.network
 					});
@@ -584,7 +642,7 @@ export class Wallet {
 					if (address.isErr()) {
 						throw address.error;
 					}
-					const scriptHash = await getScriptHash({
+					const scriptHash = await this.getScriptHash({
 						address: address.value.address,
 						network
 					});

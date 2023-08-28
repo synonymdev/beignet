@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import { validateMnemonic } from 'bip39';
-import { Wallet } from '../';
+import { IAddress, IAddresses, Wallet } from '../';
 import {
 	EAddressType,
 	EAvailableNetworks,
@@ -54,8 +54,8 @@ describe('Wallet Library', async function () {
 		expect(isValid).to.equal(true);
 	});
 
-	it('Should generate a bech32 receiving address at index 0', () => {
-		const address = wallet.getAddress({
+	it('Should generate a bech32 receiving address at index 0', async () => {
+		const address = await wallet.getAddress({
 			addressType: EAddressType.p2wpkh,
 			changeAddress: false,
 			index: '0'
@@ -63,8 +63,8 @@ describe('Wallet Library', async function () {
 		expect(address).to.equal('tb1qmja98kkd540qtesjqdanfg0ywags845vehfg66');
 	});
 
-	it('Should generate a segwit change address at index 1', () => {
-		const address = wallet.getAddress({
+	it('Should generate a segwit change address at index 1', async () => {
+		const address = await wallet.getAddress({
 			addressType: EAddressType.p2sh,
 			changeAddress: true,
 			index: '1'
@@ -72,8 +72,8 @@ describe('Wallet Library', async function () {
 		expect(address).to.equal('2NDRG1ZGhWMGGNW7Mp58BKcyBs4Hyat8Law');
 	});
 
-	it('Should generate a legacy receiving address at index 5', () => {
-		const address = wallet.getAddress({
+	it('Should generate a legacy receiving address at index 5', async () => {
+		const address = await wallet.getAddress({
 			addressType: EAddressType.p2pkh,
 			changeAddress: false,
 			index: '5'
@@ -81,8 +81,8 @@ describe('Wallet Library', async function () {
 		expect(address).to.equal('mohdq3fadTtT4uSH4oNr4F1Dp3YM4pR3VF');
 	});
 
-	it('Should generate a bech32 receiving address at index 0 via its path', () => {
-		const address = wallet.getAddressByPath({ path: "m/84'/1'/0'/0/0" });
+	it('Should generate a bech32 receiving address at index 0 via its path', async () => {
+		const address = await wallet.getAddressByPath({ path: "m/84'/1'/0'/0/0" });
 		expect(address.isErr()).to.equal(false);
 		if (address.isErr()) return;
 		expect(address.value.address).to.equal(
@@ -90,8 +90,8 @@ describe('Wallet Library', async function () {
 		);
 	});
 
-	it('Should generate a segwit change address at index 1 via its path', () => {
-		const address = wallet.getAddressByPath({ path: "m/49'/1'/0'/1/1" });
+	it('Should generate a segwit change address at index 1 via its path', async () => {
+		const address = await wallet.getAddressByPath({ path: "m/49'/1'/0'/1/1" });
 		expect(address.isErr()).to.equal(false);
 		if (address.isErr()) return;
 		expect(address.value.address).to.equal(
@@ -99,8 +99,8 @@ describe('Wallet Library', async function () {
 		);
 	});
 
-	it('Should generate a testnet legacy receiving address at index 5 via its path', () => {
-		const address = wallet.getAddressByPath({ path: "m/44'/1'/0'/0/5" });
+	it('Should generate a testnet legacy receiving address at index 5 via its path', async () => {
+		const address = await wallet.getAddressByPath({ path: "m/44'/1'/0'/0/5" });
 		expect(address.isErr()).to.equal(false);
 		if (address.isErr()) return;
 		expect(address.value.address).to.equal(
@@ -190,11 +190,32 @@ describe('Wallet Library', async function () {
 		it('Should successfully create a wallet.', () => {
 			expect(switchRes).not.to.be.null;
 		});
-		const address = wallet.getAddress({
+		const address = await wallet.getAddress({
 			addressType: EAddressType.p2wpkh,
 			changeAddress: false,
 			index: '0'
 		});
 		expect(address).to.equal('bc1qreygjcarrm68vjg4fkx04qj70g04c5ttjyfkpj');
+	});
+
+	it('Should successfully return the private key for a given path', async () => {
+		const addresses: IAddresses = wallet.data.addresses['p2wpkh'];
+
+		const addressData1 = Object.values(addresses).find(
+			(a: IAddress) => a.index === 0
+		);
+		expect(addressData1).to.not.be.undefined;
+		if (!addressData1) return;
+		const privateKey1: string = await wallet.getPrivateKey(addressData1.path);
+		expect(typeof privateKey1).to.equal('string');
+		expect(privateKey1).to.equal(
+			'cSkdqJTnvZ56deaW5PpVJPeUCAQfPV7xJocfiZxdgm9UHHmXuXzY'
+		);
+
+		const privateKey2: string = await wallet.getPrivateKey("m/84'/1'/0'/0/19");
+		expect(typeof privateKey2).to.equal('string');
+		expect(privateKey2).to.equal(
+			'cUcpwVpcwvVz17qnBzwNfNQpp9FsfXH1ogjKCkxgbB2ZzGGjrK2r'
+		);
 	});
 });

@@ -55,8 +55,8 @@ describe('Wallet Library', async () => {
 		expect(isValid).to.equal(true);
 	});
 
-	it('Should generate a bech32 receiving address at index 0', () => {
-		const address = wallet.getAddress({
+	it('Should generate a bech32 receiving address at index 0', async () => {
+		const address = await wallet.getAddress({
 			addressType: EAddressType.p2wpkh,
 			changeAddress: false,
 			index: '0'
@@ -64,8 +64,8 @@ describe('Wallet Library', async () => {
 		expect(address).to.equal('tb1qmja98kkd540qtesjqdanfg0ywags845vehfg66');
 	});
 
-	it('Should generate a segwit change address at index 1', () => {
-		const address = wallet.getAddress({
+	it('Should generate a segwit change address at index 1', async () => {
+		const address = await wallet.getAddress({
 			addressType: EAddressType.p2sh,
 			changeAddress: true,
 			index: '1'
@@ -73,8 +73,8 @@ describe('Wallet Library', async () => {
 		expect(address).to.equal('2NDRG1ZGhWMGGNW7Mp58BKcyBs4Hyat8Law');
 	});
 
-	it('Should generate a legacy receiving address at index 5', () => {
-		const address = wallet.getAddress({
+	it('Should generate a legacy receiving address at index 5', async () => {
+		const address = await wallet.getAddress({
 			addressType: EAddressType.p2pkh,
 			changeAddress: false,
 			index: '5'
@@ -82,8 +82,8 @@ describe('Wallet Library', async () => {
 		expect(address).to.equal('mohdq3fadTtT4uSH4oNr4F1Dp3YM4pR3VF');
 	});
 
-	it('Should generate a bech32 receiving address at index 0 via its path', () => {
-		const address = wallet.getAddressByPath({ path: "m/84'/1'/0'/0/0" });
+	it('Should generate a bech32 receiving address at index 0 via its path', async () => {
+		const address = await wallet.getAddressByPath({ path: "m/84'/1'/0'/0/0" });
 		expect(address.isErr()).to.equal(false);
 		if (address.isErr()) return;
 		expect(address.value.address).to.equal(
@@ -91,8 +91,8 @@ describe('Wallet Library', async () => {
 		);
 	});
 
-	it('Should generate a segwit change address at index 1 via its path', () => {
-		const address = wallet.getAddressByPath({ path: "m/49'/1'/0'/1/1" });
+	it('Should generate a segwit change address at index 1 via its path', async () => {
+		const address = await wallet.getAddressByPath({ path: "m/49'/1'/0'/1/1" });
 		expect(address.isErr()).to.equal(false);
 		if (address.isErr()) return;
 		expect(address.value.address).to.equal(
@@ -100,8 +100,8 @@ describe('Wallet Library', async () => {
 		);
 	});
 
-	it('Should generate a testnet legacy receiving address at index 5 via its path', () => {
-		const address = wallet.getAddressByPath({ path: "m/44'/1'/0'/0/5" });
+	it('Should generate a testnet legacy receiving address at index 5 via its path', async () => {
+		const address = await wallet.getAddressByPath({ path: "m/44'/1'/0'/0/5" });
 		expect(address.isErr()).to.equal(false);
 		if (address.isErr()) return;
 		expect(address.value.address).to.equal(

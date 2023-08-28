@@ -1,5 +1,11 @@
 import { Result } from '../utils';
-import { IHeader, INewBlock, TServer, TTxResult } from './electrum';
+import {
+	IHeader,
+	INewBlock,
+	TElectrumNetworks,
+	TServer,
+	TTxResult
+} from './electrum';
 import { EFeeId } from './transaction';
 
 export type TAvailableNetworks = 'bitcoin' | 'testnet' | 'regtest';
@@ -179,6 +185,10 @@ export interface IWallet {
 	};
 	remainOffline?: boolean;
 	onMessage?: TOnMessage;
+	customGetAddress?: (
+		data: ICustomGetAddress
+	) => Promise<Result<IGetAddressResponse>>;
+	customGetScriptHash?: (data: ICustomGetScriptHash) => Promise<string>;
 }
 
 export interface IAddressData {
@@ -208,6 +218,17 @@ export interface IGetAddress {
 	index?: TKeyDerivationIndex;
 	changeAddress?: boolean;
 	addressType?: EAddressType;
+}
+
+export interface ICustomGetAddress {
+	path: string;
+	type: EAddressType;
+	selectedNetwork?: TElectrumNetworks;
+}
+
+export interface ICustomGetScriptHash {
+	address: string;
+	selectedNetwork?: TElectrumNetworks;
 }
 
 export interface IGetAddressByPath {

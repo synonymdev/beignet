@@ -24,8 +24,10 @@ before(async function () {
 		network: EAvailableNetworks.testnet,
 		walletName: 'wallet0',
 		addressType: EAddressType.p2wpkh,
-		getData,
-		setData
+		storage: {
+			getData,
+			setData
+		}
 	});
 	if (res.isErr()) {
 		console.log('error: ', res.error.message);

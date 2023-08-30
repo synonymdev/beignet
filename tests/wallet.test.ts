@@ -183,24 +183,7 @@ describe('Wallet Library', async function () {
 		expect(getUtxosRes.value).to.deep.equal(expectedResult);
 	});
 
-	it('Should successfully switch to mainnet from testnet', async () => {
-		const switchRes: Result<Wallet> = await wallet.switchNetwork(
-			EAvailableNetworks.mainnet
-		);
-		expect(switchRes.isErr()).to.equal(false);
-		if (switchRes.isErr()) return;
-		it('Should successfully create a wallet.', () => {
-			expect(switchRes).not.to.be.null;
-		});
-		const address = await wallet.getAddress({
-			addressType: EAddressType.p2wpkh,
-			changeAddress: false,
-			index: '0'
-		});
-		expect(address).to.equal('bc1qreygjcarrm68vjg4fkx04qj70g04c5ttjyfkpj');
-	});
-
-	it('Should successfully return the private key for a given path', async () => {
+	it('Should successfully return the private testnet key for a given path', async () => {
 		const addresses: IAddresses = wallet.data.addresses['p2wpkh'];
 
 		const addressData1 = Object.values(addresses).find(
@@ -218,6 +201,58 @@ describe('Wallet Library', async function () {
 		expect(typeof privateKey2).to.equal('string');
 		expect(privateKey2).to.equal(
 			'cUcpwVpcwvVz17qnBzwNfNQpp9FsfXH1ogjKCkxgbB2ZzGGjrK2r'
+		);
+	});
+
+	it('Should successfully switch to mainnet from testnet', async () => {
+		const switchRes: Result<Wallet> = await wallet.switchNetwork(
+			EAvailableNetworks.mainnet
+		);
+		expect(switchRes.isErr()).to.equal(false);
+		if (switchRes.isErr()) return;
+		it('Should successfully create a wallet for the new network.', () => {
+			expect(switchRes).not.to.be.null;
+		});
+		const address = await wallet.getAddress({
+			addressType: EAddressType.p2wpkh,
+			changeAddress: false,
+			index: '0'
+		});
+		expect(address).to.equal('bc1qreygjcarrm68vjg4fkx04qj70g04c5ttjyfkpj');
+		expect(wallet.data.utxos.length).to.equal(0);
+		expect(wallet.data.balance).to.equal(0);
+		const expectedAddressIndex = {
+			address: 'bc1qreygjcarrm68vjg4fkx04qj70g04c5ttjyfkpj',
+			path: "m/84'/0'/0'/0/0",
+			publicKey:
+				'028b5c7c4c8650f229b5b89dfe4c9a7b37c1da8ecd75b38eb8a08e460c4ebf5e10',
+			index: 0,
+			scriptHash:
+				'28f2ce1db4fd99ead11e0f5d165247c40999f52a899f8c02f1476c8541bd2fc5'
+		};
+		expect(wallet.data.addressIndex[wallet.addressType]).to.deep.equal(
+			expectedAddressIndex
+		);
+	});
+
+	it('Should successfully return the private mainnet key for a given path', async () => {
+		const addresses: IAddresses = wallet.data.addresses['p2wpkh'];
+
+		const addressData1 = Object.values(addresses).find(
+			(a: IAddress) => a.index === 0
+		);
+		expect(addressData1).to.not.be.undefined;
+		if (!addressData1) return;
+		const privateKey1: string = await wallet.getPrivateKey(addressData1.path);
+		expect(typeof privateKey1).to.equal('string');
+		expect(privateKey1).to.equal(
+			'L2iqFGgLkMzQossGaQ9B2tmhSsLq3vgunnHb8vnLavXUh54GSLnK'
+		);
+
+		const privateKey2: string = await wallet.getPrivateKey("m/84'/0'/0'/0/19");
+		expect(typeof privateKey2).to.equal('string');
+		expect(privateKey2).to.equal(
+			'L2cB657yFF88YEebxoad3YgeezYKAu61AhmnDHMFo7GjjpPqBZG1'
 		);
 	});
 });

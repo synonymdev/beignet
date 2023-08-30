@@ -195,6 +195,7 @@ export class Wallet {
 		const params: IWallet = {
 			...this,
 			mnemonic: this.mnemonic,
+			passphrase: this.passphrase,
 			network,
 			servers,
 			storage: {
@@ -202,7 +203,10 @@ export class Wallet {
 				setData: this.setData
 			}
 		};
-		return Wallet.create(params);
+		const createRes = await Wallet.create(params);
+		if (createRes.isErr()) return err(createRes.error.message);
+		Object.assign(this, createRes.value);
+		return ok(this);
 	}
 
 	/**
@@ -250,6 +254,7 @@ export class Wallet {
 	 * @private
 	 */
 	private async setWalletData(): Promise<Result<boolean>> {
+		this.data = getDefaultWalletData();
 		const walletDataResponse = await this.getWalletData();
 		if (walletDataResponse.isErr())
 			return err(walletDataResponse.error.message);
@@ -1836,11 +1841,12 @@ export class Wallet {
 	 * the app will rescan the wallet's addresses from index zero.
 	 * @async
 	 * @param {boolean} [shouldClearAddresses] - Clears and re-generates all addresses when true.
+	 * @param shouldClearTransactions
 	 * @returns {Promise<Result<string>>}
 	 */
 	public async rescanAddresses({
-		shouldClearAddresses = true,
-		shouldClearTransactions = false
+		shouldClearAddresses = true, // It's assumed we want to clear addresses in this method unless explicitly set to false.
+		shouldClearTransactions = false // We'll lose some timestamp information about the transactions if we clear them. So it's set to false by default.
 	}: {
 		shouldClearAddresses?: boolean;
 		shouldClearTransactions?: boolean;

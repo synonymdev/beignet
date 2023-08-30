@@ -179,8 +179,6 @@ export interface IWallet {
 	network?: EAvailableNetworks;
 	addressType?: EAddressType;
 	data?: IWalletData;
-	getData?: TGetData;
-	setData?: TSetData;
 	storage?: TStorage;
 	electrumOptions?: {
 		servers?: TServer | TServer[];

@@ -657,6 +657,7 @@ export class Electrum {
 			console.log(history.error.message);
 			return;
 		}
+		if (!history.value.length) return;
 		let message: TMessageKeys = onMessageKeys.transactionConfirmed;
 		const lastTx = history.value[history.value.length - 1];
 		const unconfirmedTransactions: string[] = Object.values(
@@ -664,7 +665,7 @@ export class Electrum {
 		).map((tx) => tx.txid);
 		if (!unconfirmedTransactions.includes(lastTx.tx_hash))
 			message = onMessageKeys.transactionReceived;
-		if (balance.value.unconfirmed < 0) message = onMessageKeys.transactionSent;
+		if (balance.value.unconfirmed <= 0) message = onMessageKeys.transactionSent;
 		const txs: TTxResult[] = history.value.map((tx) => {
 			return {
 				tx_hash: tx.tx_hash,

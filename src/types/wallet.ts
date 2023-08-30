@@ -94,6 +94,7 @@ export interface IFormattedTransaction {
 	timestamp: number;
 	confirmTimestamp?: number;
 	exists?: boolean;
+	rbf?: boolean;
 }
 
 export interface IFormattedTransactions {
@@ -155,6 +156,7 @@ export interface IWalletData {
 	blacklistedUtxos: IUtxo[];
 	unconfirmedTransactions: IFormattedTransactions;
 	transactions: IFormattedTransactions;
+	boostedTransactions: IBoostedTransactions;
 	transaction: ISendTransaction;
 	balance: number;
 	exchangeRates: IExchangeRates;
@@ -189,6 +191,8 @@ export interface IWallet {
 		data: ICustomGetAddress
 	) => Promise<Result<IGetAddressResponse>>;
 	customGetScriptHash?: (data: ICustomGetScriptHash) => Promise<string>;
+	rbf?: boolean;
+	selectedFeeId?: EFeeId;
 }
 
 export interface IAddressData {
@@ -426,6 +430,8 @@ export type TMessageDataMap = {
 	transactionReceived: TTransactionMessage;
 	transactionConfirmed: TTransactionMessage;
 	transactionSent: TTransactionMessage;
+	reorg: IUtxo[];
+	rbf: string[];
 };
 
 export type TTransactionMessage = {
@@ -469,3 +475,23 @@ export type TStorage = {
 	getData: TGetData;
 	setData: TSetData;
 };
+
+export interface IRbfData {
+	outputs: IOutput[];
+	balance: number;
+	addressType: EAddressType;
+	fee: number; // Total fee in sats.
+	inputs: IUtxo[];
+	message: string;
+}
+
+export interface IBoostedTransaction {
+	parentTransactions: string[]; // Array of parent txids to the currently boosted transaction.
+	childTransaction: string; // Child txid of the currently boosted transaction.
+	type: EBoostType;
+	fee: number;
+}
+
+export interface IBoostedTransactions {
+	[txId: string]: IBoostedTransaction;
+}

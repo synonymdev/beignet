@@ -4,12 +4,13 @@ import { Result, ok, err } from './result';
 import {
 	EAvailableNetworks,
 	IOutput,
+	ISendTransaction,
 	TGetByteCountInput,
 	TGetByteCountInputs,
 	TGetByteCountOutput,
 	TGetByteCountOutputs
 } from '../types';
-import { objectKeys } from './wallet';
+import { objectKeys, reduceValue } from './wallet';
 import validate, { getAddressInfo } from 'bitcoin-address-validation';
 import * as bip21 from 'bip21';
 import { TRANSACTION_DEFAULTS } from '../wallet/constants';
@@ -285,4 +286,72 @@ export const removeDustOutputs = (outputs: IOutput[]): IOutput[] => {
 	return outputs.filter((output) => {
 		return output.value > TRANSACTION_DEFAULTS.dustLimit;
 	});
+};
+
+/**
+ * Used to validate transaction form data.
+ * @param {ISendTransaction} transaction
+ * @return {Result<string>}
+ */
+export const validateTransaction = (
+	transaction: ISendTransaction
+): Result<string> => {
+	const baseFee = TRANSACTION_DEFAULTS.recommendedBaseFee;
+
+	try {
+		if (!transaction.fee) {
+			return err('No transaction fee provided.');
+		}
+		if (transaction.outputs.length < 1 || !transaction.outputs[0].address) {
+			return err('Please provide an address to send funds to.');
+		}
+		if (transaction.outputs.length > 0 && !transaction.outputs[0].value) {
+			return err('Please provide an amount to send.');
+		}
+		const inputs = transaction.inputs;
+		const outputs = transaction.outputs;
+		for (let i = 0; i < outputs.length; i++) {
+			const address = outputs[i]?.address ?? '';
+			const value = outputs[i]?.value ?? 0;
+			const { isValid } = validateAddress({ address });
+			if (!isValid) {
+				return err(`Invalid Address: ${address}`);
+			}
+			if (value < baseFee) {
+				return err(
+					`Output value for ${address} must be greater than or equal to ${baseFee} sats`
+				);
+			}
+			if (!Number.isInteger(value)) {
+				return err(`Output value for ${address} should be an integer`);
+			}
+		}
+
+		const inputsReduce = reduceValue({
+			arr: inputs,
+			value: 'value'
+		});
+		if (inputsReduce.isErr()) {
+			return err(inputsReduce.error.message);
+		}
+		//Remove the change address from the outputs array, if any.
+		let filteredOutputs = outputs;
+		if (transaction.changeAddress) {
+			filteredOutputs = outputs.filter((output) => {
+				return output.address !== transaction.changeAddress;
+			});
+		}
+		const outputsReduce = reduceValue({
+			arr: filteredOutputs,
+			value: 'value'
+		});
+		if (outputsReduce.isErr()) {
+			return err(outputsReduce.error.message);
+		}
+
+		return ok('Transaction is valid.');
+	} catch (e) {
+		// @ts-ignore
+		return err(e);
+	}
 };

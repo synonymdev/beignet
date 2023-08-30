@@ -13,10 +13,12 @@ import { getData, setData } from '../example/helpers';
 
 const expect = chai.expect;
 
+const testTimeout = 60000;
+
 let wallet;
 
 before(async function () {
-	this.timeout(10000); // Set timeout to 10 seconds
+	this.timeout(testTimeout);
 	const res = await Wallet.create({
 		mnemonic: TEST_MNEMONIC,
 		network: EAvailableNetworks.testnet,
@@ -33,7 +35,8 @@ before(async function () {
 	wallet = res.value;
 });
 
-describe('Wallet Library', async () => {
+describe('Wallet Library', async function (): Promise<void> {
+	this.timeout(testTimeout);
 	it('Should successfully create a wallet.', () => {
 		expect(wallet).not.to.be.null;
 	});

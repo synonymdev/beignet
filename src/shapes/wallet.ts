@@ -108,6 +108,7 @@ export const defaultWalletData: Readonly<IWalletData> = {
 	blacklistedUtxos: [],
 	unconfirmedTransactions: {},
 	transactions: {},
+	boostedTransactions: {},
 	transaction: getDefaultSendTransaction(),
 	balance: 0,
 	exchangeRates: {}

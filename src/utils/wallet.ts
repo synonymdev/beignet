@@ -256,3 +256,32 @@ export const getDataFallback: TGetData = async <K extends keyof IWalletData>(
 		return ok(getDefaultWalletData()[key]);
 	}
 };
+
+//Returns an array of messages from an OP_RETURN message
+export const decodeOpReturnMessage = (opReturn = ''): string[] => {
+	const messages: string[] = [];
+	try {
+		//Remove OP_RETURN from the string & trim the string.
+		if (opReturn.includes('OP_RETURN')) {
+			opReturn = opReturn.replace('OP_RETURN', '');
+			opReturn = opReturn.trim();
+		}
+
+		const regex = /[0-9A-Fa-f]{6}/g;
+		//Separate the string into an array based upon a space and insert each message into an array to be returned
+		const data = opReturn.split(' ');
+		data.forEach((msg) => {
+			try {
+				//Ensure the message is in fact a hex
+				if (regex.test(msg)) {
+					const message = Buffer.from(msg, 'hex').toString();
+					messages.push(message);
+				}
+			} catch {}
+		});
+		return messages;
+	} catch (e) {
+		console.log(e);
+		return messages;
+	}
+};

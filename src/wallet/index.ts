@@ -43,10 +43,17 @@ import {
 	TSetupTransactionResponse,
 	TWalletDataKeys,
 	TGetData,
+	EFeeId,
+	IBoostedTransactions,
+	IRbfData,
+	IOutput,
+	IBoostedTransaction,
+	EBoostType,
 	ICustomGetAddress,
 	ICustomGetScriptHash
 } from '../types';
 import {
+	decodeOpReturnMessage,
 	getAddressTypeFromPath,
 	getExchangeRates,
 	getKeyDerivationPathObject,
@@ -68,9 +75,9 @@ import {
 } from '../utils';
 import {
 	addressTypes,
-	defaultAddressContent,
 	defaultFeesShape,
-	getAddressTypeContent
+	getAddressTypeContent,
+	getDefaultSendTransaction
 } from '../shapes';
 import { err, ok, Result } from '../utils';
 import { Electrum } from '../electrum';
@@ -101,6 +108,8 @@ export class Wallet {
 	public onMessage?: TOnMessage;
 	public transaction: Transaction;
 	public feeEstimates: IFees;
+	public rbf: boolean;
+	public selectedFeeId: EFeeId;
 	private customGetAddress?: (
 		data: ICustomGetAddress
 	) => Promise<Result<IGetAddressResponse>>; // For use with Bitkit.
@@ -115,7 +124,9 @@ export class Wallet {
 		electrumOptions,
 		onMessage,
 		customGetAddress,
-		customGetScriptHash
+		customGetScriptHash,
+		rbf = true,
+		selectedFeeId = EFeeId.normal
 	}: IWallet) {
 		if (!mnemonic) throw new Error('No mnemonic specified.');
 		if (!validateMnemonic(mnemonic)) throw new Error('Invalid mnemonic.');
@@ -147,6 +158,8 @@ export class Wallet {
 		});
 		if (customGetAddress) this.customGetAddress = customGetAddress;
 		if (customGetScriptHash) this.customGetScriptHash = customGetScriptHash;
+		this.rbf = rbf;
+		this.selectedFeeId = selectedFeeId;
 	}
 
 	static async create(params: IWallet): Promise<Result<Wallet>> {
@@ -205,13 +218,19 @@ export class Wallet {
 	/**
 	 * Refreshes/Syncs the wallet data.
 	 * @param {boolean} scanAllAddresses
+	 * @param {boolean} updateAllAddressTypes
 	 * @returns {Promise<Result<IWalletData>>}
 	 */
-	public async refreshWallet({ scanAllAddresses = false } = {}): Promise<
-		Result<IWalletData>
-	> {
+	public async refreshWallet({
+		scanAllAddresses = false,
+		updateAllAddressTypes = false
+	} = {}): Promise<Result<IWalletData>> {
 		try {
-			const r1 = await this.updateAddressIndexes();
+			await this.setZeroIndexAddresses();
+			const addressType: undefined | EAddressType = updateAllAddressTypes
+				? undefined
+				: this.addressType;
+			const r1 = await this.updateAddressIndexes({ addressType });
 			if (r1.isErr()) return err(r1.error.message);
 			const r2 = await this.getUtxos({ scanAllAddresses });
 			if (r2.isErr()) return err(r2.error.message);
@@ -235,7 +254,6 @@ export class Wallet {
 		if (walletDataResponse.isErr())
 			return err(walletDataResponse.error.message);
 		this.data = walletDataResponse.value;
-		await this.setZeroIndexAddresses();
 		return ok(true);
 	}
 
@@ -303,6 +321,9 @@ export class Wallet {
 					break;
 				case 'header':
 					walletData[key] = data as IHeader;
+					break;
+				case 'boostedTransactions':
+					walletData[key] = data as IBoostedTransactions;
 					break;
 				default:
 					return err(`Unhandled key in getWalletData: ${key}`);
@@ -769,7 +790,7 @@ export class Wallet {
 					keyDerivationPath,
 					addressType
 				});
-				if (!newAddresses.isErr()) {
+				if (newAddresses.isOk()) {
 					addresses = newAddresses.value.addresses;
 				}
 			}
@@ -790,7 +811,7 @@ export class Wallet {
 					keyDerivationPath,
 					addressType
 				});
-				if (!newChangeAddresses.isErr()) {
+				if (newChangeAddresses.isOk()) {
 					changeAddresses = newChangeAddresses.value.changeAddresses;
 				}
 			}
@@ -946,7 +967,7 @@ export class Wallet {
 						keyDerivationPath,
 						addressType
 					});
-					if (!newAddresses.isErr()) {
+					if (newAddresses.isOk()) {
 						addresses = newAddresses.value.addresses || {};
 					}
 				}
@@ -961,7 +982,7 @@ export class Wallet {
 						keyDerivationPath,
 						addressType
 					});
-					if (!newChangeAddresses.isErr()) {
+					if (newChangeAddresses.isOk()) {
 						changeAddresses = newChangeAddresses.value.changeAddresses || {};
 					}
 				}
@@ -1076,26 +1097,20 @@ export class Wallet {
 
 		const addresses = removeDuplicateResponse.value.addresses;
 		const changeAddresses = removeDuplicateResponse.value.changeAddresses;
-		if (
-			!Object.keys(addresses).length &&
-			!Object.keys(changeAddresses).length
-		) {
-			return err('No addresses to add.');
+		if (Object.keys(addresses).length) {
+			this.data.addresses[addressType] = {
+				...this.data.addresses[addressType],
+				...addresses
+			};
+			await this.saveWalletData('addresses', this.data.addresses);
 		}
-
-		this.data.addresses[addressType] = {
-			...this.data.addresses[addressType],
-			...addresses
-		};
-		this.data.changeAddresses[addressType] = {
-			...this.data.changeAddresses[addressType],
-			...changeAddresses
-		};
-
-		await Promise.all([
-			this.saveWalletData('addresses', this.data.addresses),
-			this.saveWalletData('changeAddresses', this.data.changeAddresses)
-		]);
+		if (Object.keys(changeAddresses).length) {
+			this.data.changeAddresses[addressType] = {
+				...this.data.changeAddresses[addressType],
+				...changeAddresses
+			};
+			await this.saveWalletData('changeAddresses', this.data.changeAddresses);
+		}
 
 		return ok({ ...generatedAddresses.value, addressType: type });
 	}
@@ -1262,22 +1277,15 @@ export class Wallet {
 				this.data.lastUsedChangeAddressIndex[addressTypeKey] =
 					lastUsedChangeAddressIndex;
 				await Promise.all([
-					// @ts-ignore
 					this.saveWalletData('addressIndex', this.data.addressIndex),
-
-					// @ts-ignore
 					this.saveWalletData(
 						'changeAddressIndex',
 						this.data.changeAddressIndex
 					),
-
-					// @ts-ignore
 					this.saveWalletData(
 						'lastUsedAddressIndex',
 						this.data.lastUsedAddressIndex
 					),
-
-					// @ts-ignore
 					this.saveWalletData(
 						'lastUsedChangeAddressIndex',
 						this.data.lastUsedChangeAddressIndex
@@ -1288,11 +1296,13 @@ export class Wallet {
 		});
 		try {
 			await Promise.all(promises);
+			return ok(
+				updated ? 'Successfully updated indexes.' : 'No update needed.'
+			);
 		} catch (e) {
 			// @ts-ignore
 			return err(e);
 		}
-		return ok(updated ? 'Successfully updated indexes.' : 'No update needed.');
 	}
 
 	/**
@@ -1300,14 +1310,10 @@ export class Wallet {
 	 * @private
 	 * @returns {void}
 	 */
-	private resetAddressIndexes(): void {
+	private async resetAddressIndexes(): Promise<void> {
 		const addressTypeKeys = Object.values(EAddressType);
 		const defaultWalletShape = getDefaultWalletData();
-		addressTypeKeys.forEach((addressType) => {
-			if (!(addressType in this.data))
-				this.data[addressType] = getAddressTypeContent<IAddress>(
-					defaultAddressContent
-				);
+		for (const addressType of addressTypeKeys) {
 			this.data.addressIndex[addressType] =
 				defaultWalletShape.addressIndex[addressType];
 			this.data.changeAddressIndex[addressType] =
@@ -1316,7 +1322,19 @@ export class Wallet {
 				defaultWalletShape.lastUsedAddressIndex[addressType];
 			this.data.lastUsedChangeAddressIndex[addressType] =
 				defaultWalletShape.lastUsedChangeAddressIndex[addressType];
-		});
+		}
+		await Promise.all([
+			this.saveWalletData('addressIndex', this.data.addressIndex),
+			this.saveWalletData('changeAddressIndex', this.data.changeAddressIndex),
+			this.saveWalletData(
+				'lastUsedAddressIndex',
+				this.data.lastUsedAddressIndex
+			),
+			this.saveWalletData(
+				'lastUsedChangeAddressIndex',
+				this.data.lastUsedChangeAddressIndex
+			)
+		]);
 	}
 
 	/**
@@ -1532,8 +1550,6 @@ export class Wallet {
 		scanAllAddresses?: boolean;
 		replaceStoredTransactions?: boolean;
 	}): Promise<Result<string | undefined>> {
-		const currentWallet = this.data;
-
 		//Check existing unconfirmed transactions and remove any that are confirmed.
 		//If the tx is reorg'd or bumped from the mempool and no longer exists, the transaction will be removed from the store and updated in the activity list.
 		await this.checkUnconfirmedTransactions();
@@ -1572,18 +1588,15 @@ export class Wallet {
 		if (replaceStoredTransactions) {
 			// No need to check the existing txs. Update with the returned formatTransactionsResponse.
 			this.data.transactions = transactions;
-			await Promise.all([
-				// @ts-ignore
-				this.saveWalletData('transactions', this.data.transactions)
-			]);
+			await this.saveWalletData('transactions', this.data.transactions);
 			return ok(undefined);
 		}
 
 		// Handle new or updated transactions.
 		const formattedTransactions: IFormattedTransactions = {};
-		const storedTransactions = currentWallet.transactions;
 
 		let notificationTxid: string | undefined;
+		const storedTransactions = this.data.transactions;
 
 		Object.keys(transactions).forEach((txid) => {
 			//If the tx is new or the tx now has a block height (state changed to confirmed)
@@ -1640,12 +1653,12 @@ export class Wallet {
 
 			const { unconfirmedTxs, outdatedTxs, ghostTxs } = processRes.value;
 			if (outdatedTxs.length) {
-				// TODO: Notify user that a reorg has occurred and that the transaction has been pushed back into the mempool with onMessage.
+				if (this.onMessage) this.onMessage('reorg', outdatedTxs);
 				//We need to update the height of the transactions that were reorg'd out.
 				await this.updateTransactionHeights(outdatedTxs);
 			}
 			if (ghostTxs.length) {
-				// TODO: Notify user that a transaction has been removed from the mempool with onMessage.
+				if (this.onMessage) this.onMessage('rbf', ghostTxs);
 				//We need to update the ghost transactions in the store & activity-list and rescan the addresses to get the correct balance.
 				await this.updateGhostTransactions({
 					txIds: ghostTxs
@@ -1789,10 +1802,22 @@ export class Wallet {
 		txIds: string[];
 	}): Promise<Result<string>> {
 		try {
+			const transactions = this.data.transactions;
+			const unconfirmedTransactions = this.data.unconfirmedTransactions;
+
 			txIds.forEach((txId) => {
-				this.data.transactions[txId].exists = false;
+				if (txId in transactions) {
+					transactions[txId]['exists'] = false;
+				}
+				if (txId in unconfirmedTransactions) {
+					delete unconfirmedTransactions[txId];
+				}
 			});
-			await this.saveWalletData('transactions', this.data.transactions);
+			await this.saveWalletData('transactions', transactions);
+			await this.saveWalletData(
+				'unconfirmedTransactions',
+				unconfirmedTransactions
+			);
 
 			//Rescan the addresses to get the correct balance.
 			await this.rescanAddresses({
@@ -1814,14 +1839,18 @@ export class Wallet {
 	 * @returns {Promise<Result<string>>}
 	 */
 	public async rescanAddresses({
-		shouldClearAddresses = true
+		shouldClearAddresses = true,
+		shouldClearTransactions = false
 	}: {
 		shouldClearAddresses?: boolean;
+		shouldClearTransactions?: boolean;
 	}): Promise<Result<IWalletData>> {
 		if (shouldClearAddresses) {
-			this.clearAddresses();
+			await this.clearAddresses();
 		}
-		this.clearTransactions();
+		if (shouldClearTransactions) {
+			await this.clearTransactions();
+		}
 		await this.clearUtxos();
 		await this.resetAddressIndexes();
 		// Wait to generate our zero index addresses.
@@ -1852,9 +1881,10 @@ export class Wallet {
 	 * @private
 	 * @returns {string}
 	 */
-	private clearTransactions(): string {
+	// @ts-ignore
+	private async clearTransactions(): Promise<string> {
 		this.data.transactions = getDefaultWalletData().transactions;
-		this.saveWalletData('transactions', this.data.transactions);
+		await this.saveWalletData('transactions', this.data.transactions);
 		return 'Successfully reset transactions.';
 	}
 
@@ -1882,9 +1912,10 @@ export class Wallet {
 	private async updateTransactionHeights(txs: IUtxo[]): Promise<string> {
 		let needsSave = false;
 		txs.forEach((tx) => {
+			const transactions = this.data.transactions;
 			const txId = tx.tx_hash;
-			if (txId in this.data.transactions) {
-				this.data.transactions[txId].confirmTimestamp = 0;
+			if (txId in transactions) {
+				transactions[txId].confirmTimestamp = 0;
 				needsSave = true;
 			}
 		});
@@ -1984,7 +2015,11 @@ export class Wallet {
 		// Batch and pre-fetch input data.
 		const inputs: { tx_hash: string; vout: number }[] = [];
 		transactions.forEach(({ result }) => {
-			result.vin.forEach((v) => inputs.push({ tx_hash: v.txid, vout: v.vout }));
+			if (result?.vin) {
+				result.vin.forEach((v) =>
+					inputs.push({ tx_hash: v.txid, vout: v.vout })
+				);
+			}
 		});
 		const inputDataResponse = await this.getInputData({
 			inputs
@@ -1999,6 +2034,7 @@ export class Wallet {
 
 		let addresses = {} as IAddresses;
 		let changeAddresses = {} as IAddresses;
+		let rbf = false;
 
 		addressTypeKeys.map((addressType) => {
 			// Check if addresses of this type have been generated. If not, skip.
@@ -2038,14 +2074,19 @@ export class Wallet {
 			let messages: string[] = []; // Array of OP_RETURN messages.
 
 			//Iterate over each input
-			result.vin.map(({ txid, scriptSig, vout }) => {
+			result.vin.map(({ txid, scriptSig, vout, sequence }) => {
 				//Push any OP_RETURN messages to messages array
 				try {
 					const asm = scriptSig.asm;
 					if (asm !== '' && asm.includes('OP_RETURN')) {
-						const OpReturnMessages = this.decodeOpReturnMessage(asm);
+						const OpReturnMessages = decodeOpReturnMessage(asm);
 						messages = messages.concat(OpReturnMessages);
 					}
+				} catch {}
+
+				try {
+					// Check if rbf was enabled for this transaction.
+					if (sequence < 0xffffffff - 1) rbf = true;
 				} catch {}
 
 				const { addresses: _addresses, value } = inputData[`${txid}${vout}`];
@@ -2110,44 +2151,12 @@ export class Wallet {
 				messages,
 				timestamp,
 				confirmTimestamp,
-				vin: result.vin
+				vin: result.vin,
+				rbf
 			};
 		});
 
 		return ok(formattedTransactions);
-	}
-
-	/**
-	 * Returns an array of messages from an OP_RETURN message
-	 * @param {string} opReturn
-	 * @returns {string[]}
-	 */
-	public decodeOpReturnMessage(opReturn = ''): string[] {
-		const messages: string[] = [];
-		try {
-			//Remove OP_RETURN from the string & trim the string.
-			if (opReturn.includes('OP_RETURN')) {
-				opReturn = opReturn.replace('OP_RETURN', '');
-				opReturn = opReturn.trim();
-			}
-
-			const regex = /[0-9A-Fa-f]{6}/g;
-			//Separate the string into an array based upon a space and insert each message into an array to be returned
-			const data = opReturn.split(' ');
-			data.forEach((msg) => {
-				try {
-					//Ensure the message is in fact a hex
-					if (regex.test(msg)) {
-						const message = Buffer.from(msg, 'hex').toString();
-						messages.push(message);
-					}
-				} catch {}
-			});
-			return messages;
-		} catch (e) {
-			console.log(e);
-			return messages;
-		}
 	}
 
 	/**
@@ -2400,6 +2409,7 @@ export class Wallet {
 
 	/**
 	 * Will ensure that both address and change address indexes are set at index 0.
+	 * Will also generate and store address and changeAddress at index 0.
 	 * @private
 	 * @async
 	 * @returns {Promise<Result<string>>}
@@ -2444,7 +2454,7 @@ export class Wallet {
 							Object.keys(changeAddress.value.changeAddresses)[0]
 						];
 					await this.saveWalletData(
-						'addressIndex',
+						'changeAddressIndex',
 						this.data.changeAddressIndex
 					);
 				}
@@ -2472,5 +2482,375 @@ export class Wallet {
 			lastUsedAddressIndex,
 			lastUsedChangeAddressIndex
 		};
+	}
+
+	/**
+	 * Returns the next available receive address.
+	 * @param {EAddressType} [addressType]
+	 * @returns {Promise<Result<string>>}
+	 */
+	getReceiveAddress = async ({
+		addressType
+	}: {
+		addressType?: EAddressType;
+	}): Promise<Result<string>> => {
+		try {
+			if (!addressType) {
+				addressType = this.addressType;
+			}
+			const wallet = this.data;
+			const addressIndex = wallet.addressIndex;
+			const receiveAddress = addressIndex[addressType].address;
+			if (receiveAddress) {
+				return ok(receiveAddress);
+			}
+			const addresses = wallet?.addresses[addressType];
+
+			// Check if addresses were generated, but the index has not been set yet.
+			if (
+				Object.keys(addresses).length > 0 &&
+				addressIndex[addressType].index < 0
+			) {
+				// Grab and return the address at index 0.
+				const address = Object.values(addresses).find(
+					({ index }) => index === 0
+				);
+				if (address) {
+					return ok(address.address);
+				}
+			}
+			// Fallback to generating a new receive address on the fly.
+			const generatedAddress = await this.generateNewReceiveAddress({
+				addressType
+			});
+			if (generatedAddress.isOk()) {
+				return ok(generatedAddress.value.address);
+			} else {
+				console.log(generatedAddress.error.message);
+			}
+			return err('No receive address available.');
+		} catch (e) {
+			// @ts-ignore
+			return err(e);
+		}
+	};
+
+	/**
+	 * Using a tx_hash this method will return the necessary data to create a
+	 * replace-by-fee transaction for any 0-conf, RBF-enabled tx.
+	 * @param {ITxHash} txHash
+	 * @returns {Promise<Result<IRbfData>>}
+	 */
+
+	public async getRbfData({
+		txHash
+	}: {
+		txHash: ITxHash;
+	}): Promise<Result<IRbfData>> {
+		const txResponse = await this.electrum.getTransactions({
+			txHashes: [txHash]
+		});
+		if (txResponse.isErr()) {
+			return err(txResponse.error.message);
+		}
+		const txData = txResponse.value.data;
+
+		const wallet = this.data;
+		const addressTypeKeys = objectKeys(EAddressType);
+		const addresses = wallet.addresses;
+		const changeAddresses = wallet.changeAddresses;
+
+		let allAddresses = {} as IAddresses;
+		let allChangeAddresses = {} as IAddresses;
+
+		await Promise.all(
+			addressTypeKeys.map((addressType) => {
+				allAddresses = {
+					...allAddresses,
+					...addresses[addressType],
+					...changeAddresses[addressType]
+				};
+				allChangeAddresses = {
+					...allChangeAddresses,
+					...changeAddresses[addressType]
+				};
+			})
+		);
+
+		let changeAddressData: IOutput = {
+			address: '',
+			value: 0,
+			index: 0
+		};
+		const inputs: IUtxo[] = [];
+		let address = '';
+		let scriptHash = '';
+		let path = '';
+		let value = 0;
+		const addressType = EAddressType.p2wpkh;
+		const outputs: IOutput[] = [];
+		let message = '';
+		let inputTotal = 0;
+		let outputTotal = 0;
+		let fee = 0;
+
+		const insAndOuts = await Promise.all(
+			txData.map(({ result }) => {
+				const vin = result.vin ?? [];
+				const vout = result.vout ?? [];
+				return { vins: vin, vouts: vout };
+			})
+		);
+		const { vins, vouts } = insAndOuts[0];
+		for (let i = 0; i < vins.length; i++) {
+			try {
+				const input = vins[i];
+				const txId = input.txid;
+				const tx = await this.electrum.getTransactions({
+					txHashes: [{ tx_hash: txId }]
+				});
+				if (tx.isErr()) {
+					return err(tx.error.message);
+				}
+				if (tx.value.data[0].data.height > 0) {
+					return err('Transaction is already confirmed. Unable to RBF.');
+				}
+				const txVout = tx.value.data[0].result.vout[input.vout];
+				if (txVout.scriptPubKey?.address) {
+					address = txVout.scriptPubKey.address;
+				} else if (
+					txVout.scriptPubKey?.addresses &&
+					txVout.scriptPubKey.addresses.length
+				) {
+					address = txVout.scriptPubKey.addresses[0];
+				}
+				if (!address) {
+					continue;
+				}
+				scriptHash = getScriptHash({ address, network: this.network });
+				// Check that we are in possession of this scriptHash.
+				if (!(scriptHash in allAddresses)) {
+					// This output did not come from us.
+					continue;
+				}
+				path = allAddresses[scriptHash].path;
+				value = btcToSats(txVout.value);
+				inputs.push({
+					tx_hash: input.txid,
+					index: input.vout,
+					tx_pos: input.vout,
+					height: 0,
+					address,
+					scriptHash,
+					path,
+					value
+				});
+				if (value) {
+					inputTotal = inputTotal + value;
+				}
+			} catch (e) {
+				console.log(e);
+			}
+		}
+		for (let i = 0; i < vouts.length; i++) {
+			const vout = vouts[i];
+			const voutValue = btcToSats(vout.value);
+			if (vout.scriptPubKey?.addresses) {
+				address = vout.scriptPubKey.addresses[0];
+			} else if (vout.scriptPubKey?.address) {
+				address = vout.scriptPubKey.address;
+			} else {
+				try {
+					if (vout.scriptPubKey.asm.includes('OP_RETURN')) {
+						message = decodeOpReturnMessage(vout.scriptPubKey.asm)[0] || '';
+					}
+				} catch (e) {}
+			}
+			if (!address) {
+				continue;
+			}
+			const changeAddressScriptHash = await getScriptHash({
+				address,
+				network: this.network
+			});
+
+			// If the address scripthash matches one of our address scripthashes, add it accordingly. Otherwise, add it as another output.
+			if (Object.keys(allAddresses).includes(changeAddressScriptHash)) {
+				changeAddressData = {
+					address,
+					value: voutValue,
+					index: i
+				};
+			}
+			const index = outputs?.length ?? 0;
+			outputs.push({
+				address,
+				value: voutValue,
+				index
+			});
+			outputTotal = outputTotal + voutValue;
+		}
+
+		if (!changeAddressData?.address && outputs.length >= 2) {
+			/*
+			 * Unable to determine change address.
+			 * Performing an RBF could divert funds from the incorrect output.
+			 *
+			 * It's very possible that this tx sent the max amount of sats to a foreign/unknown address.
+			 * Instead of pulling sats from that output to accommodate the higher fee (reducing how much the recipient receives)
+			 * suggest a CPFP transaction.
+			 */
+			return err('cpfp');
+		}
+
+		if (outputTotal > inputTotal) {
+			return err('Outputs should not be greater than the inputs.');
+		}
+		fee = Math.abs(Number(inputTotal - outputTotal));
+
+		return ok({
+			changeAddress: changeAddressData.address,
+			inputs,
+			balance: inputTotal,
+			outputs,
+			fee,
+			message,
+			addressType,
+			rbf: true
+		});
+	}
+
+	/**
+	 * Deletes a given on-chain transaction by id.
+	 * @param {string} txid
+	 */
+	async deleteOnChainTransactionById({
+		txid
+	}: {
+		txid: string;
+	}): Promise<void> {
+		if (txid in this.data.transactions) {
+			delete this.data.transactions[txid];
+		}
+		await this.saveWalletData('transactions', this.data.transactions);
+	}
+
+	/**
+	 * Sets "exists" to false for a given on-chain transaction id.
+	 * @param {string} txid
+	 */
+	async addGhostTransaction({ txid }: { txid: string }): Promise<void> {
+		if (txid in this.data.transactions) {
+			this.data.transactions[txid].exists = false;
+		}
+		await this.saveWalletData('transactions', this.data.transactions);
+	}
+
+	/**
+	 * Adds a boosted transaction id to the boostedTransactions object.
+	 * @param {string} newTxId
+	 * @param {string} oldTxId
+	 * @param {EBoostType} [type]
+	 * @param {number} fee
+	 * @returns {Promise<Result<IBoostedTransaction>>}
+	 */
+	async addBoostedTransaction({
+		newTxId,
+		oldTxId,
+		type = EBoostType.cpfp,
+		fee
+	}: {
+		newTxId: string;
+		oldTxId: string;
+		type?: EBoostType;
+		fee: number;
+	}): Promise<Result<IBoostedTransaction>> {
+		try {
+			const boostedTransactions = this.data.boostedTransactions;
+			const parentTransactions = this.getBoostedTransactionParents({
+				txid: oldTxId,
+				boostedTransactions
+			});
+			parentTransactions.push(oldTxId);
+			const boostedTx: IBoostedTransaction = {
+				parentTransactions: parentTransactions,
+				childTransaction: newTxId,
+				type,
+				fee
+			};
+			const boostedTransaction: IBoostedTransactions = {
+				[oldTxId]: boostedTx
+			};
+			this.data.boostedTransactions = {
+				...this.data.boostedTransactions,
+				...boostedTransaction
+			};
+			await this.saveWalletData(
+				'boostedTransactions',
+				this.data.boostedTransactions
+			);
+			return ok(boostedTx);
+		} catch (e) {
+			// @ts-ignore
+			return err(e);
+		}
+	}
+
+	/**
+	 * Returns an array of parents for a boosted transaction id.
+	 * @param {string} txid
+	 * @param {IBoostedTransactions} [boostedTransactions]
+	 * @returns {string[]}
+	 */
+	getBoostedTransactionParents = ({
+		txid,
+		boostedTransactions
+	}: {
+		txid: string;
+		boostedTransactions?: IBoostedTransactions;
+	}): string[] => {
+		if (!boostedTransactions) {
+			boostedTransactions = this.getBoostedTransactions();
+		}
+		const boostObj = Object.values(boostedTransactions).find((boostObject) => {
+			return boostObject.childTransaction === txid;
+		});
+
+		return boostObj?.parentTransactions ?? [];
+	};
+
+	/**
+	 * Returns boosted transactions object.
+	 * @returns {IBoostedTransactions}
+	 */
+	getBoostedTransactions = (): IBoostedTransactions => {
+		return this.data.boostedTransactions;
+	};
+
+	/**
+	 * This completely resets the send transaction state.
+	 * @returns {Promise<Result<string>>}
+	 */
+	async resetSendTransaction(): Promise<Result<string>> {
+		this.transaction.data = getDefaultSendTransaction();
+		await this.saveWalletData('transaction', this.transaction.data);
+		return ok('Transaction reseted');
+	}
+
+	/**
+	 * Returns an array of transactions that can be boosted with cpfp and rbf.
+	 * @returns {{cpfp: IFormattedTransaction[], rbf: IFormattedTransaction[]}}
+	 */
+	getBoostableTransactions(): {
+		cpfp: IFormattedTransaction[];
+		rbf: IFormattedTransaction[];
+	} {
+		const cpfp: IFormattedTransaction[] = [];
+		const rbf: IFormattedTransaction[] = [];
+		Object.values(this.data.unconfirmedTransactions).map((tx) => {
+			if (tx.rbf) rbf.push(tx);
+			cpfp.push(tx); // All unconfirmed transactions can be cpfp'd.
+		});
+		return { cpfp, rbf };
 	}
 }

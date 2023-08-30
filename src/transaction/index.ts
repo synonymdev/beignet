@@ -7,7 +7,7 @@ import {
 } from '../types';
 import { getDefaultSendTransaction } from '../shapes';
 import { Wallet } from '../wallet';
-import { Result, ok, err } from '../utils/result';
+import { Result, ok, err, validateTransaction } from '../utils';
 import { reduceValue, shuffleArray } from '../utils';
 import { TRANSACTION_DEFAULTS } from '../wallet/constants';
 import {
@@ -15,14 +15,14 @@ import {
 	getByteCount,
 	removeDustOutputs,
 	setReplaceByFee
-} from '../utils/transaction';
+} from '../utils';
 import {
 	IAddInput,
 	ICreateTransaction,
 	ISetupTransaction,
 	ITargets,
 	TSetupTransactionResponse
-} from '../types/transaction';
+} from '../types';
 import { networks, Psbt } from 'bitcoinjs-lib';
 import BIP32Factory, { BIP32Interface } from 'bip32';
 import * as bip39 from 'bip39';
@@ -270,6 +270,9 @@ export class Transaction {
 			const message = 'Fee is larger than the intended payment.';
 			return err(message);
 		}
+
+		const validateRes = validateTransaction(transactionData);
+		if (validateRes.isErr()) return err(validateRes.error.message);
 
 		try {
 			const bip32InterfaceRes = await this.getBip32Interface();
@@ -722,15 +725,18 @@ export class Transaction {
 	 * @param {string} [address] If left undefined, the current receiving address will be provided.
 	 * @param {ISendTransaction} [transaction]
 	 * @param {number} [index]
+	 * @param satsPerByte
 	 */
 	sendMax = ({
 		address,
 		transaction,
-		index = 0
+		index = 0,
+		satsPerByte
 	}: {
 		address?: string;
 		transaction?: Partial<ISendTransaction>;
 		index?: number;
+		satsPerByte?: number;
 	} = {}): Result<string> => {
 		try {
 			if (!transaction) {
@@ -742,7 +748,9 @@ export class Transaction {
 				address = outputs[index]?.address ?? '';
 			}
 
-			const transactionCosts = this.estimateTransactionCosts({});
+			const transactionCosts = this.estimateTransactionCosts({
+				customFeeRate: satsPerByte
+			});
 			if (transactionCosts.isErr()) {
 				return err(transactionCosts.error);
 			}

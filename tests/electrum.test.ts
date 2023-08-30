@@ -5,10 +5,12 @@ import { TEST_MNEMONIC } from './constants';
 import { Result } from '../src';
 const expect = chai.expect;
 
+const testTimeout = 60000;
+
 let wallet;
 
 before(async function () {
-	this.timeout(10000); // Set timeout to 10 seconds
+	this.timeout(testTimeout);
 	const res = await Wallet.create({
 		mnemonic: TEST_MNEMONIC,
 		network: EAvailableNetworks.testnet,
@@ -23,7 +25,8 @@ before(async function () {
 	wallet = res.value;
 });
 
-describe('Electrum Methods', async () => {
+describe('Electrum Methods', async function (): Promise<void> {
+	this.timeout(testTimeout);
 	it('connectToElectrum: Should connect to a random Electrum server', async () => {
 		const connectResponse = await wallet.connectToElectrum();
 		expect(connectResponse.isErr()).to.equal(false);

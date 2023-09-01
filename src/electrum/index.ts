@@ -28,8 +28,6 @@ import {
 	TUnspentAddressScriptHashData
 } from '../types';
 import * as electrum from 'rn-electrum-client/helpers';
-import tls from 'tls';
-import * as net from 'net';
 import { err, ok, Result } from '../utils';
 import { Wallet } from '../wallet';
 import { CHUNK_LIMIT, GAP_LIMIT } from '../wallet/constants';
@@ -37,6 +35,16 @@ import { getScriptHash, objectKeys } from '../utils';
 import { addressTypes } from '../shapes';
 import { Block } from 'bitcoinjs-lib';
 import { onMessageKeys } from '../shapes';
+import { Server } from 'net';
+import { TLSSocket } from 'tls';
+
+let tls, net;
+try {
+	tls = require('tls');
+	net = require('net');
+} catch {
+	// Modules not available, will attempt to use passed instances, if any.
+}
 
 export class Electrum {
 	private wallet: Wallet;
@@ -50,12 +58,16 @@ export class Electrum {
 		wallet,
 		servers,
 		network,
-		onReceive
+		onReceive,
+		tls: _tls,
+		net: _net
 	}: {
 		wallet: Wallet;
 		servers?: TServer | TServer[];
 		network: EAvailableNetworks;
 		onReceive?: (data: unknown) => void;
+		tls?: TLSSocket;
+		net?: Server;
 	}) {
 		this.wallet = wallet;
 		this.servers = servers ?? [];
@@ -63,6 +75,13 @@ export class Electrum {
 		this.electrumNetwork = this.getElectrumNetwork(network);
 		this.connectedToElectrum = false;
 		this.onReceive = onReceive;
+		if (!tls) tls = _tls;
+		if (!net) net = _net;
+		if (!tls || !net) {
+			throw new Error(
+				'TLS and NET modules are not available and were not passed as instances'
+			);
+		}
 	}
 
 	async connectToElectrum({

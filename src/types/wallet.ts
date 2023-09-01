@@ -7,6 +7,8 @@ import {
 	TTxResult
 } from './electrum';
 import { EFeeId } from './transaction';
+import { TLSSocket } from 'tls';
+import { Server } from 'net';
 
 export type TAvailableNetworks = 'bitcoin' | 'testnet' | 'regtest';
 export type TAddressType = 'p2wpkh' | 'p2sh' | 'p2pkh';
@@ -182,6 +184,8 @@ export interface IWallet {
 	storage?: TStorage;
 	electrumOptions?: {
 		servers?: TServer | TServer[];
+		tls?: TLSSocket;
+		net?: Server;
 	};
 	remainOffline?: boolean;
 	onMessage?: TOnMessage;

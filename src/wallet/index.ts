@@ -154,7 +154,9 @@ export class Wallet {
 		this.electrum = new Electrum({
 			wallet: this,
 			network: this.network,
-			servers: electrumOptions?.servers
+			servers: electrumOptions?.servers,
+			tls: electrumOptions?.tls,
+			net: electrumOptions?.net
 		});
 		if (customGetAddress) this.customGetAddress = customGetAddress;
 		if (customGetScriptHash) this.customGetScriptHash = customGetScriptHash;

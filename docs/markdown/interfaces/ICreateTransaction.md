@@ -16,4 +16,4 @@
 
 #### Defined in
 
-[types/transaction.ts:7](https://github.com/synonymdev/beignet/blob/8f99086/src/types/transaction.ts#L7)
+[types/transaction.ts:7](https://github.com/synonymdev/beignet/blob/6c60ef8/src/types/transaction.ts#L7)

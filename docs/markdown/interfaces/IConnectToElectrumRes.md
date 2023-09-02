@@ -16,4 +16,4 @@
 
 #### Defined in
 
-[types/electrum.ts:12](https://github.com/synonymdev/beignet/blob/8f99086/src/types/electrum.ts#L12)
+[types/electrum.ts:12](https://github.com/synonymdev/beignet/blob/6c60ef8/src/types/electrum.ts#L12)

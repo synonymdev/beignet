@@ -21,7 +21,6 @@ before(async function () {
 	const res = await Wallet.create({
 		mnemonic: TEST_MNEMONIC,
 		network: EAvailableNetworks.testnet,
-		walletName: 'wallet0',
 		addressType: EAddressType.p2wpkh
 	});
 	if (res.isErr()) {
@@ -54,6 +53,12 @@ describe('Wallet Library', async function () {
 	it('Should determine that the current wallet instance is valid', () => {
 		const isValid = wallet.isValid(TEST_MNEMONIC);
 		expect(isValid).to.equal(true);
+	});
+
+	it('Should create a wallet name based on the seed hash when none is provided.', () => {
+		expect(wallet.name).to.equal(
+			'80f5701bbfb73d9e26fa6bcdbd670cd69b078887eea3626acbf8c6abe775e8fc'
+		);
 	});
 
 	it('Should generate a bech32 receiving address at index 0', async () => {

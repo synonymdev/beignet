@@ -176,7 +176,7 @@ export type TSetData = <K extends keyof IWalletData>(
 
 export interface IWallet {
 	mnemonic: string;
-	walletName?: string;
+	name?: string;
 	passphrase?: string;
 	network?: EAvailableNetworks;
 	addressType?: EAddressType;

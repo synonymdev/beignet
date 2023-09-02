@@ -57,7 +57,9 @@ import {
 	getAddressTypeFromPath,
 	getExchangeRates,
 	getKeyDerivationPathObject,
-	getKeyDerivationPathString
+	getKeyDerivationPathString,
+	getSeed,
+	getSeedHash
 } from '../utils';
 import {
 	formatKeyDerivationPath,
@@ -67,7 +69,6 @@ import {
 	getHighestUsedIndexFromTxHashes,
 	getKeyDerivationPath,
 	getScriptHash,
-	getSha256,
 	objectKeys,
 	shuffleArray,
 	validateAddress,
@@ -85,7 +86,6 @@ import { Transaction } from '../transaction';
 import { CHUNK_LIMIT, GAP_LIMIT, GENERATE_ADDRESS_AMOUNT } from './constants';
 import cloneDeep from 'lodash.clonedeep';
 import { btcToSats } from '../utils/conversion';
-import bip39 = require('bip39');
 
 const bip32 = BIP32Factory(ecc);
 
@@ -94,7 +94,7 @@ export class Wallet {
 	private readonly passphrase: string;
 	private readonly seed: Buffer;
 	private readonly root: BIP32Interface;
-	private readonly walletName: string;
+	private readonly name: string;
 	private getData: TGetData;
 	private setData?: TSetData;
 	public network: EAvailableNetworks;
@@ -117,7 +117,7 @@ export class Wallet {
 	private constructor({
 		mnemonic,
 		passphrase,
-		walletName,
+		name,
 		network = EAvailableNetworks.mainnet,
 		addressType = EAddressType.p2wpkh,
 		storage,
@@ -130,14 +130,14 @@ export class Wallet {
 	}: IWallet) {
 		if (!mnemonic) throw new Error('No mnemonic specified.');
 		if (!validateMnemonic(mnemonic)) throw new Error('Invalid mnemonic.');
-		if (walletName && walletName.includes('-'))
+		if (name && name.includes('-'))
 			throw new Error('Wallet name cannot include a hyphen (-).');
 		this.mnemonic = mnemonic;
 		this.passphrase = passphrase ?? '';
-		this.walletName = walletName ?? 'wallet0';
 		this.network = network;
 		this.addressType = addressType;
-		this.seed = bip39.mnemonicToSeedSync(this.mnemonic, this.passphrase);
+		this.seed = getSeed(this.mnemonic, this.passphrase);
+		this.name = name ?? getSeedHash(this.seed);
 		this.root = bip32.fromSeed(this.seed, this.getBitcoinNetwork(this.network));
 		this.data = getDefaultWalletData();
 		this.getData = storage?.getData ?? getDataFallback;
@@ -166,14 +166,7 @@ export class Wallet {
 
 	static async create(params: IWallet): Promise<Result<Wallet>> {
 		try {
-			let walletName = params?.walletName;
-			if (!walletName) {
-				// If no name is provided, use the sha256 hash of the mnemonic + passphrase to generate a unique wallet name when getting/setting data.
-				const str = `${params.mnemonic}${params.passphrase}`;
-				walletName = getSha256(str);
-				console.log('Wallet Name:', walletName);
-			}
-			const wallet = new Wallet({ ...params, walletName });
+			const wallet = new Wallet(params);
 			const res = await wallet.setWalletData();
 			if (res.isErr()) return err(res.error.message);
 			const exchangeRates = await getExchangeRates();
@@ -270,7 +263,7 @@ export class Wallet {
 	 * @param key
 	 */
 	private getWalletDataKey(key: keyof IWalletData): string {
-		return `${this.walletName}-${this.network}-${key}`;
+		return `${this.name}-${this.network}-${key}`;
 	}
 
 	/**

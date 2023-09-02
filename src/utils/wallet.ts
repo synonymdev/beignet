@@ -20,6 +20,9 @@ import {
 	getKeyDerivationPathString
 } from './derivation-path';
 import { bech32m } from 'bech32';
+import * as bip39 from 'bip39';
+import * as bitcoin from 'bitcoinjs-lib';
+import { BITKIT_WALLET_SEED_HASH_PREFIX } from '../wallet/constants';
 
 /**
  * Returns the default wallet data object.
@@ -284,4 +287,25 @@ export const decodeOpReturnMessage = (opReturn = ''): string[] => {
 		console.log(e);
 		return messages;
 	}
+};
+
+/**
+ * Returns the seed for a given mnemonic and passphrase.
+ * @param {string} mnemonic
+ * @param {string} bip39Passphrase
+ * @returns {Buffer}
+ */
+export const getSeed = (mnemonic, bip39Passphrase): Buffer => {
+	return bip39.mnemonicToSeedSync(mnemonic, bip39Passphrase);
+};
+
+/**
+ * Returns the seed hash for a given mnemonic and passphrase.
+ * @param {Buffer} seed
+ * @returns {string}
+ */
+export const getSeedHash = (seed: Buffer): string => {
+	return bitcoin.crypto
+		.sha256(Buffer.concat([BITKIT_WALLET_SEED_HASH_PREFIX, seed]))
+		.toString('hex');
 };

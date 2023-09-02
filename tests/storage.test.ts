@@ -22,7 +22,7 @@ before(async function () {
 	const res = await Wallet.create({
 		mnemonic: TEST_MNEMONIC,
 		network: EAvailableNetworks.testnet,
-		walletName: 'wallet0',
+		name: 'wallet0',
 		addressType: EAddressType.p2wpkh,
 		storage: {
 			getData,

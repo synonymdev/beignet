@@ -732,9 +732,10 @@ export class Wallet {
 			let lastUsedChangeAddressIndex =
 				currentWallet.lastUsedChangeAddressIndex[addressType];
 
-			if (!addressIndex?.address) {
-				const generatedAddresses = await this.addAddresses({
+			if (addressIndex?.index < 0 || !addressIndex?.address) {
+				const generatedAddresses = await this.generateAddresses({
 					addressAmount: GENERATE_ADDRESS_AMOUNT,
+					addressIndex: 0,
 					changeAddressAmount: 0,
 					keyDerivationPath,
 					addressType
@@ -749,10 +750,11 @@ export class Wallet {
 				addressIndex = sorted[0];
 			}
 
-			if (!changeAddressIndex?.address) {
-				const generatedAddresses = await this.addAddresses({
+			if (changeAddressIndex?.index < 0 || !changeAddressIndex?.address) {
+				const generatedAddresses = await this.generateAddresses({
 					addressAmount: 0,
 					changeAddressAmount: GENERATE_ADDRESS_AMOUNT,
+					changeAddressIndex: 0,
 					keyDerivationPath,
 					addressType
 				});
@@ -1898,8 +1900,10 @@ export class Wallet {
 	private async clearAddresses(): Promise<string> {
 		this.data.addresses = getAddressTypeContent<IAddresses>({});
 		this.data.changeAddresses = getAddressTypeContent<IAddresses>({});
-		await this.saveWalletData('addresses', this.data.addresses);
-		await this.saveWalletData('changeAddresses', this.data.changeAddresses);
+		await Promise.all([
+			this.saveWalletData('addresses', this.data.addresses),
+			this.saveWalletData('changeAddresses', this.data.changeAddresses)
+		]);
 		return 'Successfully reset transactions.';
 	}
 

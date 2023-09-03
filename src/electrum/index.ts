@@ -306,24 +306,7 @@ export class Electrum {
 					}
 				}
 			);
-
-			//TODO: Is Remove duplicates needed here?
-			const res: IGetAddressHistoryResponse[] = history.reduce(
-				(acc: IGetAddressHistoryResponse[], current) => {
-					if (
-						!acc.find(
-							(item: IGetAddressHistoryResponse) =>
-								item.tx_hash === current.tx_hash
-						)
-					) {
-						acc.push(current);
-					}
-					return acc;
-				},
-				[]
-			);
-
-			return ok(res);
+			return ok(history);
 		} catch (e) {
 			// @ts-ignore
 			return err(e);

@@ -733,7 +733,7 @@ export class Wallet {
 				currentWallet.lastUsedChangeAddressIndex[addressType];
 
 			if (!addressIndex?.address) {
-				const generatedAddresses = await this.generateAddresses({
+				const generatedAddresses = await this.addAddresses({
 					addressAmount: GENERATE_ADDRESS_AMOUNT,
 					changeAddressAmount: 0,
 					keyDerivationPath,
@@ -750,7 +750,7 @@ export class Wallet {
 			}
 
 			if (!changeAddressIndex?.address) {
-				const generatedAddresses = await this.generateAddresses({
+				const generatedAddresses = await this.addAddresses({
 					addressAmount: 0,
 					changeAddressAmount: GENERATE_ADDRESS_AMOUNT,
 					keyDerivationPath,
@@ -1586,7 +1586,7 @@ export class Wallet {
 		});
 
 		if (replaceStoredTransactions) {
-			// No need to check the existing txs. Update with the returned formatTransactionsResponse.
+			// No need to check the existing txs since we're replacing them. Update with the returned formatTransactionsResponse.
 			this.data.transactions = transactions;
 			await this.saveWalletData('transactions', this.data.transactions);
 			return ok(undefined);

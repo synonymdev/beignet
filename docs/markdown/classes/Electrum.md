@@ -10,29 +10,46 @@
 
 ### Properties
 
+- [\_wallet](Electrum.md#_wallet)
 - [connectedToElectrum](Electrum.md#connectedtoelectrum)
+- [connectionPollingInterval](Electrum.md#connectionpollinginterval)
 - [electrumNetwork](Electrum.md#electrumnetwork)
+- [latestConnectionState](Electrum.md#latestconnectionstate)
 - [network](Electrum.md#network)
+- [onElectrumConnectionChange](Electrum.md#onelectrumconnectionchange)
+- [onMessage](Electrum.md#onmessage)
 - [onReceive](Electrum.md#onreceive)
 - [servers](Electrum.md#servers)
+
+### Accessors
+
 - [wallet](Electrum.md#wallet)
 
 ### Methods
 
 - [broadcastTransaction](Electrum.md#broadcasttransaction)
+- [checkConnection](Electrum.md#checkconnection)
 - [connectToElectrum](Electrum.md#connecttoelectrum)
+- [disconnect](Electrum.md#disconnect)
 - [getAddressBalance](Electrum.md#getaddressbalance)
 - [getAddressHistory](Electrum.md#getaddresshistory)
+- [getAddressScriptHashBalances](Electrum.md#getaddressscripthashbalances)
 - [getBlockHashFromHex](Electrum.md#getblockhashfromhex)
 - [getBlockHeader](Electrum.md#getblockheader)
 - [getBlockHex](Electrum.md#getblockhex)
+- [getConnectedPeer](Electrum.md#getconnectedpeer)
 - [getElectrumNetwork](Electrum.md#getelectrumnetwork)
+- [getScriptPubKeyHistory](Electrum.md#getscriptpubkeyhistory)
+- [getTransactionMerkle](Electrum.md#gettransactionmerkle)
 - [getTransactions](Electrum.md#gettransactions)
 - [getTransactionsFromInputs](Electrum.md#gettransactionsfrominputs)
 - [getUtxos](Electrum.md#getutxos)
 - [isConnected](Electrum.md#isconnected)
 - [listUnspentAddressScriptHashes](Electrum.md#listunspentaddressscripthashes)
 - [onReceiveAddress](Electrum.md#onreceiveaddress)
+- [publishConnectionChange](Electrum.md#publishconnectionchange)
+- [startConnectionPolling](Electrum.md#startconnectionpolling)
+- [stopConnectionPolling](Electrum.md#stopconnectionpolling)
 - [subscribeToAddresses](Electrum.md#subscribetoaddresses)
 - [subscribeToHeader](Electrum.md#subscribetoheader)
 - [transactionExists](Electrum.md#transactionexists)
@@ -57,9 +74,19 @@
 
 #### Defined in
 
-[electrum/index.ts:57](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L57)
+[electrum/index.ts:64](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L64)
 
 ## Properties
+
+### \_wallet
+
+• `Private` `Readonly` **\_wallet**: [`Wallet`](Wallet.md)
+
+#### Defined in
+
+[electrum/index.ts:53](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L53)
+
+___
 
 ### connectedToElectrum
 
@@ -67,27 +94,81 @@
 
 #### Defined in
 
-[electrum/index.ts:55](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L55)
+[electrum/index.ts:61](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L61)
+
+___
+
+### connectionPollingInterval
+
+• `Private` **connectionPollingInterval**: ``null`` \| `Timeout`
+
+#### Defined in
+
+[electrum/index.ts:56](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L56)
 
 ___
 
 ### electrumNetwork
 
-• **electrumNetwork**: [`TElectrumNetworks`](../README.md#telectrumnetworks)
+• `Readonly` **electrumNetwork**: [`TElectrumNetworks`](../README.md#telectrumnetworks)
 
 #### Defined in
 
-[electrum/index.ts:54](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L54)
+[electrum/index.ts:60](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L60)
+
+___
+
+### latestConnectionState
+
+• `Private` **latestConnectionState**: ``null`` \| `boolean` = `null`
+
+#### Defined in
+
+[electrum/index.ts:55](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L55)
 
 ___
 
 ### network
 
-• **network**: [`EAvailableNetworks`](../enums/EAvailableNetworks.md)
+• `Readonly` **network**: [`EAvailableNetworks`](../enums/EAvailableNetworks.md)
 
 #### Defined in
 
-[electrum/index.ts:53](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L53)
+[electrum/index.ts:59](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L59)
+
+___
+
+### onElectrumConnectionChange
+
+• `Optional` **onElectrumConnectionChange**: (`isConnected`: `boolean`) => `void`
+
+#### Type declaration
+
+▸ (`isConnected`): `void`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `isConnected` | `boolean` |
+
+##### Returns
+
+`void`
+
+#### Defined in
+
+[electrum/index.ts:63](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L63)
+
+___
+
+### onMessage
+
+• `Private` **onMessage**: [`TOnMessage`](../README.md#tonmessage)
+
+#### Defined in
+
+[electrum/index.ts:54](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L54)
 
 ___
 
@@ -111,7 +192,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:56](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L56)
+[electrum/index.ts:62](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L62)
 
 ___
 
@@ -121,17 +202,21 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:52](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L52)
+[electrum/index.ts:58](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L58)
 
-___
+## Accessors
 
 ### wallet
 
-• `Private` **wallet**: [`Wallet`](Wallet.md)
+• `get` **wallet**(): [`Wallet`](Wallet.md)
+
+#### Returns
+
+[`Wallet`](Wallet.md)
 
 #### Defined in
 
-[electrum/index.ts:50](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L50)
+[electrum/index.ts:99](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L99)
 
 ## Methods
 
@@ -153,29 +238,59 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:701](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L701)
+[electrum/index.ts:782](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L782)
+
+___
+
+### checkConnection
+
+▸ `Private` **checkConnection**(): `Promise`<`void`\>
+
+Attempts to check the current Electrum connection.
+
+#### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+[electrum/index.ts:824](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L824)
 
 ___
 
 ### connectToElectrum
 
-▸ **connectToElectrum**(`«destructured»`): `Promise`<[`IConnectToElectrumRes`](../interfaces/IConnectToElectrumRes.md)\>
+▸ **connectToElectrum**(`«destructured»`): `Promise`<[`Result`](../README.md#result)<`string`\>\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `«destructured»` | `Object` |
-| › `network` | [`EAvailableNetworks`](../enums/EAvailableNetworks.md) |
+| › `network?` | [`EAvailableNetworks`](../enums/EAvailableNetworks.md) |
 | › `servers?` | [`TServer`](../README.md#tserver) \| [`TServer`](../README.md#tserver)[] |
 
 #### Returns
 
-`Promise`<[`IConnectToElectrumRes`](../interfaces/IConnectToElectrumRes.md)\>
+`Promise`<[`Result`](../README.md#result)<`string`\>\>
 
 #### Defined in
 
-[electrum/index.ts:87](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L87)
+[electrum/index.ts:103](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L103)
+
+___
+
+### disconnect
+
+▸ **disconnect**(): `Promise`<`void`\>
+
+#### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+[electrum/index.ts:856](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L856)
 
 ___
 
@@ -197,7 +312,7 @@ Returns the balance in sats for a given address.
 
 #### Defined in
 
-[electrum/index.ts:123](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L123)
+[electrum/index.ts:143](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L143)
 
 ___
 
@@ -221,7 +336,27 @@ Returns the available history for the provided address script hashes.
 
 #### Defined in
 
-[electrum/index.ts:209](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L209)
+[electrum/index.ts:247](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L247)
+
+___
+
+### getAddressScriptHashBalances
+
+▸ **getAddressScriptHashBalances**(`scriptHashes`): `Promise`<`any`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `scriptHashes` | `string`[] |
+
+#### Returns
+
+`Promise`<`any`\>
+
+#### Defined in
+
+[electrum/index.ts:163](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L163)
 
 ___
 
@@ -245,7 +380,7 @@ Leaving blockHex empty will return the last known block hash from storage.
 
 #### Defined in
 
-[electrum/index.ts:513](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L513)
+[electrum/index.ts:573](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L573)
 
 ___
 
@@ -261,7 +396,7 @@ Returns last known block height, and it's corresponding hex from local storage.
 
 #### Defined in
 
-[electrum/index.ts:529](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L529)
+[electrum/index.ts:589](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L589)
 
 ___
 
@@ -284,7 +419,23 @@ Returns the block hex of the provided block height.
 
 #### Defined in
 
-[electrum/index.ts:491](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L491)
+[electrum/index.ts:551](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L551)
+
+___
+
+### getConnectedPeer
+
+▸ **getConnectedPeer**(): `Promise`<[`Result`](../README.md#result)<[`IPeerData`](../interfaces/IPeerData.md)\>\>
+
+Returns currently connected peer.
+
+#### Returns
+
+`Promise`<[`Result`](../README.md#result)<[`IPeerData`](../interfaces/IPeerData.md)\>\>
+
+#### Defined in
+
+[electrum/index.ts:174](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L174)
 
 ___
 
@@ -306,7 +457,53 @@ Returns the network string for use with Electrum methods.
 
 #### Defined in
 
-[electrum/index.ts:148](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L148)
+[electrum/index.ts:187](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L187)
+
+___
+
+### getScriptPubKeyHistory
+
+▸ **getScriptPubKeyHistory**(`scriptPubkey`): `Promise`<[`TGetAddressHistory`](../README.md#tgetaddresshistory)[]\>
+
+Used to retrieve scriptPubkey history for LDK.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `scriptPubkey` | `string` |
+
+#### Returns
+
+`Promise`<[`TGetAddressHistory`](../README.md#tgetaddresshistory)[]\>
+
+#### Defined in
+
+[electrum/index.ts:358](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L358)
+
+___
+
+### getTransactionMerkle
+
+▸ **getTransactionMerkle**(`«destructured»`): `Promise`<{ `block_height`: `number` ; `merkle`: `string`[] ; `pos`: `number`  }\>
+
+Returns the merkle branch to a confirmed transaction given its hash and height.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `«destructured»` | `Object` |
+| › `height` | `number` |
+| › `tx_hash` | `string` |
+
+#### Returns
+
+`Promise`<{ `block_height`: `number` ; `merkle`: `string`[] ; `pos`: `number`  }\>
+
+#### Defined in
+
+[electrum/index.ts:628](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L628)
 
 ___
 
@@ -329,7 +526,7 @@ Returns available transactions from electrum based on the provided txHashes.
 
 #### Defined in
 
-[electrum/index.ts:415](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L415)
+[electrum/index.ts:476](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L476)
 
 ___
 
@@ -352,7 +549,7 @@ Returns transactions associated with the provided transaction hashes.
 
 #### Defined in
 
-[electrum/index.ts:538](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L538)
+[electrum/index.ts:598](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L598)
 
 ___
 
@@ -375,7 +572,7 @@ Returns UTXO's for a given wallet and network along with the available balance.
 
 #### Defined in
 
-[electrum/index.ts:338](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L338)
+[electrum/index.ts:400](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L400)
 
 ___
 
@@ -389,7 +586,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:113](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L113)
+[electrum/index.ts:133](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L133)
 
 ___
 
@@ -412,7 +609,7 @@ Queries Electrum to return the available UTXO's and balance of the provided addr
 
 #### Defined in
 
-[electrum/index.ts:166](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L166)
+[electrum/index.ts:205](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L205)
 
 ___
 
@@ -432,7 +629,55 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:662](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L662)
+[electrum/index.ts:743](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L743)
+
+___
+
+### publishConnectionChange
+
+▸ `Private` **publishConnectionChange**(`isConnected`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `isConnected` | `boolean` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[electrum/index.ts:844](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L844)
+
+___
+
+### startConnectionPolling
+
+▸ **startConnectionPolling**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[electrum/index.ts:861](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L861)
+
+___
+
+### stopConnectionPolling
+
+▸ **stopConnectionPolling**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[electrum/index.ts:869](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L869)
 
 ___
 
@@ -456,7 +701,7 @@ Subscribes to a number of address script hashes for receiving.
 
 #### Defined in
 
-[electrum/index.ts:602](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L602)
+[electrum/index.ts:685](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L685)
 
 ___
 
@@ -472,7 +717,7 @@ Subscribes to the current networks headers.
 
 #### Defined in
 
-[electrum/index.ts:567](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L567)
+[electrum/index.ts:650](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L650)
 
 ___
 
@@ -494,4 +739,4 @@ Determines whether a transaction exists based on the transaction response from e
 
 #### Defined in
 
-[electrum/index.ts:468](https://github.com/synonymdev/beignet/blob/6c60ef8/src/electrum/index.ts#L468)
+[electrum/index.ts:528](https://github.com/synonymdev/beignet/blob/e4162f7/src/electrum/index.ts#L528)

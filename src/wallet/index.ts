@@ -129,7 +129,7 @@ export class Wallet {
 		addressType = EAddressType.p2wpkh,
 		storage,
 		electrumOptions,
-		onMessage = () => null,
+		onMessage = (): null => null,
 		customGetAddress,
 		customGetScriptHash,
 		rbf = true,

@@ -114,8 +114,6 @@ export const formatKeyDerivationPath = ({
 		const pathString = pathStringResponse.value;
 		return ok({ pathObject, pathString });
 	} catch (e) {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
 		return err(e);
 	}
 };
@@ -172,7 +170,6 @@ export const getHighestUsedIndexFromTxHashes = ({
 
 		return ok(data);
 	} catch (e) {
-		// @ts-ignore
 		return err(e);
 	}
 };
@@ -230,8 +227,6 @@ export const reduceValue = <T>({
 			}, 0) || 0
 		);
 	} catch (e) {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
 		return err(e);
 	}
 };
@@ -283,8 +278,7 @@ export const decodeOpReturnMessage = (opReturn = ''): string[] => {
 			} catch {}
 		});
 		return messages;
-	} catch (e) {
-		console.log(e);
+	} catch {
 		return messages;
 	}
 };
@@ -309,3 +303,40 @@ export const getSeedHash = (seed: Buffer): string => {
 		.sha256(Buffer.concat([BITKIT_WALLET_SEED_HASH_PREFIX, seed]))
 		.toString('hex');
 };
+
+export const getWalletDataStorageKey = (
+	name: string,
+	network: EAvailableNetworks,
+	key: keyof IWalletData
+): string => {
+	return `${name}-${network}-${key}`;
+};
+
+export const getStorageKeyValues = (
+	storageKey: string
+): {
+	walletName: string;
+	network: EAvailableNetworks;
+	value: keyof IWalletData;
+} => {
+	const [walletName, network, value] = storageKey.split('-');
+	return {
+		walletName,
+		network: network as EAvailableNetworks,
+		value: value as keyof IWalletData
+	};
+};
+
+/**
+ * Returns the total fee in sats for a transaction at a given size (transactionByteCount) times the desired satsPerByte.
+ * @param {number} satsPerByte
+ * @param {number} transactionByteCount
+ * @returns {number}
+ */
+export const getTxFee = ({
+	satsPerByte,
+	transactionByteCount
+}: {
+	satsPerByte: number;
+	transactionByteCount: number;
+}): number => transactionByteCount * satsPerByte;

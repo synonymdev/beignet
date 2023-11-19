@@ -1,10 +1,12 @@
 import * as bitcoin from 'bitcoinjs-lib';
-import { Psbt } from 'bitcoinjs-lib';
+import { networks, Psbt } from 'bitcoinjs-lib';
 import { Result, ok, err } from './result';
 import {
+	EAddressType,
 	EAvailableNetworks,
 	IOutput,
 	ISendTransaction,
+	TDecodeRawTx,
 	TGetByteCountInput,
 	TGetByteCountInputs,
 	TGetByteCountOutput,
@@ -48,7 +50,7 @@ export const setReplaceByFee = ({
 				}
 			});
 		}
-	} catch (e) {}
+	} catch {}
 };
 
 /*
@@ -138,10 +140,12 @@ export const parseOnChainPaymentRequest = (
 /**
  * Constructs the parameter for getByteCount via an array of addresses.
  * @param {string[]} addresses
+ * @param increaseAddressCount
  * @returns {TGetByteCountInputs | TGetByteCountOutputs}y
  */
 export const constructByteCountParam = (
-	addresses: string[]
+	addresses: string[],
+	increaseAddressCount: { addrType: EAddressType; count: number }[] = []
 ): TGetByteCountInputs | TGetByteCountOutputs => {
 	try {
 		if (addresses.length <= 0) {
@@ -153,6 +157,9 @@ export const constructByteCountParam = (
 				const addressType = getAddressInfo(address).type.toUpperCase();
 				param[addressType] = param[addressType] ? param[addressType] + 1 : 1;
 			}
+		});
+		increaseAddressCount.forEach(({ addrType, count }) => {
+			param[addrType] = (param[addrType] ?? 0) + count;
 		});
 		return param;
 	} catch {
@@ -272,7 +279,7 @@ export const getByteCount = (
 
 		// Convert from Weight Units to virtual size
 		return Math.ceil(totalWeight / 4);
-	} catch (e) {
+	} catch {
 		return TRANSACTION_DEFAULTS.recommendedBaseFee;
 	}
 };
@@ -351,7 +358,59 @@ export const validateTransaction = (
 
 		return ok('Transaction is valid.');
 	} catch (e) {
-		// @ts-ignore
+		return err(e);
+	}
+};
+
+/**
+ * Attempts to decode a raw tx hex.
+ * Source: https://github.com/bitcoinjs/bitcoinjs-lib/issues/1606#issuecomment-664740672
+ * @param {string} hex
+ * @param {EAvailableNetworks} [_network]
+ * @returns {Result<TDecodeRawTx>}
+ */
+export const decodeRawTransaction = (
+	hex: string,
+	_network: EAvailableNetworks
+): Result<TDecodeRawTx> => {
+	try {
+		const network = networks[_network];
+		const tx = bitcoin.Transaction.fromHex(hex);
+		return ok({
+			txid: tx.getId(),
+			tx_hash: tx.getHash(true).toString('hex'),
+			size: tx.byteLength(),
+			vsize: tx.virtualSize(),
+			weight: tx.weight(),
+			version: tx.version,
+			locktime: tx.locktime,
+			vin: tx.ins.map((input) => ({
+				txid: Buffer.from(input.hash).reverse().toString('hex'),
+				vout: input.index,
+				scriptSig: {
+					asm: bitcoin.script.toASM(input.script),
+					hex: input.script.toString('hex')
+				},
+				txinwitness: input.witness.map((b) => b.toString('hex')),
+				sequence: input.sequence
+			})),
+			vout: tx.outs.map((output, i) => {
+				let address;
+				try {
+					address = bitcoin.address.fromOutputScript(output.script, network);
+				} catch (e) {}
+				return {
+					value: output.value,
+					n: i,
+					scriptPubKey: {
+						asm: bitcoin.script.toASM(output.script),
+						hex: output.script.toString('hex'),
+						address
+					}
+				};
+			})
+		});
+	} catch (e) {
 		return err(e);
 	}
 };

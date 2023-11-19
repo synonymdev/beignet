@@ -9,7 +9,7 @@ import { EUnit } from '../types';
 export const btcToSats = (value: number): number => {
 	try {
 		return Number(bitcoinUnits(value, 'BTC').to('satoshi').value().toFixed(0));
-	} catch (e) {
+	} catch {
 		return 0;
 	}
 };
@@ -82,7 +82,7 @@ export const fiatToBitcoinUnit = ({
 			.toFixed(unit === EUnit.satoshi ? 0 : 8); // satoshi cannot be a fractional number
 
 		return Number(value);
-	} catch (e) {
+	} catch {
 		return 0;
 	}
 };

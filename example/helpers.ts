@@ -1,5 +1,11 @@
 import { promises as fs } from 'fs';
-import { TGetData, TSetData, IWalletData } from '../src';
+import {
+	TGetData,
+	TSetData,
+	IWalletData,
+	EAvailableNetworks,
+	EProtocol
+} from '../src';
 import { err, Result, ok } from '../src';
 import { getDefaultWalletData } from '../src';
 
@@ -30,7 +36,6 @@ export const setData: TSetData = async <K extends keyof IWalletData>(
 		await fs.writeFile(`${dir}/${key}.json`, JSON.stringify(value, null, 2));
 		return ok(true);
 	} catch (e) {
-		// @ts-ignore
 		return err(e);
 	}
 };
@@ -38,4 +43,24 @@ export const setData: TSetData = async <K extends keyof IWalletData>(
 export const onMessage = (id, data): void => {
 	console.log(id);
 	console.dir(data, { depth: null });
+};
+
+export const servers = {
+	[EAvailableNetworks.mainnet]: [
+		{
+			host: '35.187.18.233',
+			ssl: 8900,
+			tcp: 8911,
+			protocol: EProtocol.ssl
+		}
+	],
+	[EAvailableNetworks.testnet]: [],
+	[EAvailableNetworks.regtest]: [
+		{
+			host: '35.233.47.252',
+			ssl: 18484,
+			tcp: 18483,
+			protocol: EProtocol.tcp
+		}
+	]
 };

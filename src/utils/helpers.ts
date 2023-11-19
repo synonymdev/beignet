@@ -84,7 +84,7 @@ export const validateAddress = ({
 			}
 		}
 		return { isValid, network: network ?? EAvailableNetworks.bitcoin };
-	} catch (e) {
+	} catch {
 		return { isValid: false, network: EAvailableNetworks.bitcoin };
 	}
 };
@@ -112,8 +112,6 @@ export const getKeyDerivationPath = ({
 		}
 		return ok(keyDerivationPathResponse.value);
 	} catch (e) {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
 		return err(e);
 	}
 };
@@ -166,6 +164,28 @@ export const validateMnemonic = (mnemonic = ''): boolean => {
 	try {
 		return bip39.validateMnemonic(mnemonic);
 	} catch {
+		return false;
+	}
+};
+
+/**
+ * Determines if the two objects passed as params match.
+ * @param obj1
+ * @param obj2
+ * @returns boolean
+ */
+export const objectsMatch = (obj1, obj2): boolean => {
+	if (!obj1 || !obj2) {
+		return false;
+	}
+	const obj1Length = Object.keys(obj1).length;
+	const obj2Length = Object.keys(obj2).length;
+
+	if (obj1Length === obj2Length) {
+		return Object.keys(obj1).every(
+			(key) => key in obj2 && obj2[key] === obj1[key]
+		);
+	} else {
 		return false;
 	}
 };

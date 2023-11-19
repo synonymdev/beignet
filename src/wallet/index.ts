@@ -1,17 +1,21 @@
 import * as bitcoin from 'bitcoinjs-lib';
-import { Network } from 'bitcoinjs-lib';
+import { Network, networks } from 'bitcoinjs-lib';
 import BIP32Factory, { BIP32Interface } from 'bip32';
 import * as ecc from '@bitcoinerlab/secp256k1';
 //import { getExchangeRates } from "../utils/exchange-rate";
 import {
 	EAddressType,
 	EAvailableNetworks,
+	EBoostType,
+	EFeeId,
 	EPaymentType,
 	IAddress,
 	IAddresses,
-	TAddressTypeContent,
+	IBoostedTransaction,
+	IBoostedTransactions,
+	ICustomGetAddress,
+	ICustomGetScriptHash,
 	IExchangeRates,
-	IFees,
 	IFormattedTransaction,
 	IFormattedTransactions,
 	IGenerateAddresses,
@@ -26,9 +30,11 @@ import {
 	IHeader,
 	IKeyDerivationPath,
 	InputData,
+	IOnchainFees,
+	IOutput,
+	IRbfData,
 	ISendTransaction,
 	ISendTx,
-	TSetData,
 	ISetupTransaction,
 	ITransaction,
 	ITxHash,
@@ -36,40 +42,38 @@ import {
 	IWallet,
 	IWalletData,
 	TAddressIndexInfo,
+	TAddressTypeContent,
 	TAvailableNetworks,
+	TGetData,
+	TGetTotalFeeObj,
 	TOnMessage,
 	TProcessUnconfirmedTransactions,
 	TServer,
+	TSetData,
 	TSetupTransactionResponse,
-	TWalletDataKeys,
-	TGetData,
-	EFeeId,
-	IBoostedTransactions,
-	IRbfData,
-	IOutput,
-	IBoostedTransaction,
-	EBoostType,
-	ICustomGetAddress,
-	ICustomGetScriptHash
+	TWalletDataKeys
 } from '../types';
 import {
 	decodeOpReturnMessage,
-	getAddressTypeFromPath,
-	getExchangeRates,
-	getKeyDerivationPathObject,
-	getKeyDerivationPathString,
-	getSeed,
-	getSeedHash
-} from '../utils';
-import {
+	err,
 	formatKeyDerivationPath,
+	getAddressTypeFromPath,
 	getDataFallback,
 	getDefaultWalletData,
 	getDefaultWalletDataKeys,
+	getExchangeRates,
 	getHighestUsedIndexFromTxHashes,
 	getKeyDerivationPath,
+	getKeyDerivationPathObject,
+	getKeyDerivationPathString,
 	getScriptHash,
+	getSeed,
+	getSeedHash,
+	getWalletDataStorageKey,
 	objectKeys,
+	objectsMatch,
+	ok,
+	Result,
 	shuffleArray,
 	validateAddress,
 	validateMnemonic
@@ -77,29 +81,36 @@ import {
 import {
 	addressTypes,
 	defaultFeesShape,
-	getAddressTypeContent,
-	getDefaultSendTransaction
+	getAddressTypeContent
 } from '../shapes';
-import { err, ok, Result } from '../utils';
 import { Electrum } from '../electrum';
 import { Transaction } from '../transaction';
 import { CHUNK_LIMIT, GAP_LIMIT, GENERATE_ADDRESS_AMOUNT } from './constants';
 import cloneDeep from 'lodash.clonedeep';
 import { btcToSats } from '../utils/conversion';
+import * as bip39 from 'bip39';
 
 const bip32 = BIP32Factory(ecc);
 
 export class Wallet {
-	private readonly mnemonic: string;
-	private readonly passphrase: string;
-	private readonly seed: Buffer;
-	private readonly root: BIP32Interface;
-	private readonly name: string;
-	private getData: TGetData;
-	private setData?: TSetData;
-	public network: EAvailableNetworks;
+	private _network: EAvailableNetworks;
+	private readonly _mnemonic: string;
+	private readonly _passphrase: string;
+	private readonly _seed: Buffer;
+	private readonly _root: BIP32Interface;
+	private _data: IWalletData;
+	private _getData: TGetData;
+	private _setData?: TSetData;
+	private _customGetAddress?: (
+		data: ICustomGetAddress
+	) => Promise<Result<IGetAddressResponse>>; // For use with Bitkit.
+	private _customGetScriptHash?: (
+		data: ICustomGetScriptHash
+	) => Promise<string>; // For use with Bitkit.
+
+	public readonly id: string;
+	public readonly name: string;
 	public addressType: EAddressType;
-	public data: IWalletData;
 	public electrumOptions?: {
 		servers?: TServer | TServer[];
 	};
@@ -107,13 +118,9 @@ export class Wallet {
 	public exchangeRates: IExchangeRates;
 	public onMessage?: TOnMessage;
 	public transaction: Transaction;
-	public feeEstimates: IFees;
+	public feeEstimates: IOnchainFees;
 	public rbf: boolean;
 	public selectedFeeId: EFeeId;
-	private customGetAddress?: (
-		data: ICustomGetAddress
-	) => Promise<Result<IGetAddressResponse>>; // For use with Bitkit.
-	private customGetScriptHash?: (data: ICustomGetScriptHash) => Promise<string>; // For use with Bitkit.
 	private constructor({
 		mnemonic,
 		passphrase,
@@ -122,7 +129,7 @@ export class Wallet {
 		addressType = EAddressType.p2wpkh,
 		storage,
 		electrumOptions,
-		onMessage,
+		onMessage = () => null,
 		customGetAddress,
 		customGetScriptHash,
 		rbf = true,
@@ -132,21 +139,25 @@ export class Wallet {
 		if (!validateMnemonic(mnemonic)) throw new Error('Invalid mnemonic.');
 		if (name && name.includes('-'))
 			throw new Error('Wallet name cannot include a hyphen (-).');
-		this.mnemonic = mnemonic;
-		this.passphrase = passphrase ?? '';
-		this.network = network;
+		this._network = network;
+		this._mnemonic = mnemonic;
+		this._passphrase = passphrase ?? '';
+		this._seed = getSeed(this._mnemonic, this._passphrase);
+		this._root = bip32.fromSeed(
+			this._seed,
+			this.getBitcoinNetwork(this._network)
+		);
+		this._data = getDefaultWalletData();
+		this._getData = storage?.getData ?? getDataFallback;
+		this._setData = storage?.setData;
+		if (customGetAddress) this._customGetAddress = customGetAddress;
+		if (customGetScriptHash) this._customGetScriptHash = customGetScriptHash;
 		this.addressType = addressType;
-		this.seed = getSeed(this.mnemonic, this.passphrase);
-		this.name = name ?? getSeedHash(this.seed);
-		this.root = bip32.fromSeed(this.seed, this.getBitcoinNetwork(this.network));
-		this.data = getDefaultWalletData();
-		this.getData = storage?.getData ?? getDataFallback;
-		this.setData = storage?.setData;
+		this.id = name ?? getSeedHash(this._seed);
+		this.name = name ?? this.id;
 		this.exchangeRates = {};
 		this.transaction = new Transaction({
-			wallet: this,
-			mnemonic: this.mnemonic,
-			passphrase: this.passphrase
+			wallet: this
 		});
 		this.feeEstimates = cloneDeep(defaultFeesShape);
 		this.onMessage = onMessage;
@@ -158,10 +169,16 @@ export class Wallet {
 			tls: electrumOptions?.tls,
 			net: electrumOptions?.net
 		});
-		if (customGetAddress) this.customGetAddress = customGetAddress;
-		if (customGetScriptHash) this.customGetScriptHash = customGetScriptHash;
 		this.rbf = rbf;
 		this.selectedFeeId = selectedFeeId;
+	}
+
+	public get data(): IWalletData {
+		return this._data;
+	}
+
+	public get network(): EAvailableNetworks {
+		return this._network;
 	}
 
 	static async create(params: IWallet): Promise<Result<Wallet>> {
@@ -177,7 +194,6 @@ export class Wallet {
 			await wallet.refreshWallet({});
 			return ok(wallet);
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -185,23 +201,27 @@ export class Wallet {
 	public async switchNetwork(
 		network: EAvailableNetworks,
 		servers?: TServer | TServer[]
-	): Promise<Result<Wallet>> {
-		this.network = network;
+	): Promise<Result<string>> {
+		// Disconnect from Electrum.
+		this.electrum.disconnect();
+
+		this._network = network;
 		const params: IWallet = {
 			...this,
-			mnemonic: this.mnemonic,
-			passphrase: this.passphrase,
+			mnemonic: this._mnemonic,
+			passphrase: this._passphrase,
 			network,
 			servers,
 			storage: {
-				getData: this.getData,
-				setData: this.setData
-			}
+				getData: this._getData,
+				setData: this._setData
+			},
+			data: getDefaultWalletData()
 		};
 		const createRes = await Wallet.create(params);
 		if (createRes.isErr()) return err(createRes.error.message);
 		Object.assign(this, createRes.value);
-		return ok(this);
+		return ok(`Successfully switched to ${network}.`);
 	}
 
 	/**
@@ -211,6 +231,7 @@ export class Wallet {
 	 */
 	async updateAddressType(addressType: EAddressType): Promise<void> {
 		this.addressType = addressType;
+		await this.saveWalletData('addressType', addressType);
 		await this.refreshWallet({});
 	}
 
@@ -238,7 +259,6 @@ export class Wallet {
 			await this.electrum.subscribeToAddresses();
 			return ok(this.data);
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -249,11 +269,11 @@ export class Wallet {
 	 * @private
 	 */
 	private async setWalletData(): Promise<Result<boolean>> {
-		this.data = getDefaultWalletData();
+		this._data = getDefaultWalletData();
 		const walletDataResponse = await this.getWalletData();
 		if (walletDataResponse.isErr())
 			return err(walletDataResponse.error.message);
-		this.data = walletDataResponse.value;
+		this._data = walletDataResponse.value;
 		return ok(true);
 	}
 
@@ -262,8 +282,8 @@ export class Wallet {
 	 * @returns {string}
 	 * @param key
 	 */
-	private getWalletDataKey(key: keyof IWalletData): string {
-		return `${this.name}-${this.network}-${key}`;
+	public getWalletDataKey(key: keyof IWalletData): string {
+		return getWalletDataStorageKey(this.name, this._network, key);
 	}
 
 	/**
@@ -278,11 +298,9 @@ export class Wallet {
 			let dataResult;
 			try {
 				const walletDataKey = this.getWalletDataKey(key);
-				dataResult = await this.getData(walletDataKey);
+				dataResult = await this._getData(walletDataKey);
 				if (dataResult.isErr()) return err(dataResult.error.message);
-			} catch (e) {
-				return err('Unable to get wallet data.');
-			}
+			} catch {}
 			const data = dataResult?.value ?? walletData[key];
 			switch (key) {
 				case 'addressType':
@@ -316,14 +334,14 @@ export class Wallet {
 				case 'balance':
 					walletData[key] = data as number;
 					break;
-				case 'exchangeRates':
-					walletData[key] = data as IExchangeRates;
-					break;
 				case 'header':
 					walletData[key] = data as IHeader;
 					break;
 				case 'boostedTransactions':
 					walletData[key] = data as IBoostedTransactions;
+					break;
+				case 'selectedFeeId':
+					walletData[key] = data as EFeeId;
 					break;
 				default:
 					return err(`Unhandled key in getWalletData: ${key}`);
@@ -338,7 +356,7 @@ export class Wallet {
 	 * @returns {Network}
 	 */
 	private getBitcoinNetwork(network?: TAvailableNetworks): Network {
-		if (!network) network = this.network;
+		if (!network) network = this._network;
 		return bitcoin.networks[network];
 	}
 
@@ -348,7 +366,7 @@ export class Wallet {
 	 * @returns {boolean}
 	 */
 	isValid(mnemonic): boolean {
-		return mnemonic === this.mnemonic && validateMnemonic(mnemonic);
+		return mnemonic === this._mnemonic && validateMnemonic(mnemonic);
 	}
 
 	/**
@@ -362,13 +380,13 @@ export class Wallet {
 		path: string,
 		addressType: EAddressType
 	): Promise<IGetAddressResponse> {
-		if (this.customGetAddress) {
+		if (this._customGetAddress) {
 			const data = {
 				path,
 				type: addressType,
-				selectedNetwork: this.electrum.getElectrumNetwork(this.network)
+				selectedNetwork: this.electrum.getElectrumNetwork(this._network)
 			};
-			const res = await this.customGetAddress(data);
+			const res = await this._customGetAddress(data);
 			if (res.isErr()) {
 				return {
 					address: '',
@@ -378,7 +396,7 @@ export class Wallet {
 			}
 			return res.value;
 		}
-		const keyPair = this.root.derivePath(path);
+		const keyPair = this._root.derivePath(path);
 		let address;
 		switch (addressType) {
 			case EAddressType.p2wpkh:
@@ -438,7 +456,7 @@ export class Wallet {
 				addressType,
 				changeAddress,
 				index,
-				network: this.network
+				network: this._network
 			});
 			if (pathRes.isErr()) {
 				return '';
@@ -447,7 +465,7 @@ export class Wallet {
 			const res = await this._getAddress(path, addressType);
 			if (!res?.address) return '';
 			return res.address;
-		} catch (e) {
+		} catch {
 			return '';
 		}
 	}
@@ -475,7 +493,6 @@ export class Wallet {
 			if (!getAddressRes?.address) return err('Unable to get address.');
 			return ok(getAddressRes);
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -489,11 +506,11 @@ export class Wallet {
 		servers?: TServer | TServer[]
 	): Promise<Result<string>> {
 		const res = await this.electrum.connectToElectrum({
-			network: this.network,
+			network: this._network,
 			servers: servers ?? this.electrumOptions?.servers
 		});
 		let msg = 'Unable to connect to Electrum server.';
-		if (res.error) {
+		if (res.isErr()) {
 			console.log(msg);
 			return err(msg);
 		}
@@ -511,11 +528,46 @@ export class Wallet {
 	): Promise<Result<IGetAddressBalanceRes>> {
 		const scriptHash = await this.getScriptHash({
 			address,
-			network: this.network
+			network: this._network
 		});
 		const res = await this.electrum.getAddressBalance(scriptHash);
 		if (res.error) return err('Unable to get address balance at this time.');
 		return ok({ unconfirmed: res.unconfirmed, confirmed: res.confirmed });
+	}
+
+	/**
+	 * Returns combined balance of provided addresses.
+	 * @async
+	 * @param {string[]} addresses
+	 * @returns {Promise<Result<number>>}
+	 */
+	public async getAddressesBalance(
+		addresses: string[] = []
+	): Promise<Result<number>> {
+		try {
+			const network = this._network;
+			const scriptHashes = await Promise.all(
+				addresses.map(async (address) => {
+					return await this.getScriptHash({ address, network });
+				})
+			);
+			const res =
+				await this.electrum.getAddressScriptHashBalances(scriptHashes);
+			if (res.error) {
+				return err(res.data);
+			}
+			return ok(
+				res.data.reduce((acc, cur) => {
+					return (
+						acc +
+						Number(cur.result?.confirmed ?? 0) +
+						Number(cur.result?.unconfirmed ?? 0)
+					);
+				}, 0) || 0
+			);
+		} catch (e) {
+			return err(e);
+		}
 	}
 
 	/**
@@ -531,9 +583,9 @@ export class Wallet {
 		address: string;
 		network: EAvailableNetworks;
 	}): Promise<string> {
-		if (this.customGetScriptHash) {
+		if (this._customGetScriptHash) {
 			const selectedNetwork = this.electrum.getElectrumNetwork(network);
-			return await this.customGetScriptHash({ address, selectedNetwork });
+			return await this._customGetScriptHash({ address, selectedNetwork });
 		}
 		return getScriptHash({ address, network });
 	}
@@ -544,7 +596,7 @@ export class Wallet {
 	 * @returns {string}
 	 */
 	getPrivateKey(path: string): string {
-		const keyPair = this.root.derivePath(path);
+		const keyPair = this._root.derivePath(path);
 		return keyPair.toWIF();
 	}
 
@@ -589,7 +641,7 @@ export class Wallet {
 		keyDerivationPath,
 		addressType = this.addressType
 	}: IGenerateAddresses): Promise<Result<IGenerateAddressesResponse>> {
-		const network = this.network;
+		const network = this._network;
 		try {
 			if (!keyDerivationPath) {
 				// Set derivation path accordingly based on address type.
@@ -629,7 +681,7 @@ export class Wallet {
 					}
 					const scriptHash = await this.getScriptHash({
 						address: address.value.address,
-						network: this.network
+						network: this._network
 					});
 					if (!scriptHash) {
 						throw new Error('Unable to get script hash.');
@@ -680,7 +732,6 @@ export class Wallet {
 
 			return ok({ addresses, changeAddresses });
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -712,7 +763,7 @@ export class Wallet {
 		const checkRes = await this.checkElectrumConnection();
 		if (checkRes.isErr()) return err(checkRes.error.message);
 		try {
-			const network = this.network;
+			const network = this._network;
 			addressType = addressType ?? this.addressType;
 			const currentWallet = this.data;
 			const { path } = addressTypes[addressType]; // Assuming addressTypes is globally defined.
@@ -1003,9 +1054,6 @@ export class Wallet {
 
 			return lastKnownIndexes;
 		} catch (e) {
-			console.log(e);
-
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -1039,7 +1087,6 @@ export class Wallet {
 
 			return ok({ addressIndex, changeAddressIndex });
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -1100,18 +1147,18 @@ export class Wallet {
 		const addresses = removeDuplicateResponse.value.addresses;
 		const changeAddresses = removeDuplicateResponse.value.changeAddresses;
 		if (Object.keys(addresses).length) {
-			this.data.addresses[addressType] = {
+			this._data.addresses[addressType] = {
 				...this.data.addresses[addressType],
 				...addresses
 			};
-			await this.saveWalletData('addresses', this.data.addresses);
+			await this.saveWalletData('addresses', this._data.addresses);
 		}
 		if (Object.keys(changeAddresses).length) {
-			this.data.changeAddresses[addressType] = {
+			this._data.changeAddresses[addressType] = {
 				...this.data.changeAddresses[addressType],
 				...changeAddresses
 			};
-			await this.saveWalletData('changeAddresses', this.data.changeAddresses);
+			await this.saveWalletData('changeAddresses', this._data.changeAddresses);
 		}
 
 		return ok({ ...generatedAddresses.value, addressType: type });
@@ -1164,7 +1211,6 @@ export class Wallet {
 
 			return ok({ addresses, changeAddresses });
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -1273,24 +1319,24 @@ export class Wallet {
 					)[0];
 				}
 
-				this.data.addressIndex[addressTypeKey] = addressIndex;
-				this.data.changeAddressIndex[addressTypeKey] = changeAddressIndex;
-				this.data.lastUsedAddressIndex[addressTypeKey] = lastUsedAddressIndex;
-				this.data.lastUsedChangeAddressIndex[addressTypeKey] =
+				this._data.addressIndex[addressTypeKey] = addressIndex;
+				this._data.changeAddressIndex[addressTypeKey] = changeAddressIndex;
+				this._data.lastUsedAddressIndex[addressTypeKey] = lastUsedAddressIndex;
+				this._data.lastUsedChangeAddressIndex[addressTypeKey] =
 					lastUsedChangeAddressIndex;
 				await Promise.all([
-					this.saveWalletData('addressIndex', this.data.addressIndex),
+					this.saveWalletData('addressIndex', this._data.addressIndex),
 					this.saveWalletData(
 						'changeAddressIndex',
-						this.data.changeAddressIndex
+						this._data.changeAddressIndex
 					),
 					this.saveWalletData(
 						'lastUsedAddressIndex',
-						this.data.lastUsedAddressIndex
+						this._data.lastUsedAddressIndex
 					),
 					this.saveWalletData(
 						'lastUsedChangeAddressIndex',
-						this.data.lastUsedChangeAddressIndex
+						this._data.lastUsedChangeAddressIndex
 					)
 				]);
 				updated = true;
@@ -1302,7 +1348,6 @@ export class Wallet {
 				updated ? 'Successfully updated indexes.' : 'No update needed.'
 			);
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -1316,25 +1361,25 @@ export class Wallet {
 		const addressTypeKeys = Object.values(EAddressType);
 		const defaultWalletShape = getDefaultWalletData();
 		for (const addressType of addressTypeKeys) {
-			this.data.addressIndex[addressType] =
+			this._data.addressIndex[addressType] =
 				defaultWalletShape.addressIndex[addressType];
-			this.data.changeAddressIndex[addressType] =
+			this._data.changeAddressIndex[addressType] =
 				defaultWalletShape.changeAddressIndex[addressType];
-			this.data.lastUsedAddressIndex[addressType] =
+			this._data.lastUsedAddressIndex[addressType] =
 				defaultWalletShape.lastUsedAddressIndex[addressType];
-			this.data.lastUsedChangeAddressIndex[addressType] =
+			this._data.lastUsedChangeAddressIndex[addressType] =
 				defaultWalletShape.lastUsedChangeAddressIndex[addressType];
 		}
 		await Promise.all([
-			this.saveWalletData('addressIndex', this.data.addressIndex),
-			this.saveWalletData('changeAddressIndex', this.data.changeAddressIndex),
+			this.saveWalletData('addressIndex', this._data.addressIndex),
+			this.saveWalletData('changeAddressIndex', this._data.changeAddressIndex),
 			this.saveWalletData(
 				'lastUsedAddressIndex',
-				this.data.lastUsedAddressIndex
+				this._data.lastUsedAddressIndex
 			),
 			this.saveWalletData(
 				'lastUsedChangeAddressIndex',
-				this.data.lastUsedChangeAddressIndex
+				this._data.lastUsedChangeAddressIndex
 			)
 		]);
 	}
@@ -1354,7 +1399,7 @@ export class Wallet {
 		keyDerivationPath?: IKeyDerivationPath;
 	}): Promise<Result<IAddress>> {
 		try {
-			const network = this.network;
+			const network = this._network;
 			const currentWallet = this.data;
 
 			const getGapLimitResponse = this.getGapLimit({
@@ -1393,10 +1438,9 @@ export class Wallet {
 			// Check if the next address index already exists or if it needs to be generated.
 			if (nextAddressIndex) {
 				// Update addressIndex and return the address content.
-				this.data.addressIndex[addressType] = nextAddressIndex;
+				this._data.addressIndex[addressType] = nextAddressIndex;
 				await Promise.all([
-					// @ts-ignore
-					this.saveWalletData('addressIndex', this.data.addressIndex)
+					this.saveWalletData('addressIndex', this._data.addressIndex)
 				]);
 				return ok(nextAddressIndex);
 			}
@@ -1420,14 +1464,11 @@ export class Wallet {
 			}
 			const newAddressIndex: IAddress =
 				addAddressesRes.value.addresses[addressKeys[0]];
-			this.data.addressIndex[addressType] = newAddressIndex;
+			this._data.addressIndex[addressType] = newAddressIndex;
 
-			// @ts-ignore
-			await this.saveWalletData('addressIndex', this.data.addressIndex);
+			await this.saveWalletData('addressIndex', this._data.addressIndex);
 			return ok(newAddressIndex);
 		} catch (e) {
-			console.log(e);
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -1438,7 +1479,7 @@ export class Wallet {
 	 * @param {EAddressType} [addressType]
 	 * @returns {Result<{ addressDelta: number; changeAddressDelta: number }>}
 	 */
-	private getGapLimit({
+	public getGapLimit({
 		addressType
 	}: {
 		addressType?: EAddressType;
@@ -1465,8 +1506,6 @@ export class Wallet {
 
 			return ok({ addressDelta, changeAddressDelta });
 		} catch (e) {
-			console.log(e);
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -1487,11 +1526,11 @@ export class Wallet {
 		}
 		const utxos = getUtxosRes.value.utxos;
 		const balance = getUtxosRes.value.balance;
-		this.data.utxos = utxos;
-		this.data.balance = balance;
+		this._data.utxos = utxos;
+		this._data.balance = balance;
 		await Promise.all([
-			this.saveWalletData('utxos', this.data.utxos),
-			this.saveWalletData('balance', this.data.balance)
+			this.saveWalletData('utxos', this._data.utxos),
+			this.saveWalletData('balance', this._data.balance)
 		]);
 		return ok({ utxos, balance });
 	}
@@ -1512,17 +1551,16 @@ export class Wallet {
 	 * @param {IWalletData[K]} data
 	 * @returns {Promise<void>}
 	 */
-	private async saveWalletData<K extends keyof IWalletData>(
+	public async saveWalletData<K extends keyof IWalletData>(
 		key: TWalletDataKeys,
 		data: IWalletData[K]
 	): Promise<void> {
-		if (!this.setData) return;
+		if (!this._setData) return;
 		const walletDataKey = this.getWalletDataKey(key);
-		await this.setData(walletDataKey, data);
+		await this._setData(walletDataKey, data);
 	}
 
 	//TODO: Implement this as a way to better update and save state so we can consolidate this.data[key] updates.
-
 	// @ts-ignore
 	private async updateAndSaveWalletData(
 		key: TWalletDataKeys,
@@ -1531,11 +1569,11 @@ export class Wallet {
 	): Promise<void> {
 		if (addressType) {
 			this.data[key][addressType] = data;
-			await this.saveWalletData(key, this.data[key]);
+			await this.saveWalletData(key, this._data[key]);
 		} else {
 			// @ts-ignore
 			this.data[key] = data;
-			await this.saveWalletData(key, this.data[key]);
+			await this.saveWalletData(key, this._data[key]);
 		}
 	}
 
@@ -1545,7 +1583,7 @@ export class Wallet {
 	 * @param {boolean} [replaceStoredTransactions] Setting this to true will set scanAllAddresses to true as well.
 	 * @returns {Promise<Result<string | undefined>>}
 	 */
-	private async updateTransactions({
+	public async updateTransactions({
 		scanAllAddresses = false,
 		replaceStoredTransactions = false
 	}: {
@@ -1589,8 +1627,8 @@ export class Wallet {
 
 		if (replaceStoredTransactions) {
 			// No need to check the existing txs since we're replacing them. Update with the returned formatTransactionsResponse.
-			this.data.transactions = transactions;
-			await this.saveWalletData('transactions', this.data.transactions);
+			this._data.transactions = transactions;
+			await this.saveWalletData('transactions', this._data.transactions);
 			return ok(undefined);
 		}
 
@@ -1630,11 +1668,11 @@ export class Wallet {
 			return ok(undefined);
 		}
 
-		this.data.transactions = {
+		this._data.transactions = {
 			...this.data.transactions,
 			...formattedTransactions
 		};
-		await this.saveWalletData('transactions', this.data.transactions);
+		await this.saveWalletData('transactions', this._data.transactions);
 		return ok(notificationTxid);
 	}
 
@@ -1666,18 +1704,15 @@ export class Wallet {
 					txIds: ghostTxs
 				});
 			}
-			this.data.unconfirmedTransactions = unconfirmedTxs;
+			this._data.unconfirmedTransactions = unconfirmedTxs;
 			await Promise.all([
 				this.saveWalletData(
 					'unconfirmedTransactions',
-
-					// @ts-ignore
-					this.data.unconfirmedTransactions
+					this._data.unconfirmedTransactions
 				)
 			]);
 			return ok('Successfully updated unconfirmed transactions.');
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -1689,7 +1724,7 @@ export class Wallet {
 	 * 3. Transactions that have been removed from the mempool. (ghostTxs)
 	 * @private
 	 * @async
-	 * @returns {Promise<Result<TProcessUnconfirmedTransactions>>
+	 * @returns {Promise<Result<TProcessUnconfirmedTransactions>>}
 	 */
 	private async processUnconfirmedTransactions(): Promise<
 		Result<TProcessUnconfirmedTransactions>
@@ -1753,7 +1788,6 @@ export class Wallet {
 				ghostTxs
 			});
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -1804,8 +1838,8 @@ export class Wallet {
 		txIds: string[];
 	}): Promise<Result<string>> {
 		try {
-			const transactions = this.data.transactions;
-			const unconfirmedTransactions = this.data.unconfirmedTransactions;
+			const transactions = this._data.transactions;
+			const unconfirmedTransactions = this._data.unconfirmedTransactions;
 
 			txIds.forEach((txId) => {
 				if (txId in transactions) {
@@ -1827,7 +1861,6 @@ export class Wallet {
 			});
 			return ok('Successfully deleted transactions.');
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -1870,11 +1903,11 @@ export class Wallet {
 	 * @returns {Promise<string>}
 	 */
 	private async clearUtxos(): Promise<string> {
-		this.data.balance = 0;
-		this.data.utxos = [];
+		this._data.balance = 0;
+		this._data.utxos = [];
 		await Promise.all([
-			this.saveWalletData('balance', this.data.balance),
-			this.saveWalletData('utxos', this.data.utxos)
+			this.saveWalletData('balance', this._data.balance),
+			this.saveWalletData('utxos', this._data.utxos)
 		]);
 		return "Successfully cleared UTXO's.";
 	}
@@ -1884,10 +1917,9 @@ export class Wallet {
 	 * @private
 	 * @returns {string}
 	 */
-	// @ts-ignore
 	private async clearTransactions(): Promise<string> {
-		this.data.transactions = getDefaultWalletData().transactions;
-		await this.saveWalletData('transactions', this.data.transactions);
+		this._data.transactions = getDefaultWalletData().transactions;
+		await this.saveWalletData('transactions', this._data.transactions);
 		return 'Successfully reset transactions.';
 	}
 
@@ -1898,11 +1930,11 @@ export class Wallet {
 	 * @returns {Promise<string>}
 	 */
 	private async clearAddresses(): Promise<string> {
-		this.data.addresses = getAddressTypeContent<IAddresses>({});
-		this.data.changeAddresses = getAddressTypeContent<IAddresses>({});
+		this._data.addresses = getAddressTypeContent<IAddresses>({});
+		this._data.changeAddresses = getAddressTypeContent<IAddresses>({});
 		await Promise.all([
-			this.saveWalletData('addresses', this.data.addresses),
-			this.saveWalletData('changeAddresses', this.data.changeAddresses)
+			this.saveWalletData('addresses', this._data.addresses),
+			this.saveWalletData('changeAddresses', this._data.changeAddresses)
 		]);
 		return 'Successfully reset transactions.';
 	}
@@ -1916,8 +1948,8 @@ export class Wallet {
 	 */
 	private async updateTransactionHeights(txs: IUtxo[]): Promise<string> {
 		let needsSave = false;
+		const transactions = this._data.transactions;
 		txs.forEach((tx) => {
-			const transactions = this.data.transactions;
 			const txId = tx.tx_hash;
 			if (txId in transactions) {
 				transactions[txId].confirmTimestamp = 0;
@@ -1925,8 +1957,7 @@ export class Wallet {
 			}
 		});
 		if (needsSave) {
-			// @ts-ignore
-			await this.saveWalletData('transactions', this.data.transactions);
+			await this.saveWalletData('transactions', this._data.transactions);
 		}
 		return 'Successfully updated reorg transactions.';
 	}
@@ -1958,19 +1989,18 @@ export class Wallet {
 				return ok('No unconfirmed transactions found.');
 			}
 
-			this.data.unconfirmedTransactions = {
+			this._data.unconfirmedTransactions = {
 				...this.data.unconfirmedTransactions,
 				...unconfirmedTransactions
 			};
 
 			await this.saveWalletData(
 				'unconfirmedTransactions',
-				this.data.unconfirmedTransactions
+				this._data.unconfirmedTransactions
 			);
 			return ok('Successfully updated unconfirmed transactions.');
 		} catch (e) {
 			console.log(e);
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -2202,7 +2232,6 @@ export class Wallet {
 			}
 			return ok(inputData);
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -2229,16 +2258,18 @@ export class Wallet {
 	 * @returns {boolean}
 	 */
 	public validateAddress(address: string): boolean {
-		return validateAddress({ address, network: this.network }).isValid;
+		return validateAddress({ address, network: this._network }).isValid;
 	}
 
 	/**
 	 * Retrieves the next available change address data.
 	 * @async
+	 * @param {EAddressType} [addressType]
 	 * @returns {Promise<Result<IAddress>>}
 	 */
-	public async getChangeAddress(): Promise<Result<IAddress>> {
-		const addressType = this.addressType;
+	public async getChangeAddress(
+		addressType = this.addressType
+	): Promise<Result<IAddress>> {
 		const currentWallet = this.data;
 
 		const changeAddressIndexContent =
@@ -2267,11 +2298,11 @@ export class Wallet {
 	/**
 	 * Returns the current fee estimates for the provided network.
 	 * @async
-	 * @returns {Promise<IFees>}
+	 * @returns {Promise<IOnchainFees>}
 	 */
-	public async getFeeEstimates(): Promise<IFees> {
+	public async getFeeEstimates(): Promise<IOnchainFees> {
 		try {
-			const network = this.network;
+			const network = this._network;
 
 			if (network === EAvailableNetworks.bitcoinRegtest) {
 				return {
@@ -2306,29 +2337,62 @@ export class Wallet {
 	 * @param {ISetupTransaction} params
 	 * @returns {TSetupTransactionResponse}
 	 */
-	public async setupTransaction(
+	public setupTransaction(
 		params: ISetupTransaction = {}
 	): TSetupTransactionResponse {
-		return await this.transaction.setupTransaction(params);
+		return this.transaction.setupTransaction(params);
+	}
+
+	/**
+	 * Returns a fee object for the current transaction.
+	 * @param {number} satsPerByte
+	 * @param {string} message
+	 * @param {Partial<ISendTransaction>} transaction
+	 * @param {boolean} fundingLightning
+	 * @returns {Result<TGetTotalFeeObj>}
+	 */
+	public getFeeInfo({
+		satsPerByte = this.feeEstimates.normal,
+		message = '',
+		transaction,
+		fundingLightning = false
+	}: {
+		satsPerByte?: number;
+		message?: string;
+		transaction?: Partial<ISendTransaction>;
+		fundingLightning?: boolean;
+	} = {}): Result<TGetTotalFeeObj> {
+		return this.transaction.getTotalFeeObj({
+			satsPerByte,
+			message,
+			transaction,
+			fundingLightning
+		});
 	}
 
 	/**
 	 * Sets up and creates a transaction to multiple outputs.
 	 * @param {ISendTx[]} txs
-	 * @param {number} satsPerByte
-	 * @param {boolean} rbf
+	 * @param {number} [satsPerByte]
+	 * @param {boolean} [rbf]
+	 * @param {false} [broadcast]
+	 * @param {boolean} [shuffleOutputs]
 	 * @returns {Promise<Result<string>>}
 	 */
 	public async sendMany({
 		txs = [],
 		satsPerByte = this.feeEstimates.normal,
-		rbf
+		rbf,
+		broadcast = true,
+		shuffleOutputs = true
 	}: {
 		txs: ISendTx[];
 		satsPerByte?: number;
 		rbf?: boolean;
+		broadcast?: boolean;
+		shuffleOutputs?: boolean;
 	}): Promise<Result<string>> {
-		const setupTransactionRes = await this.transaction.setupTransaction({
+		const setupTransactionRes = this.transaction.setupTransaction({
 			rbf
 		});
 		if (setupTransactionRes.isErr()) {
@@ -2337,26 +2401,42 @@ export class Wallet {
 
 		if (!Array.isArray(txs)) txs = [txs];
 
-		const shuffledTxs = shuffleArray(txs);
+		const shuffledTxs = shuffleOutputs ? shuffleArray(txs) : txs;
 		let index = 0;
 		for (const tx of shuffledTxs) {
-			const updateSendTransactionRes =
-				await this.transaction.updateSendTransaction({
-					transaction: {
-						label: tx.message,
-						outputs: [{ address: tx.address, value: tx.amount, index }]
-					}
-				});
+			const updateSendTransactionRes = this.transaction.updateSendTransaction({
+				transaction: {
+					label: tx.message,
+					outputs: [{ address: tx.address, value: tx.amount, index }]
+				}
+			});
 			if (updateSendTransactionRes.isErr())
 				err(updateSendTransactionRes.error.message);
 			index++;
 		}
 
-		await this.transaction.updateFee({ satsPerByte });
+		const updateFeeRes = this.transaction.updateFee({ satsPerByte });
+		if (updateFeeRes.isErr()) {
+			if (updateFeeRes.error.message.includes('Unable to increase the fee')) {
+				const feeInfo = this.getFeeInfo({ satsPerByte: 1 });
+				if (feeInfo.isOk()) {
+					return err(
+						`Fee is too high. The maximum fee for this transaction is ${feeInfo.value.maxSatPerByte}`
+					);
+				}
+			} else {
+				return err(updateFeeRes.error.message);
+			}
+		}
 
-		const createRes = await this.transaction.createTransaction();
+		const createRes = await this.transaction.createTransaction({
+			shuffleOutputs
+		});
 		if (createRes.isErr()) return err(createRes.error.message);
 		const { hex } = createRes.value;
+		if (!broadcast) {
+			return ok(hex);
+		}
 		const broadcastRes = await this.electrum.broadcastTransaction({
 			rawTx: hex
 		});
@@ -2369,9 +2449,11 @@ export class Wallet {
 	 * @async
 	 * @param {string} address
 	 * @param {number} amount
-	 * @param {string} message
-	 * @param {number} satsPerByte
-	 * @param {boolean} rbf
+	 * @param {string} [message]
+	 * @param {number} [satsPerByte]
+	 * @param {boolean} [rbf]
+	 * @param {boolean} [broadcast]
+	 * @param {boolean} [shuffleOutputs]
 	 * @returns {Promise<Result<string>>}
 	 */
 	public async send({
@@ -2379,18 +2461,24 @@ export class Wallet {
 		amount,
 		message = '',
 		satsPerByte = this.feeEstimates.normal,
-		rbf
+		rbf,
+		broadcast = true,
+		shuffleOutputs = true
 	}: {
 		address: string;
-		amount: number;
+		amount: number; // sats
 		message?: string;
 		satsPerByte?: number;
 		rbf?: boolean;
+		broadcast?: boolean;
+		shuffleOutputs?: boolean;
 	}): Promise<Result<string>> {
 		return await this.sendMany({
 			txs: [{ address, amount, message }],
 			satsPerByte,
-			rbf
+			rbf,
+			broadcast,
+			shuffleOutputs
 		});
 	}
 
@@ -2440,9 +2528,9 @@ export class Wallet {
 					addressType
 				});
 				if (address.isOk()) {
-					this.data.addressIndex[addressType] =
+					this._data.addressIndex[addressType] =
 						address.value.addresses[Object.keys(address.value.addresses)[0]];
-					await this.saveWalletData('addressIndex', this.data.addressIndex);
+					await this.saveWalletData('addressIndex', this._data.addressIndex);
 				}
 			}
 			if (changeAddressIndex?.index < 0) {
@@ -2454,13 +2542,13 @@ export class Wallet {
 					addressType
 				});
 				if (changeAddress.isOk()) {
-					this.data.changeAddressIndex[addressType] =
+					this._data.changeAddressIndex[addressType] =
 						changeAddress.value.changeAddresses[
 							Object.keys(changeAddress.value.changeAddresses)[0]
 						];
 					await this.saveWalletData(
 						'changeAddressIndex',
-						this.data.changeAddressIndex
+						this._data.changeAddressIndex
 					);
 				}
 			}
@@ -2535,7 +2623,6 @@ export class Wallet {
 			}
 			return err('No receive address available.');
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	};
@@ -2632,7 +2719,7 @@ export class Wallet {
 				if (!address) {
 					continue;
 				}
-				scriptHash = getScriptHash({ address, network: this.network });
+				scriptHash = getScriptHash({ address, network: this._network });
 				// Check that we are in possession of this scriptHash.
 				if (!(scriptHash in allAddresses)) {
 					// This output did not come from us.
@@ -2669,14 +2756,14 @@ export class Wallet {
 					if (vout.scriptPubKey.asm.includes('OP_RETURN')) {
 						message = decodeOpReturnMessage(vout.scriptPubKey.asm)[0] || '';
 					}
-				} catch (e) {}
+				} catch {}
 			}
 			if (!address) {
 				continue;
 			}
 			const changeAddressScriptHash = await getScriptHash({
 				address,
-				network: this.network
+				network: this._network
 			});
 
 			// If the address scripthash matches one of our address scripthashes, add it accordingly. Otherwise, add it as another output.
@@ -2734,10 +2821,10 @@ export class Wallet {
 	}: {
 		txid: string;
 	}): Promise<void> {
-		if (txid in this.data.transactions) {
-			delete this.data.transactions[txid];
+		if (txid in this._data.transactions) {
+			delete this._data.transactions[txid];
 		}
-		await this.saveWalletData('transactions', this.data.transactions);
+		await this.saveWalletData('transactions', this._data.transactions);
 	}
 
 	/**
@@ -2745,10 +2832,10 @@ export class Wallet {
 	 * @param {string} txid
 	 */
 	async addGhostTransaction({ txid }: { txid: string }): Promise<void> {
-		if (txid in this.data.transactions) {
-			this.data.transactions[txid].exists = false;
+		if (txid in this._data.transactions) {
+			this._data.transactions[txid].exists = false;
 		}
-		await this.saveWalletData('transactions', this.data.transactions);
+		await this.saveWalletData('transactions', this._data.transactions);
 	}
 
 	/**
@@ -2786,17 +2873,16 @@ export class Wallet {
 			const boostedTransaction: IBoostedTransactions = {
 				[oldTxId]: boostedTx
 			};
-			this.data.boostedTransactions = {
+			this._data.boostedTransactions = {
 				...this.data.boostedTransactions,
 				...boostedTransaction
 			};
 			await this.saveWalletData(
 				'boostedTransactions',
-				this.data.boostedTransactions
+				this._data.boostedTransactions
 			);
 			return ok(boostedTx);
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -2837,9 +2923,7 @@ export class Wallet {
 	 * @returns {Promise<Result<string>>}
 	 */
 	async resetSendTransaction(): Promise<Result<string>> {
-		this.transaction.data = getDefaultSendTransaction();
-		await this.saveWalletData('transaction', this.transaction.data);
-		return ok('Transaction reseted');
+		return await this.transaction.resetSendTransaction();
 	}
 
 	/**
@@ -2857,5 +2941,137 @@ export class Wallet {
 			cpfp.push(tx); // All unconfirmed transactions can be cpfp'd.
 		});
 		return { cpfp, rbf };
+	}
+
+	/**
+	 * Creates a BIP32Interface from the selected wallet's mnemonic and passphrase
+	 * @returns {Promise<Result<BIP32Interface>>}
+	 */
+	getBip32Interface = async (): Promise<Result<BIP32Interface>> => {
+		const network = networks[this._network];
+		const seed = await bip39.mnemonicToSeed(this._mnemonic, this._passphrase);
+		const root = bip32.fromSeed(seed, network);
+		return ok(root);
+	};
+
+	/**
+	 * Adds a specified input to the current transaction.
+	 * @param {IUtxo} input
+	 * @returns {Result<IUtxo[]>}
+	 */
+	public addTxInput({ input }: { input: IUtxo }): Result<IUtxo[]> {
+		try {
+			const txData = this.transaction.data;
+			const inputs = txData?.inputs ?? [];
+			const newInputs = [...inputs, input];
+			this.transaction.updateSendTransaction({
+				transaction: {
+					inputs: newInputs
+				}
+			});
+			return ok(newInputs);
+		} catch (e) {
+			console.log(e);
+			return err(e);
+		}
+	}
+
+	/**
+	 * Removes the specified input from the current transaction.
+	 * @param {IUtxo} input
+	 * @returns {Result<IUtxo[]>}
+	 */
+	public removeTxInput({ input }: { input: IUtxo }): Result<IUtxo[]> {
+		try {
+			const txData = this.transaction.data;
+			const txInputs = txData?.inputs ?? [];
+			const newInputs = txInputs.filter((txInput) => {
+				if (!objectsMatch(input, txInput)) {
+					return txInput;
+				}
+			});
+			this.transaction.updateSendTransaction({
+				transaction: {
+					inputs: newInputs
+				}
+			});
+			return ok(newInputs);
+		} catch (e) {
+			console.log(e);
+			return err(e);
+		}
+	}
+
+	/**
+	 * Adds a specified tag to the current transaction.
+	 * @param {string} tag
+	 * @returns {Result<string>}
+	 */
+	addTxTag({ tag }: { tag: string }): Result<string> {
+		try {
+			const txData = this.transaction.data;
+			let tags = [...txData.tags, tag];
+			tags = [...new Set(tags)]; // remove duplicates
+			this.transaction.updateSendTransaction({
+				transaction: {
+					...txData,
+					tags
+				}
+			});
+			return ok('Tag successfully added');
+		} catch (e) {
+			console.log(e);
+			return err(e);
+		}
+	}
+
+	/**
+	 * Removes a specified tag to the current transaction.
+	 * @param {string} tag
+	 * @returns {Result<string>}
+	 */
+	removeTxTag({ tag }: { tag: string }): Result<string> {
+		try {
+			const txData = this.transaction.data;
+			const tags = txData.tags;
+			const newTags = tags.filter((t) => t !== tag);
+
+			this.transaction.updateSendTransaction({
+				transaction: {
+					...txData,
+					tags: newTags
+				}
+			});
+			return ok('Tag successfully added');
+		} catch (e) {
+			console.log(e);
+			return err(e);
+		}
+	}
+
+	/**
+	 * Updates the fee rate for the current transaction to the preferred value if none set.
+	 * @returns {Result<string>}
+	 */
+	setupFeeForOnChainTransaction(): Result<string> {
+		try {
+			const transactionData = this.transaction.data;
+			let satsPerByte = transactionData?.satsPerByte ?? 1;
+			satsPerByte =
+				this.selectedFeeId === EFeeId.none
+					? satsPerByte
+					: this.feeEstimates[this.selectedFeeId];
+			const res = this.transaction.updateFee({
+				satsPerByte
+			});
+			if (res.isErr()) {
+				console.log(res.error.message);
+				return err(res.error.message);
+			}
+
+			return ok('Fee has been changed successfully');
+		} catch (e) {
+			return err(e);
+		}
 	}
 }

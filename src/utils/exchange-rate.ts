@@ -65,8 +65,6 @@ export const getExchangeRates = async (): Promise<Result<IExchangeRates>> => {
 
 		return ok(rates);
 	} catch (e) {
-		console.error(e);
-		// @ts-ignore
 		return err(e);
 	}
 };

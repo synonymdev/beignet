@@ -4,7 +4,7 @@ import {
 	IAddress,
 	IAddresses,
 	TAddressTypeContent,
-	IConnectToElectrumRes,
+	TConnectToElectrumRes,
 	IElectrumGetAddressBalanceRes,
 	IGetAddressHistoryResponse,
 	IGetAddressScriptHashesHistoryResponse,
@@ -25,14 +25,17 @@ import {
 	TSubscribedReceive,
 	TTxResponse,
 	TTxResult,
-	TUnspentAddressScriptHashData
+	TUnspentAddressScriptHashData,
+	IPeerData,
+	TGetAddressHistory,
+	TOnMessage
 } from '../types';
 import * as electrum from 'rn-electrum-client/helpers';
-import { err, ok, Result } from '../utils';
+import { err, getAddressFromScriptPubKey, ok, Result } from '../utils';
 import { Wallet } from '../wallet';
 import { CHUNK_LIMIT, GAP_LIMIT } from '../wallet/constants';
 import { getScriptHash, objectKeys } from '../utils';
-import { addressTypes } from '../shapes';
+import { addressTypes, POLLING_INTERVAL } from '../shapes';
 import { Block } from 'bitcoinjs-lib';
 import { onMessageKeys } from '../shapes';
 import { Server } from 'net';
@@ -47,13 +50,17 @@ try {
 }
 
 export class Electrum {
-	private wallet: Wallet;
+	private readonly _wallet: Wallet;
+	private onMessage: TOnMessage;
+	private latestConnectionState: boolean | null = null;
+	private connectionPollingInterval: NodeJS.Timeout | null;
 
 	public servers?: TServer | TServer[];
-	public network: EAvailableNetworks;
-	public electrumNetwork: TElectrumNetworks;
+	public readonly network: EAvailableNetworks;
+	public readonly electrumNetwork: TElectrumNetworks;
 	public connectedToElectrum: boolean;
 	public onReceive?: (data: unknown) => void;
+	public onElectrumConnectionChange?: (isConnected: boolean) => void;
 	constructor({
 		wallet,
 		servers,
@@ -69,7 +76,8 @@ export class Electrum {
 		tls?: TLSSocket;
 		net?: Server;
 	}) {
-		this.wallet = wallet;
+		this._wallet = wallet;
+		this.onMessage = wallet?.onMessage ?? ((): null => null);
 		this.servers = servers ?? [];
 		this.network = network;
 		this.electrumNetwork = this.getElectrumNetwork(network);
@@ -82,32 +90,44 @@ export class Electrum {
 				'TLS and NET modules are not available and were not passed as instances'
 			);
 		}
+		this.connectionPollingInterval = setInterval(
+			(): Promise<void> => this.checkConnection(),
+			POLLING_INTERVAL
+		);
+	}
+
+	public get wallet(): Wallet {
+		return this._wallet;
 	}
 
 	async connectToElectrum({
-		network,
+		network = this.network,
 		servers
 	}: {
-		network: EAvailableNetworks;
+		network?: EAvailableNetworks;
 		servers?: TServer | TServer[];
-	}): Promise<IConnectToElectrumRes> {
-		this.servers = servers
+	}): Promise<Result<TConnectToElectrumRes>> {
+		let customPeers = servers
 			? Array.isArray(servers)
 				? servers
 				: [servers]
 			: [];
-		const customPeers = this.servers;
+		// @ts-ignore
+		customPeers = customPeers.length ? customPeers : this?.servers ?? [];
 		const electrumNetwork = this.getElectrumNetwork(network);
+		if (electrumNetwork === 'bitcoinRegtest' && !customPeers.length) {
+			return err('Regtest requires that you pre-specify a server.');
+		}
 		const startResponse = await electrum.start({
 			network: electrumNetwork,
 			tls,
 			net,
 			customPeers
 		});
-		if (startResponse.error) return { error: true };
+		if (startResponse.error) return err(startResponse.error);
 		await this.subscribeToHeader();
-		this.connectedToElectrum = true;
-		return { error: false };
+		this.publishConnectionChange(true);
+		return ok('Connected to Electrum server.');
 	}
 
 	async isConnected(): Promise<boolean> {
@@ -138,6 +158,25 @@ export class Electrum {
 		}
 		const { confirmed, unconfirmed } = response.data;
 		return { error: response.error, confirmed, unconfirmed };
+	}
+
+	async getAddressScriptHashBalances(scriptHashes: string[]): Promise<any> {
+		return await electrum.getAddressScriptHashBalances({
+			scriptHashes,
+			network: this.electrumNetwork
+		});
+	}
+
+	/**
+	 * Returns currently connected peer.
+	 * @returns {Promise<Result<IPeerData>>}
+	 */
+	async getConnectedPeer(): Promise<Result<IPeerData>> {
+		const response = await electrum.getConnectedPeer(this.electrumNetwork);
+		if (response?.host && response?.port && response?.protocol) {
+			return ok(response);
+		}
+		return err('No peer available.');
 	}
 
 	/**
@@ -195,7 +234,6 @@ export class Electrum {
 			});
 			return ok({ utxos, balance });
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -219,7 +257,7 @@ export class Electrum {
 					network: this.network,
 					servers: this.servers
 				});
-			const currentWallet = this.wallet.data;
+			const currentWallet = this._wallet.data;
 			const currentAddresses: TAddressTypeContent<IAddresses> =
 				currentWallet.addresses;
 			const currentChangeAddresses: TAddressTypeContent<IAddresses> =
@@ -308,9 +346,50 @@ export class Electrum {
 			);
 			return ok(history);
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
+	}
+
+	/**
+	 * Used to retrieve scriptPubkey history for LDK.
+	 * @param {string} scriptPubkey
+	 * @returns {Promise<TGetAddressHistory[]>}
+	 */
+	async getScriptPubKeyHistory(
+		scriptPubkey: string
+	): Promise<TGetAddressHistory[]> {
+		const history: { txid: string; height: number }[] = [];
+		const address = getAddressFromScriptPubKey(scriptPubkey, this.network);
+		if (!address) {
+			return history;
+		}
+		const scriptHash = getScriptHash({
+			network: this.network,
+			address
+		});
+		if (!scriptHash) {
+			return history;
+		}
+		const response = await electrum.getAddressScriptHashesHistory({
+			scriptHashes: [scriptHash],
+			network: this.electrumNetwork
+		});
+		if (response.error) {
+			return history;
+		}
+		await Promise.all(
+			response.data.map(({ result }): void => {
+				if (result && result?.length > 0) {
+					result.map((item) => {
+						history.push({
+							txid: item?.tx_hash ?? '',
+							height: item?.height ?? 0
+						});
+					});
+				}
+			})
+		);
+		return history;
 	}
 
 	/**
@@ -329,7 +408,7 @@ export class Electrum {
 					network: this.network,
 					servers: this.servers
 				});
-			const currentWallet = this.wallet.data;
+			const currentWallet = this._wallet.data;
 
 			const addressTypeKeys = Object.values(EAddressType);
 			let addresses = {} as IAddresses;
@@ -385,7 +464,6 @@ export class Electrum {
 
 			return this.listUnspentAddressScriptHashes({ addresses: data });
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -438,7 +516,6 @@ export class Electrum {
 				data: result
 			});
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	}
@@ -538,9 +615,32 @@ export class Electrum {
 				return err(response);
 			}
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
+	}
+
+	/**
+	 * Returns the merkle branch to a confirmed transaction given its hash and height.
+	 * @param {string} tx_hash
+	 * @param {number} height
+	 * @returns {Promise<{ merkle: string[]; block_height: number; pos: number }>}
+	 */
+	async getTransactionMerkle({
+		tx_hash,
+		height
+	}: {
+		tx_hash: string;
+		height: number;
+	}): Promise<{
+		merkle: string[];
+		block_height: number;
+		pos: number;
+	}> {
+		return await electrum.getTransactionMerkle({
+			tx_hash,
+			height,
+			network: this.electrumNetwork
+		});
 	}
 
 	/**
@@ -554,10 +654,10 @@ export class Electrum {
 				onReceive: (data: INewBlock[]) => {
 					const hex = data[0].hex;
 					const hash = this.getBlockHashFromHex({ blockHex: hex });
-					this.wallet.data.header = { ...data[0], hash };
+					this._wallet.data.header = { ...data[0], hash };
+					this._wallet.saveWalletData('header', this._wallet.data.header);
 					this.onReceive?.(data);
-					if (this.wallet?.onMessage)
-						this.wallet.onMessage(onMessageKeys.newBlock, data[0]);
+					this.onMessage(onMessageKeys.newBlock, data[0]);
 				}
 			});
 		if (subscribeResponse.error) {
@@ -572,7 +672,7 @@ export class Electrum {
 		const hex = subscribeResponse.data.hex;
 		const hash = this.getBlockHashFromHex({ blockHex: hex });
 		const header = { ...subscribeResponse.data, hash };
-		this.wallet.data.header = header;
+		this._wallet.data.header = header;
 		return ok(header);
 	}
 
@@ -589,7 +689,7 @@ export class Electrum {
 		scriptHashes?: string[];
 		onReceive?: (data: TSubscribedReceive) => void;
 	} = {}): Promise<Result<string>> {
-		const currentWallet = this.wallet.data;
+		const currentWallet = this._wallet.data;
 		const addressTypeKeys = objectKeys(addressTypes);
 		// Gather the receiving address scripthash for each address type if no scripthashes were provided.
 		if (!scriptHashes.length) {
@@ -623,7 +723,7 @@ export class Electrum {
 				onReceive: async (data: TSubscribedReceive): Promise<void> => {
 					onReceive?.(data);
 					this.onReceiveAddress(data);
-					this.wallet.refreshWallet({});
+					this._wallet.refreshWallet({});
 				}
 			});
 			if (response.error) {
@@ -634,8 +734,6 @@ export class Electrum {
 		try {
 			await Promise.all(promises);
 		} catch (e) {
-			console.log(e);
-			// @ts-ignore
 			return err(e);
 		}
 
@@ -643,11 +741,11 @@ export class Electrum {
 	}
 
 	private async onReceiveAddress(data): Promise<void> {
-		if (!this.wallet?.onMessage) return;
+		if (!this._wallet?.onMessage) return;
 		const receivedAt = data[0];
-		const balance = await this.wallet.getScriptHashBalance(receivedAt);
+		const balance = await this._wallet.getScriptHashBalance(receivedAt);
 		if (balance.isErr()) return;
-		const address = this.wallet.getAddressFromScriptHash(receivedAt);
+		const address = this._wallet.getAddressFromScriptHash(receivedAt);
 		if (!address) {
 			console.log('Unable to run getAddressFromScriptHash');
 			return;
@@ -663,7 +761,7 @@ export class Electrum {
 		let message: TMessageKeys = onMessageKeys.transactionConfirmed;
 		const lastTx = history.value[history.value.length - 1];
 		const unconfirmedTransactions: string[] = Object.values(
-			this.wallet.data.unconfirmedTransactions
+			this._wallet.data.unconfirmedTransactions
 		).map((tx) => tx.txid);
 		if (!unconfirmedTransactions.includes(lastTx.tx_hash))
 			message = onMessageKeys.transactionReceived;
@@ -674,7 +772,7 @@ export class Electrum {
 				height: tx.height
 			};
 		});
-		this.wallet.onMessage(message, {
+		this._wallet.onMessage(message, {
 			balance: balance.value,
 			address: address,
 			txs
@@ -693,7 +791,7 @@ export class Electrum {
 		 * This prevents updating the wallet prior to the Electrum server detecting the new tx in the mempool.
 		 */
 		if (subscribeToOutputAddress) {
-			const transaction = this.wallet.transaction.data;
+			const transaction = this._wallet.transaction.data;
 			for (const o of transaction.outputs) {
 				const address = o?.address;
 				if (address) {
@@ -716,5 +814,62 @@ export class Electrum {
 			return err(broadcastResponse.data);
 		}
 		return ok(broadcastResponse.data);
+	}
+
+	/**
+	 * Attempts to check the current Electrum connection.
+	 * @private
+	 * @returns {Promise<void>}
+	 */
+	private async checkConnection(): Promise<void> {
+		try {
+			const { error } = await electrum.pingServer();
+
+			if (error) {
+				console.log('Connection to Electrum Server lost, reconnecting...');
+				const response = await this.connectToElectrum({});
+
+				if (response.isErr()) {
+					this.publishConnectionChange(false);
+				}
+			} else {
+				this.publishConnectionChange(true);
+			}
+		} catch (e) {
+			console.error(e);
+			this.publishConnectionChange(false);
+		}
+	}
+
+	private publishConnectionChange(isConnected: boolean): void {
+		if (this.latestConnectionState === isConnected) {
+			return;
+		}
+
+		if (!isConnected || this.latestConnectionState != null) {
+			this.onMessage('onElectrumConnectionChange', isConnected);
+		}
+		this.connectedToElectrum = isConnected;
+		this.latestConnectionState = isConnected;
+	}
+
+	public async disconnect(): Promise<void> {
+		this.stopConnectionPolling();
+		await electrum.stop();
+	}
+
+	public startConnectionPolling(): void {
+		if (this.connectionPollingInterval) return;
+		this.connectionPollingInterval = setInterval(
+			(): Promise<void> => this.checkConnection(),
+			POLLING_INTERVAL
+		);
+	}
+
+	public stopConnectionPolling(): void {
+		if (this.connectionPollingInterval) {
+			clearInterval(this.connectionPollingInterval);
+			this.connectionPollingInterval = null;
+		}
 	}
 }

@@ -8,9 +8,7 @@ import {
 
 export type TElectrumNetworks = 'bitcoin' | 'bitcoinTestnet' | 'bitcoinRegtest';
 
-export interface IConnectToElectrumRes {
-	error: boolean;
-}
+export type TConnectToElectrumRes = string;
 
 export interface IElectrumGetAddressBalanceRes extends IGetAddressBalanceRes {
 	error: boolean;
@@ -121,6 +119,12 @@ export interface IFormattedPeerData {
 	tcp: string | number;
 }
 
+export interface IPeerData {
+	host: string;
+	port: string;
+	protocol: TProtocol;
+}
+
 export type ElectrumConnectionPubSub = {
 	publish: (isConnected: boolean) => void;
 	subscribe: (
@@ -131,3 +135,5 @@ export type ElectrumConnectionPubSub = {
 export type ElectrumConnectionSubscription = {
 	remove(): void;
 };
+
+export type TGetAddressHistory = { txid: string; height: number };

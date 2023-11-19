@@ -1,9 +1,9 @@
 import {
 	IAddresses,
 	TAddressTypeContent,
-	IFees,
 	IHeader,
-	TAddressTypes
+	TAddressTypes,
+	IOnchainFees
 } from '../types';
 import cloneDeep from 'lodash.clonedeep';
 import {
@@ -57,7 +57,6 @@ export const defaultSendTransaction: ISendTransaction = {
 	fiatAmount: 0,
 	fee: 512,
 	satsPerByte: 2,
-	selectedFeeId: EFeeId.slow,
 	message: '',
 	label: '',
 	rbf: false,
@@ -111,10 +110,10 @@ export const defaultWalletData: Readonly<IWalletData> = {
 	boostedTransactions: {},
 	transaction: getDefaultSendTransaction(),
 	balance: 0,
-	exchangeRates: {}
+	selectedFeeId: EFeeId.normal
 };
 
-export const defaultFeesShape: IFees = {
+export const defaultFeesShape: IOnchainFees = {
 	//On-chain fees in sats/vbyte
 	fast: 4, // 10-20 mins
 	normal: 3, // 20-60 mins

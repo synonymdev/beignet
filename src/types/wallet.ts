@@ -121,7 +121,6 @@ export interface ISendTransaction {
 	fiatAmount: number;
 	fee: number; //Total fee in sats
 	satsPerByte: number;
-	selectedFeeId: EFeeId;
 	message: string; // OP_RETURN data for a given transaction.
 	label: string; // User set label for a given transaction.
 	rbf: boolean;
@@ -161,7 +160,7 @@ export interface IWalletData {
 	boostedTransactions: IBoostedTransactions;
 	transaction: ISendTransaction;
 	balance: number;
-	exchangeRates: IExchangeRates;
+	selectedFeeId: EFeeId;
 }
 
 export type TWalletDataKeys = keyof IWalletData;
@@ -176,6 +175,7 @@ export type TSetData = <K extends keyof IWalletData>(
 
 export interface IWallet {
 	mnemonic: string;
+	id?: string;
 	name?: string;
 	passphrase?: string;
 	network?: EAvailableNetworks;
@@ -419,7 +419,7 @@ export interface IGetFeeEstimatesResponse {
 }
 
 //On-chain fee estimates in sats/vbyte
-export interface IFees {
+export interface IOnchainFees {
 	fast: number; // 10-20 mins
 	normal: number; // 20-60 mins
 	slow: number; // 1-2 hrs
@@ -434,6 +434,7 @@ export type TMessageDataMap = {
 	transactionSent: TTransactionMessage;
 	reorg: IUtxo[];
 	rbf: string[];
+	onElectrumConnectionChange: boolean;
 };
 
 export type TTransactionMessage = {
@@ -474,8 +475,8 @@ export type TAddressIndexInfo = {
 };
 
 export type TStorage = {
-	getData: TGetData;
-	setData: TSetData;
+	getData?: TGetData;
+	setData?: TSetData;
 };
 
 export interface IRbfData {

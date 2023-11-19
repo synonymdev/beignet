@@ -3,7 +3,8 @@ import {
 	IAddresses,
 	IOutput,
 	ISendTransaction,
-	IUtxo
+	IUtxo,
+	TGetTotalFeeObj
 } from '../types';
 import { getDefaultSendTransaction } from '../shapes';
 import { Wallet } from '../wallet';
@@ -24,34 +25,24 @@ import {
 	TSetupTransactionResponse
 } from '../types';
 import { networks, Psbt } from 'bitcoinjs-lib';
-import BIP32Factory, { BIP32Interface } from 'bip32';
-import * as bip39 from 'bip39';
+import { BIP32Interface } from 'bip32';
 import ecc from '@bitcoinerlab/secp256k1';
 import * as bitcoin from 'bitcoinjs-lib';
 import { getAddressInfo } from 'bitcoin-address-validation';
 
 bitcoin.initEccLib(ecc);
-const bip32 = BIP32Factory(ecc);
 
 export class Transaction {
-	public data: ISendTransaction;
-	public wallet: Wallet;
-	private mnemonic: string;
-	private passphrase: string;
+	private _data: ISendTransaction;
+	private readonly _wallet: Wallet;
 
-	constructor({
-		wallet,
-		mnemonic,
-		passphrase = ''
-	}: {
-		wallet: Wallet;
-		mnemonic: string;
-		passphrase?: string;
-	}) {
-		this.wallet = wallet;
-		this.mnemonic = mnemonic;
-		this.passphrase = passphrase;
-		this.data = getDefaultSendTransaction();
+	constructor({ wallet }: { wallet: Wallet }) {
+		this._wallet = wallet;
+		this._data = getDefaultSendTransaction();
+	}
+
+	public get data(): ISendTransaction {
+		return this._data;
 	}
 
 	/**
@@ -62,15 +53,15 @@ export class Transaction {
 	 * @param {boolean} [rbf]
 	 * @returns {Promise<Result<Partial<ISendTransaction>>>}
 	 */
-	public async setupTransaction({
+	public setupTransaction({
 		inputTxHashes,
 		utxos,
-		rbf = false
+		rbf = true
 	}: ISetupTransaction = {}): TSetupTransactionResponse {
 		try {
-			const addressType = this.wallet.addressType;
+			const addressType = this._wallet.addressType;
 
-			const currentWallet = this.wallet.data;
+			const currentWallet = this._wallet.data;
 
 			const transaction = currentWallet.transaction;
 
@@ -116,21 +107,22 @@ export class Transaction {
 			const changeAddressIndexContent =
 				currentWallet.changeAddressIndex[addressType];
 			// Set the current change address.
-			let changeAddress = changeAddressIndexContent.address;
+			const changeAddress = changeAddressIndexContent.address;
 
-			if (!changeAddress || changeAddressIndexContent.index < 0) {
-				// It's possible we haven't set the change address index yet. Generate one on the fly.
-				const generateAddressResponse = await this.wallet.generateAddresses({
-					addressAmount: 0,
-					changeAddressAmount: 1,
-					addressType
-				});
-				if (generateAddressResponse.isErr()) {
-					return err(generateAddressResponse.error.message);
-				}
-				changeAddress =
-					generateAddressResponse.value.changeAddresses[0].address;
-			}
+			// The following code is no longer needed in beignet, but keeping until 1:1 migration with Bitkit is complete.
+			// if (!changeAddress || changeAddressIndexContent.index < 0) {
+			// 	// It's possible we haven't set the change address index yet. Generate one on the fly.
+			// 	const generateAddressResponse = await this._wallet.generateAddresses({
+			// 		addressAmount: 0,
+			// 		changeAddressAmount: 1,
+			// 		addressType
+			// 	});
+			// 	if (generateAddressResponse.isErr()) {
+			// 		return err(generateAddressResponse.error.message);
+			// 	}
+			// 	changeAddress =
+			// 		generateAddressResponse.value.changeAddresses[0].address;
+			// }
 			if (!changeAddress) {
 				return err('Unable to successfully generate a change address.');
 			}
@@ -157,16 +149,25 @@ export class Transaction {
 				rbf
 			};
 
-			this.data = {
-				...this.data,
+			this._data = {
+				...this._data,
 				...payload
 			};
 
 			return ok(payload);
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
+	}
+
+	/**
+	 * This completely resets the send transaction state.
+	 * @returns {Promise<Result<string>>}
+	 */
+	async resetSendTransaction(): Promise<Result<string>> {
+		this._data = getDefaultSendTransaction();
+		await this._wallet.saveWalletData('transaction', this._data);
+		return ok('Transaction reset.');
 	}
 
 	/**
@@ -175,9 +176,9 @@ export class Transaction {
 	 */
 	removeBlackListedUtxos(utxos?: IUtxo[]): IUtxo[] {
 		if (!utxos) {
-			utxos = this.wallet.data.utxos;
+			utxos = this._wallet.data.utxos;
 		}
-		const blacklistedUtxos = this.wallet.data.blacklistedUtxos;
+		const blacklistedUtxos = this._wallet.data.blacklistedUtxos;
 		return utxos.filter((utxo) => {
 			return !blacklistedUtxos.find(
 				(blacklistedUtxo) =>
@@ -189,13 +190,18 @@ export class Transaction {
 		});
 	}
 
-	/*
-	 * Attempt to estimate the current fee for a given wallet and its UTXO's
-	 * */
+	/**
+	 * Attempt to estimate the current fee for a given transaction and its UTXO's
+	 * @param {number} [satsPerByte]
+	 * @param {string} [message]
+	 * @param {Partial<ISendTransaction>} [transaction]
+	 * @param {boolean} [fundingLightning]
+	 * @returns {number}
+	 */
 	getTotalFee = ({
-		satsPerByte = this.wallet.feeEstimates.normal,
+		satsPerByte = this._wallet.feeEstimates.normal,
 		message = '',
-		transaction = this.data,
+		transaction = this._data,
 		fundingLightning = false
 	}: {
 		satsPerByte?: number;
@@ -238,18 +244,111 @@ export class Transaction {
 	};
 
 	/**
+	 * Attempt to estimate the current fee for a given transaction and its UTXO's
+	 * @param {number} [satsPerByte]
+	 * @param {string} [message]
+	 * @param {Partial<ISendTransaction>} [transaction]
+	 * @param {boolean} [fundingLightning]
+	 * @returns {Result<TGetTotalFeeObj>}
+	 */
+	getTotalFeeObj = ({
+		satsPerByte = this._wallet.feeEstimates.normal,
+		message = '',
+		transaction = this._data,
+		fundingLightning = false
+	}: {
+		satsPerByte?: number;
+		message?: string;
+		transaction?: Partial<ISendTransaction>;
+		fundingLightning?: boolean;
+	} = {}): Result<TGetTotalFeeObj> => {
+		try {
+			if (!transaction.inputs?.length) {
+				this.setupTransaction({});
+				transaction = this._data;
+			}
+			const inputs = transaction.inputs || [];
+			const outputs = transaction.outputs || [];
+			const changeAddress = transaction.changeAddress;
+
+			//Group all input & output addresses into their respective array.
+			const inputAddresses = inputs.map((input) => input.address);
+			const outputAddresses = outputs.map((output) => output.address);
+
+			// Always assume we're sending to at least one output for a proper base calculation.
+			let increaseAddressCount = 0;
+			if (!outputAddresses.length) {
+				increaseAddressCount++;
+			}
+			//No need for a change address when draining the wallet
+			if (changeAddress && !transaction.max) {
+				outputAddresses.push(changeAddress);
+			}
+
+			//Determine the address type of each address and construct the object for fee calculation
+			const inputParam = constructByteCountParam(inputAddresses);
+			const outputParam = constructByteCountParam(outputAddresses, [
+				{ addrType: this._wallet.addressType, count: increaseAddressCount }
+			]);
+			//Increase P2WPKH output address by one for lightning funding calculation.
+			if (fundingLightning) {
+				outputParam.P2WPKH = (outputParam.P2WPKH || 0) + 1;
+			}
+
+			const transactionByteCount = getByteCount(
+				inputParam,
+				outputParam,
+				message
+			);
+			const maxSatPerByte = this.getMaxSatsPerByte({
+				transactionByteCount,
+				balance: this._wallet.getBalance()
+			});
+			if (maxSatPerByte < satsPerByte) {
+				return ok({
+					totalFee: transactionByteCount * maxSatPerByte,
+					transactionByteCount: maxSatPerByte ? transactionByteCount : 0,
+					satsPerByte: maxSatPerByte,
+					maxSatPerByte
+				});
+			}
+			return ok({
+				totalFee: transactionByteCount * satsPerByte,
+				transactionByteCount,
+				satsPerByte,
+				maxSatPerByte
+			});
+		} catch (e) {
+			return err(e);
+		}
+	};
+
+	/**
+	 * Returns the maximum sats per byte that can be used for a given transaction.
+	 * @param {number} transactionByteCount
+	 * @param {number} [balance]
+	 * @returns {number}
+	 */
+	getMaxSatsPerByte = ({
+		transactionByteCount,
+		balance = this._wallet.getBalance()
+	}: {
+		transactionByteCount: number;
+		balance?: number;
+	}): number => {
+		return Math.floor(balance / (2 * transactionByteCount));
+	};
+
+	/**
 	 * Creates complete signed transaction using the transaction data store
 	 * @param {ISendTransaction} [transactionData]
+	 * @param {boolean} [shuffleOutputs]
 	 * @returns {Promise<Result<{id: string, hex: string}>>}
 	 */
 	createTransaction = async ({
-		transactionData
+		transactionData = this._data,
+		shuffleOutputs = true
 	}: ICreateTransaction = {}): Promise<Result<{ id: string; hex: string }>> => {
-		// If no transaction data is provided, use the stored transaction object from storage.
-		if (!transactionData) {
-			transactionData = this.data;
-		}
-
 		//Remove any outputs that are below the dust limit and apply them to the fee.
 		removeDustOutputs(transactionData.outputs);
 
@@ -275,7 +374,7 @@ export class Transaction {
 		if (validateRes.isErr()) return err(validateRes.error.message);
 
 		try {
-			const bip32InterfaceRes = await this.getBip32Interface();
+			const bip32InterfaceRes = await this._wallet.getBip32Interface();
 			if (bip32InterfaceRes.isErr()) {
 				return err(bip32InterfaceRes.error.message);
 			}
@@ -283,7 +382,8 @@ export class Transaction {
 			//Create PSBT before signing inputs
 			const psbtRes = await this.createPsbtFromTransactionData({
 				transactionData,
-				bip32Interface: bip32InterfaceRes.value
+				bip32Interface: bip32InterfaceRes.value,
+				shuffleTargets: shuffleOutputs
 			});
 
 			if (psbtRes.isErr()) {
@@ -306,7 +406,6 @@ export class Transaction {
 			const hex = tx.toHex();
 			return ok({ id, hex });
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	};
@@ -318,7 +417,7 @@ export class Transaction {
 	getTransactionInputValue = ({ inputs }: { inputs?: IUtxo[] }): number => {
 		try {
 			if (!inputs) {
-				const transaction = this.data;
+				const transaction = this._data;
 				inputs = transaction.inputs;
 			}
 			if (inputs) {
@@ -346,7 +445,7 @@ export class Transaction {
 		psbt: Psbt;
 		bip32Interface: BIP32Interface;
 	}): Promise<Result<Psbt>> => {
-		const transactionDataRes = this.data;
+		const transactionDataRes = this._data;
 
 		const { inputs } = transactionDataRes;
 		for (const [index, input] of inputs.entries()) {
@@ -354,7 +453,6 @@ export class Transaction {
 				const keyPair = bip32Interface.derivePath(input.path);
 				psbt.signInput(index, keyPair);
 			} catch (e) {
-				// @ts-ignore
 				return err(e);
 			}
 		}
@@ -366,11 +464,10 @@ export class Transaction {
 
 	/**
 	 * Returns a PSBT that includes unsigned funding inputs.
-	 * @param {TWalletName} selectedWallet
-	 * @param {TAvailableNetworks} selectedNetwork
 	 * @param {ISendTransaction} transactionData
 	 * @param {BIP32Interface} bip32Interface
-	 * @return {Promise<Result<Psbt>>}
+	 * @param shuffleTargets
+	 * @returns {Promise<Result<Psbt>>}
 	 */
 	createPsbtFromTransactionData = async ({
 		transactionData,
@@ -394,7 +491,7 @@ export class Transaction {
 			outputs
 		});
 
-		const network = networks[this.wallet.network];
+		const network = networks[this._wallet.network];
 
 		//Collect all outputs.
 		let targets: ITargets[] = outputs.concat();
@@ -417,7 +514,7 @@ export class Transaction {
 			// If we have spare sats hanging around and the difference is greater than the dust limit, generate a changeAddress to send them to.
 			const diffValue = balance - (outputValue + fee);
 			if (diffValue > TRANSACTION_DEFAULTS.dustLimit) {
-				const changeAddressRes = await this.wallet.getChangeAddress();
+				const changeAddressRes = await this._wallet.getChangeAddress();
 				if (changeAddressRes.isErr()) {
 					return err(changeAddressRes.error.message);
 				}
@@ -447,7 +544,7 @@ export class Transaction {
 		}
 
 		if (!bip32Interface) {
-			const bip32InterfaceRes = await this.getBip32Interface();
+			const bip32InterfaceRes = await this._wallet.getBip32Interface();
 			if (bip32InterfaceRes.isErr()) {
 				return err(bip32InterfaceRes.error.message);
 			}
@@ -469,7 +566,6 @@ export class Transaction {
 				});
 			}
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 
@@ -513,7 +609,7 @@ export class Transaction {
 		input
 	}: IAddInput): Promise<Result<string>> => {
 		try {
-			const network = networks[this.wallet.network];
+			const network = networks[this._wallet.network];
 			const { type } = getAddressInfo(input.address);
 
 			if (!input.value) {
@@ -562,7 +658,7 @@ export class Transaction {
 			}
 
 			if (type === 'p2pkh') {
-				const transaction = await this.wallet.electrum.getTransactions({
+				const transaction = await this._wallet.electrum.getTransactions({
 					txHashes: [{ tx_hash: input.tx_hash }]
 				});
 				if (transaction.isErr()) {
@@ -583,15 +679,22 @@ export class Transaction {
 	};
 
 	/**
-	 * Creates a BIP32Interface from the selected wallet's mnemonic and passphrase
-	 * @returns {Promise<Result<BIP32Interface>>}
+	 * Adds an output at the specified index to the current transaction.
+	 * @param {string} address
+	 * @param {number} value
+	 * @param {number} [index]
+	 * @returns {IOutput}
 	 */
-	getBip32Interface = async (): Promise<Result<BIP32Interface>> => {
-		const network = networks[this.wallet.network];
-		const bip39Passphrase = this.passphrase;
-		const seed = await bip39.mnemonicToSeed(this.mnemonic, bip39Passphrase);
-		const root = bip32.fromSeed(seed, network);
-		return ok(root);
+	addOutput = ({ address, value, index = 0 }: IOutput): Result<string> => {
+		if (!this._data.inputs?.length) {
+			const setupRes = this.setupTransaction();
+			if (setupRes.isErr()) return err(setupRes.error.message);
+		}
+		return this.updateSendTransaction({
+			transaction: {
+				outputs: [{ address, value, index }]
+			}
+		});
 	};
 
 	/**
@@ -606,7 +709,7 @@ export class Transaction {
 	} = {}): number => {
 		try {
 			if (!outputs) {
-				const transaction = this.data;
+				const transaction = this._data;
 				outputs = transaction.outputs;
 			}
 			const response = reduceValue({ arr: outputs, value: 'value' });
@@ -614,8 +717,7 @@ export class Transaction {
 				return response.value;
 			}
 			return 0;
-		} catch (e) {
-			console.log(e);
+		} catch {
 			return 0;
 		}
 	};
@@ -633,7 +735,7 @@ export class Transaction {
 		try {
 			//Add output if specified
 			if (transaction.outputs) {
-				const currentTransaction = this.wallet.transaction.data;
+				const currentTransaction = this._wallet.transaction.data;
 				const outputs = currentTransaction.outputs.concat();
 				transaction.outputs.forEach((output) => {
 					outputs[output.index] = output;
@@ -641,14 +743,13 @@ export class Transaction {
 				transaction.outputs = outputs;
 			}
 
-			this.data = {
-				...this.data,
+			this._data = {
+				...this._data,
 				...transaction
 			};
 
 			return ok('Transaction updated');
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	};
@@ -663,15 +764,12 @@ export class Transaction {
 	public updateFee({
 		satsPerByte,
 		index = 0,
-		transaction
+		transaction = this._data
 	}: {
 		satsPerByte: number;
 		index?: number;
 		transaction?: ISendTransaction;
 	}): Result<{ fee: number }> {
-		if (!transaction) {
-			transaction = this.data;
-		}
 		const inputTotal = this.getTransactionInputValue({
 			inputs: transaction.inputs
 		});
@@ -691,15 +789,13 @@ export class Transaction {
 			);
 		}
 
-		const selectedFeeId = this.wallet.transaction.data.selectedFeeId;
 		const totalTransactionValue = this.getTransactionOutputValue({
 			outputs
 		});
 		const newTotalAmount = totalTransactionValue + newFee;
 		const _transaction: Partial<ISendTransaction> = {
 			satsPerByte,
-			fee: newFee,
-			selectedFeeId
+			fee: newFee
 		};
 
 		if (max) {
@@ -726,21 +822,28 @@ export class Transaction {
 	 * @param {ISendTransaction} [transaction]
 	 * @param {number} [index]
 	 * @param satsPerByte
+	 * @param rbf
 	 */
-	sendMax = ({
+	sendMax = async ({
 		address,
 		transaction,
 		index = 0,
-		satsPerByte
+		satsPerByte,
+		rbf = false
 	}: {
 		address?: string;
 		transaction?: Partial<ISendTransaction>;
 		index?: number;
 		satsPerByte?: number;
-	} = {}): Result<string> => {
+		rbf?: boolean;
+	} = {}): Promise<Result<string>> => {
 		try {
 			if (!transaction) {
-				transaction = this.data;
+				transaction = this._data;
+			}
+			if (!transaction.inputs?.length) {
+				const setupRes = await this.setupTransaction({ rbf });
+				if (setupRes.isErr()) return err(setupRes.error.message);
 			}
 			const outputs = transaction.outputs ?? [];
 			// No address specified, attempt to assign the address currently specified in the current output index.
@@ -774,7 +877,6 @@ export class Transaction {
 
 			return ok('Successfully setup max send transaction.');
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	};
@@ -794,18 +896,18 @@ export class Transaction {
 	}): Result<{ amount: number; fee: number; satsPerByte: number }> => {
 		try {
 			if (!transaction) {
-				transaction = this.data;
+				transaction = this._data;
 			}
 
 			// onchain transaction
-			const onchainBalance = this.wallet.data.balance;
+			const onchainBalance = this._wallet.data.balance;
 
 			const inputValue = this.getTransactionInputValue({
 				inputs: transaction.inputs
 			});
 			const amount = onchainBalance > inputValue ? onchainBalance : inputValue;
 
-			const currentWallet = this.wallet.data;
+			const currentWallet = this._wallet.data;
 			let utxos: IUtxo[] = [];
 			//Ensure we add the larger utxo set for a more accurate fee.
 			if (transaction.inputs.length > currentWallet?.utxos.length) {
@@ -813,8 +915,8 @@ export class Transaction {
 			} else {
 				utxos = currentWallet?.utxos ?? [];
 			}
-			const fees = this.wallet.feeEstimates;
-			const selectedFeeId = transaction.selectedFeeId;
+			const fees = this._wallet.feeEstimates;
+			const selectedFeeId = this._wallet.selectedFeeId;
 			const satsPerByte = customFeeRate ?? fees[selectedFeeId] ?? 1;
 			const fee = this.getTotalFee({
 				satsPerByte,
@@ -823,7 +925,6 @@ export class Transaction {
 					...transaction,
 					max: true,
 					inputs: utxos,
-					selectedFeeId,
 					satsPerByte
 				}
 			});
@@ -840,7 +941,6 @@ export class Transaction {
 
 			return ok(maxAmount);
 		} catch (e) {
-			// @ts-ignore
 			return err(e);
 		}
 	};

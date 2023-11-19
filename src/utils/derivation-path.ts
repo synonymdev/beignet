@@ -41,7 +41,8 @@ export const getKeyDerivationPathObject = ({
 
 		let coinType = parsedPath[2] as TKeyDerivationCoinType;
 		if (network) {
-			coinType = network.toLocaleLowerCase().includes('testnet') ? '1' : '0';
+			coinType =
+				network.toLocaleLowerCase() === EAvailableNetworks.bitcoin ? '0' : '1';
 		}
 
 		const account = parsedPath[3] as TKeyDerivationAccount;
@@ -63,8 +64,6 @@ export const getKeyDerivationPathObject = ({
 			index
 		});
 	} catch (e) {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
 		return err(e);
 	}
 };
@@ -110,7 +109,8 @@ export const getKeyDerivationPathString = ({
 			path.purpose = purpose;
 		}
 
-		path.coinType = network.toLocaleLowerCase().includes('testnet') ? '1' : '0';
+		path.coinType =
+			network.toLocaleLowerCase() === EAvailableNetworks.bitcoin ? '0' : '1';
 
 		if (accountType !== undefined) {
 			if (typeof accountType === 'number') {
@@ -135,8 +135,6 @@ export const getKeyDerivationPathString = ({
 			`m/${path.purpose}'/${path.coinType}'/${path.account}'/${path.change}/${index}`
 		);
 	} catch (e) {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
 		return err(e);
 	}
 };
@@ -168,8 +166,6 @@ export const getAddressTypeFromPath = (
 				return err('Invalid path');
 		}
 	} catch (e) {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
 		return err(e);
 	}
 };

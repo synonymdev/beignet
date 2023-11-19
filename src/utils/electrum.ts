@@ -79,7 +79,6 @@ export const formatPeerData = (
 			tcp
 		});
 	} catch (e) {
-		console.log(e);
 		if (typeof e === 'string' || e instanceof Error) {
 			return err(e);
 		}
@@ -118,7 +117,6 @@ export const getPeers = async ({
 		// No peers available grab hardcoded peers instead.
 		return ok(hardcodedPeers[selectedNetwork]);
 	} catch (e) {
-		console.log(e);
 		if (typeof e === 'string' || e instanceof Error) {
 			return err(e);
 		}

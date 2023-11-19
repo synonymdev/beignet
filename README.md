@@ -4,7 +4,7 @@
 
 ## Description
 
-A self-custodial, JS Bitcoin wallet management library.
+A Javascript Bitcoin wallet management library.
 
 ## Table of Contents
 
@@ -51,23 +51,26 @@ import { Wallet, generateMnemonic } from 'beignet';
 const mnemonic = generateMnemonic();
 
 // Create a wallet instance
-const createWalletRes = new Wallet({ mnemonic });
+const createWalletRes = await Wallet.create({ mnemonic });
 if (createWalletRes.isErr()) return;
 const wallet = createWalletRes.value;
   
 // Get receiving address
-const address = wallet.getAddress();
-
-// Get wallet balance
-const walletBalance = wallet.getBalance();
-
-// Send sats
-const sendRes = await wallet.send({ address, amount: 1000 });
+const address = await wallet.getAddress();
 
 // Get address balance
 const addressBalanceRes = await wallet.getAddressBalance(address);
 if (addressBalance.isErr()) return;
 const addressBalance = addressBalanceRes.value;
+
+// Get wallet balance
+const walletBalance = wallet.getBalance();
+
+// Get fee information to perform a transaction.
+const feeInfo = wallet.getFeeInfo();
+
+// Send sats
+const sendRes = await wallet.send({ address: 'address to send sats to', amount: 1000 });
 ```
 
 ## Advanced Usage
@@ -118,7 +121,7 @@ const storage: TStorage = {
 };
 
 // Create a wallet instance
-const createWalletRes = new Wallet({
+const createWalletRes = await Wallet.create({
 	mnemonic,
 	passphrase,
 	electrumOptions: { servers },

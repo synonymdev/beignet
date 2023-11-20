@@ -1,16 +1,11 @@
-import {
-	decodeRawTransaction,
-	EAvailableNetworks,
-	getTxFee,
-	Wallet
-} from '../src';
+import { EAvailableNetworks, Wallet } from '../src';
 import { getData, onMessage, servers, setData } from './helpers';
 import * as repl from 'repl';
 //import { generateMnemonic } from 'bip39';
-
 //const mnemonic = generateMnemonic();
+
 const mnemonic =
-	'spider secret joy grain sheriff garbage uniform true lucky coach blind unhappy';
+	'develop under powder delay tunnel kite finger spend deal tiger pluck cherry';
 
 const network: EAvailableNetworks = EAvailableNetworks.regtest;
 
@@ -40,32 +35,33 @@ const runExample = async (): Promise<void> => {
 	console.log('\nAddress:', address);
 
 	// Get fee information to perform a transaction.
-	const feeInfo = wallet.getFeeInfo({ satsPerByte: 5 });
-	if (feeInfo.isErr()) return;
-	console.log('\nFee Info:', feeInfo.value);
+	// const feeInfo = wallet.getFeeInfo({ satsPerByte: 5 });
+	// if (feeInfo.isErr()) return;
+	// console.log('\nFee Info:', feeInfo.value);
 
 	// Get fee estimate in sats for a given satsPerByte to perform a transaction.
 	// This is useful for quickly calculating how many sats are needed to perform a transaction when using a slider.
-	const txFeeInSats = getTxFee({
-		satsPerByte: feeInfo.value.maxSatPerByte,
-		transactionByteCount: feeInfo.value.transactionByteCount
-	});
-	console.log('\nFee In Sats:', txFeeInSats);
+	// const txFeeInSats = getTxFee({
+	// 	satsPerByte: 5,
+	// 	transactionByteCount: feeInfo.value.transactionByteCount
+	// });
+	// console.log('\nFee In Sats:', txFeeInSats);
 
-	const sendRes = await wallet.send({
-		address,
-		amount: 5000,
-		satsPerByte: 5,
-		broadcast: false // Mostly set to false for testing, but can also be used to return the raw transaction hex.
-	});
-	if (sendRes.isErr()) return;
-	console.log('\nSend Res:', sendRes.value);
+	// Create a transaction.
+	// const sendRes = await wallet.send({
+	// 	address,
+	// 	amount: 5000,
+	// 	satsPerByte: 5,
+	// 	broadcast: false // Mostly set to false for testing, but can also be used to return the raw transaction hex.
+	// });
+	// if (sendRes.isErr()) return;
+	// console.log('\nSend Res:', sendRes.value);
 
 	// Decode the transaction to verify prior to broadcasting.
-	const decodeRes = decodeRawTransaction(sendRes.value, network);
-	if (decodeRes.isErr()) return;
-	console.log('\nDecode Transaction:');
-	console.dir(decodeRes.value, { depth: null });
+	// const decodeRes = decodeRawTransaction(sendRes.value, network);
+	// if (decodeRes.isErr()) return;
+	// console.log('\nDecode Transaction:');
+	// console.dir(decodeRes.value, { depth: null });
 
 	// Broadcast the transaction.
 	// const broadcastRes = await wallet.electrum.broadcastTransaction({

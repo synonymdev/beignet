@@ -203,7 +203,7 @@ export class Wallet {
 		servers?: TServer | TServer[]
 	): Promise<Result<string>> {
 		// Disconnect from Electrum.
-		this.electrum.disconnect();
+		await this.electrum.disconnect();
 
 		this._network = network;
 		const params: IWallet = {

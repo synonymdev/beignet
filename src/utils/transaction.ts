@@ -17,6 +17,7 @@ import validate, { getAddressInfo } from 'bitcoin-address-validation';
 import * as bip21 from 'bip21';
 import { TRANSACTION_DEFAULTS } from '../wallet/constants';
 import { validateAddress } from './helpers';
+import { btcToSats } from './conversion';
 
 /**
  * Sets RBF for the provided psbt.
@@ -124,7 +125,7 @@ export const parseOnChainPaymentRequest = (
 				return ok({
 					address,
 					network: validateAddressResult.network,
-					sats: Number((amount * 100000000).toFixed(0)),
+					sats: btcToSats(amount),
 					message
 				});
 			} catch {

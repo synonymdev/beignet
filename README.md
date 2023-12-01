@@ -4,7 +4,9 @@
 
 ## Description
 
-A Javascript Bitcoin wallet management library.
+An instant, self-custodial Bitcoin wallet for JS devs.
+
+This Typescript library offers JS developers a way to incorporate an on-chain, self-custodial Bitcoin wallet into their projects.
 
 ## Table of Contents
 

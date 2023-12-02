@@ -9,20 +9,22 @@ import {
 	generateMnemonic
 } from '../src';
 import { TEST_MNEMONIC } from './constants';
-import { getData, setData } from '../example/helpers';
+import { deleteDirectory, getData, setData } from '../example/helpers';
 
 const expect = chai.expect;
 
 const testTimeout = 60000;
 
 let wallet;
+const WALLET_NAME = 'storagetestwallet0';
 
 before(async function () {
 	this.timeout(testTimeout);
+	await deleteDirectory('example/walletData'); // Start test with clean slate.
 	const res = await Wallet.create({
 		mnemonic: TEST_MNEMONIC,
 		network: EAvailableNetworks.testnet,
-		name: 'storagetestwallet0',
+		name: WALLET_NAME,
 		addressType: EAddressType.p2wpkh,
 		storage: {
 			getData,
@@ -202,4 +204,19 @@ describe('Storage Test', async function (): Promise<void> {
 		expect(getUtxosRes.value.balance).to.equal(4855);
 		expect(getUtxosRes.value).to.deep.equal(expectedResult);
 	});
+
+	// it('Attempts to create a new wallet using the same name of an existing wallet in storage.', async () => {
+	// 	const createRes = await Wallet.create({
+	// 		mnemonic: generateMnemonic(),
+	// 		network: EAvailableNetworks.testnet,
+	// 		name: WALLET_NAME,
+	// 		addressType: EAddressType.p2wpkh,
+	// 		storage: {
+	// 			getData,
+	// 			setData
+	// 		}
+	// 	});
+	// 	expect(createRes.isOk()).to.equal(false);
+	// 	if (createRes.isOk()) return;
+	// });
 });

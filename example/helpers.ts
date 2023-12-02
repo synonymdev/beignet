@@ -40,6 +40,16 @@ export const setData: TSetData = async <K extends keyof IWalletData>(
 	}
 };
 
+export const deleteDirectory = async (
+	dir = 'example/walletData'
+): Promise<void> => {
+	try {
+		await fs.rm(dir, { recursive: true, force: true });
+	} catch (e) {
+		console.error(`Error deleting directory ${dir}: ${e}`);
+	}
+};
+
 export const onMessage = (id, data): void => {
 	console.log(id);
 	console.dir(data, { depth: null });

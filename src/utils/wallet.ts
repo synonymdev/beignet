@@ -22,7 +22,10 @@ import {
 import { bech32m } from 'bech32';
 import * as bip39 from 'bip39';
 import * as bitcoin from 'bitcoinjs-lib';
-import { BITKIT_WALLET_SEED_HASH_PREFIX } from '../wallet/constants';
+import {
+	WALLET_ID_PREFIX,
+	BITKIT_WALLET_SEED_HASH_PREFIX
+} from '../wallet/constants';
 
 /**
  * Returns the default wallet data object.
@@ -301,6 +304,12 @@ export const getSeed = (mnemonic, bip39Passphrase): Buffer => {
 export const getSeedHash = (seed: Buffer): string => {
 	return bitcoin.crypto
 		.sha256(Buffer.concat([BITKIT_WALLET_SEED_HASH_PREFIX, seed]))
+		.toString('hex');
+};
+
+export const generateWalletId = (seed: Buffer): string => {
+	return bitcoin.crypto
+		.sha256(Buffer.concat([WALLET_ID_PREFIX, seed]))
 		.toString('hex');
 };
 

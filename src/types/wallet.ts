@@ -145,6 +145,7 @@ export interface IAddress {
 }
 
 export interface IWalletData {
+	id: string;
 	addressType: EAddressType;
 	header: IHeader;
 	addresses: TAddressTypeContent<IAddresses>;

@@ -68,8 +68,8 @@ import {
 	getKeyDerivationPathString,
 	getScriptHash,
 	getSeed,
-	getSeedHash,
 	getWalletDataStorageKey,
+	generateWalletId,
 	objectKeys,
 	objectsMatch,
 	ok,
@@ -153,7 +153,7 @@ export class Wallet {
 		if (customGetAddress) this._customGetAddress = customGetAddress;
 		if (customGetScriptHash) this._customGetScriptHash = customGetScriptHash;
 		this.addressType = addressType;
-		this.id = name ?? getSeedHash(this._seed);
+		this.id = generateWalletId(this._seed);
 		this.name = name ?? this.id;
 		this.exchangeRates = {};
 		this.transaction = new Transaction({
@@ -269,12 +269,38 @@ export class Wallet {
 	 * @private
 	 */
 	private async setWalletData(): Promise<Result<boolean>> {
+		const storageIdCheckRes = await this.storageIdCheck(this.id);
+		if (storageIdCheckRes.isErr()) return err(storageIdCheckRes.error.message);
 		this._data = getDefaultWalletData();
 		const walletDataResponse = await this.getWalletData();
 		if (walletDataResponse.isErr())
 			return err(walletDataResponse.error.message);
 		this._data = walletDataResponse.value;
 		return ok(true);
+	}
+
+	/**
+	 * Ensure we are not overwriting wallet data of a different wallet by checking that the wallet id's match.
+	 * @private
+	 * @async
+	 * @param {string} id
+	 * @returns {Promise<Result<string>>}
+	 */
+	private async storageIdCheck(id: string): Promise<Result<string>> {
+		const storageKey = this.getWalletDataKey('id');
+		const res = await this._getData(storageKey);
+		// No id found, it is safe to save to storage.
+		if (res.isErr() || !res.value) {
+			// Save id to storage.
+			await this.saveWalletData('id', id);
+			return ok('Saved ID to storage.');
+		}
+		// If the ID saved in storage does not match return an error and notify the developer.
+		if (res.value !== id)
+			return err(
+				'Mismatched id found in storage. Change the wallet name or delete the old wallet from storage and try again.'
+			);
+		return ok("ID's match, it's safe to continue.");
 	}
 
 	/**
@@ -303,6 +329,9 @@ export class Wallet {
 			} catch {}
 			const data = dataResult?.value ?? walletData[key];
 			switch (key) {
+				case 'id':
+					walletData[key] = data as string;
+					break;
 				case 'addressType':
 					walletData[key] = data as EAddressType;
 					break;

@@ -57,7 +57,7 @@ describe('Wallet Library', async function () {
 
 	it('Should create a wallet name based on the seed hash when none is provided.', () => {
 		expect(wallet.name).to.equal(
-			'80f5701bbfb73d9e26fa6bcdbd670cd69b078887eea3626acbf8c6abe775e8fc'
+			'7b4534b23017b8174ac0083bb7baa2f2cf3fb553f165e13485f2ca1a4cef883e'
 		);
 	});
 

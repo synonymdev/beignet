@@ -10,17 +10,28 @@ This Typescript library offers JS developers a way to incorporate an on-chain, s
 
 ## Table of Contents
 
-1. [Installation](#installation)
+1. [Getting Started](#getting-started)
+2. [Running Tests & Examples](#running-tests--examples)
   - [Clone the Repository](#clone-the-repository)
   - [Install Dependencies & Build](#install-dependencies--build)
   - [Run Tests](#run-tests)
   - [Run Example Project](#run-example-project)
-2. [Implementation](#implementation)
-3. [Advanced Usage](#advanced-usage)
-3. [Documentation](#documentation)
-4. [Support](#support)
+3. [Implementation](#implementation)
+4. [Advanced Usage](#advanced-usage)
+5. [Documentation](#documentation)
+6. [Support](#support)
 
-## Installation
+## Getting Started
+
+```bash
+# Using Yarn
+yarn add beignet
+
+# Or, using NPM
+npm i -S beignet
+```
+
+## Running Tests & Examples
 
 ### Clone the Repository
 
@@ -152,4 +163,4 @@ const sendManyRes = await wallet.sendMany({ txs });
 
 ## Support
 
-If you are experiencing any problems, please open an issue and use the template provided, or reach out to us on [Telegram](https://t.me/bitkitchat).
+If you are experiencing any problems, please open an issue or reach out to us on [Telegram](https://t.me/bitkitchat).

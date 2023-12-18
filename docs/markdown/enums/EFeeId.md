@@ -8,8 +8,6 @@
 
 - [custom](EFeeId.md#custom)
 - [fast](EFeeId.md#fast)
-- [instant](EFeeId.md#instant)
-- [minimum](EFeeId.md#minimum)
 - [none](EFeeId.md#none)
 - [normal](EFeeId.md#normal)
 - [slow](EFeeId.md#slow)
@@ -22,7 +20,7 @@
 
 #### Defined in
 
-[types/transaction.ts:36](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/transaction.ts#L36)
+[types/transaction.ts:35](https://github.com/synonymdev/beignet/blob/7c83290/src/types/transaction.ts#L35)
 
 ___
 
@@ -32,27 +30,7 @@ ___
 
 #### Defined in
 
-[types/transaction.ts:32](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/transaction.ts#L32)
-
-___
-
-### instant
-
-• **instant** = ``"instant"``
-
-#### Defined in
-
-[types/transaction.ts:31](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/transaction.ts#L31)
-
-___
-
-### minimum
-
-• **minimum** = ``"minimum"``
-
-#### Defined in
-
-[types/transaction.ts:35](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/transaction.ts#L35)
+[types/transaction.ts:32](https://github.com/synonymdev/beignet/blob/7c83290/src/types/transaction.ts#L32)
 
 ___
 
@@ -62,7 +40,7 @@ ___
 
 #### Defined in
 
-[types/transaction.ts:37](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/transaction.ts#L37)
+[types/transaction.ts:36](https://github.com/synonymdev/beignet/blob/7c83290/src/types/transaction.ts#L36)
 
 ___
 
@@ -72,7 +50,7 @@ ___
 
 #### Defined in
 
-[types/transaction.ts:33](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/transaction.ts#L33)
+[types/transaction.ts:33](https://github.com/synonymdev/beignet/blob/7c83290/src/types/transaction.ts#L33)
 
 ___
 
@@ -82,4 +60,4 @@ ___
 
 #### Defined in
 
-[types/transaction.ts:34](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/transaction.ts#L34)
+[types/transaction.ts:34](https://github.com/synonymdev/beignet/blob/7c83290/src/types/transaction.ts#L34)

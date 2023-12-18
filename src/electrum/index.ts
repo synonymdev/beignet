@@ -20,7 +20,6 @@ import {
 	ITxHash,
 	IUtxo,
 	TElectrumNetworks,
-	TMessageKeys,
 	TServer,
 	TSubscribedReceive,
 	TTxResponse,
@@ -54,13 +53,14 @@ export class Electrum {
 	private onMessage: TOnMessage;
 	private latestConnectionState: boolean | null = null;
 	private connectionPollingInterval: NodeJS.Timeout | null;
+	private tls: TLSSocket;
+	private net: Server;
 
 	public servers?: TServer | TServer[];
 	public readonly network: EAvailableNetworks;
 	public readonly electrumNetwork: TElectrumNetworks;
 	public connectedToElectrum: boolean;
 	public onReceive?: (data: unknown) => void;
-	public onElectrumConnectionChange?: (isConnected: boolean) => void;
 	constructor({
 		wallet,
 		servers,
@@ -83,9 +83,9 @@ export class Electrum {
 		this.electrumNetwork = this.getElectrumNetwork(network);
 		this.connectedToElectrum = false;
 		this.onReceive = onReceive;
-		if (!tls) tls = _tls;
-		if (!net) net = _net;
-		if (!tls || !net) {
+		this.tls = _tls ?? tls;
+		this.net = _net ?? net;
+		if (!this.tls || !this.net) {
 			throw new Error(
 				'TLS and NET modules are not available and were not passed as instances'
 			);
@@ -120,13 +120,14 @@ export class Electrum {
 		}
 		const startResponse = await electrum.start({
 			network: electrumNetwork,
-			tls,
-			net,
+			tls: this.tls,
+			net: this.net,
 			customPeers
 		});
-		if (startResponse.error) return err(startResponse.error);
-		await this.subscribeToHeader();
+		if (startResponse.error && !this.wallet.isSwitchingNetworks)
+			return err(startResponse.error);
 		this.publishConnectionChange(true);
+		this.subscribeToHeader().then();
 		return ok('Connected to Electrum server.');
 	}
 
@@ -654,8 +655,8 @@ export class Electrum {
 				onReceive: (data: INewBlock[]) => {
 					const hex = data[0].hex;
 					const hash = this.getBlockHashFromHex({ blockHex: hex });
-					this._wallet.data.header = { ...data[0], hash };
-					this._wallet.saveWalletData('header', this._wallet.data.header);
+					const header: IHeader = { ...data[0], hash };
+					this._wallet.updateHeader(header);
 					this.onReceive?.(data);
 					this.onMessage(onMessageKeys.newBlock, data[0]);
 				}
@@ -672,7 +673,7 @@ export class Electrum {
 		const hex = subscribeResponse.data.hex;
 		const hash = this.getBlockHashFromHex({ blockHex: hex });
 		const header = { ...subscribeResponse.data, hash };
-		this._wallet.data.header = header;
+		await this._wallet.updateHeader(header);
 		return ok(header);
 	}
 
@@ -722,7 +723,6 @@ export class Electrum {
 				network: this.electrumNetwork,
 				onReceive: async (data: TSubscribedReceive): Promise<void> => {
 					onReceive?.(data);
-					this.onReceiveAddress(data);
 					this._wallet.refreshWallet({});
 				}
 			});
@@ -738,45 +738,6 @@ export class Electrum {
 		}
 
 		return ok('Successfully subscribed to addresses.');
-	}
-
-	private async onReceiveAddress(data): Promise<void> {
-		if (!this._wallet?.onMessage) return;
-		const receivedAt = data[0];
-		const balance = await this._wallet.getScriptHashBalance(receivedAt);
-		if (balance.isErr()) return;
-		const address = this._wallet.getAddressFromScriptHash(receivedAt);
-		if (!address) {
-			console.log('Unable to run getAddressFromScriptHash');
-			return;
-		}
-		const history = await this.getAddressHistory({
-			scriptHashes: [address]
-		});
-		if (history.isErr()) {
-			console.log(history.error.message);
-			return;
-		}
-		if (!history.value.length) return;
-		let message: TMessageKeys = onMessageKeys.transactionConfirmed;
-		const lastTx = history.value[history.value.length - 1];
-		const unconfirmedTransactions: string[] = Object.values(
-			this._wallet.data.unconfirmedTransactions
-		).map((tx) => tx.txid);
-		if (!unconfirmedTransactions.includes(lastTx.tx_hash))
-			message = onMessageKeys.transactionReceived;
-		if (balance.value.unconfirmed <= 0) message = onMessageKeys.transactionSent;
-		const txs: TTxResult[] = history.value.map((tx) => {
-			return {
-				tx_hash: tx.tx_hash,
-				height: tx.height
-			};
-		});
-		this._wallet.onMessage(message, {
-			balance: balance.value,
-			address: address,
-			txs
-		});
 	}
 
 	public async broadcastTransaction({
@@ -827,7 +788,10 @@ export class Electrum {
 
 			if (error) {
 				console.log('Connection to Electrum Server lost, reconnecting...');
-				const response = await this.connectToElectrum({});
+				const response = await this.connectToElectrum({
+					network: this.network,
+					servers: this.servers
+				});
 
 				if (response.isErr()) {
 					this.publishConnectionChange(false);
@@ -842,15 +806,14 @@ export class Electrum {
 	}
 
 	private publishConnectionChange(isConnected: boolean): void {
-		if (this.latestConnectionState === isConnected) {
-			return;
+		if (
+			this.latestConnectionState !== isConnected &&
+			!this.wallet.isSwitchingNetworks
+		) {
+			this.onMessage('connectedToElectrum', isConnected);
+			this.connectedToElectrum = isConnected;
+			this.latestConnectionState = isConnected;
 		}
-
-		if (!isConnected || this.latestConnectionState != null) {
-			this.onMessage('onElectrumConnectionChange', isConnected);
-		}
-		this.connectedToElectrum = isConnected;
-		this.latestConnectionState = isConnected;
 	}
 
 	public async disconnect(): Promise<void> {

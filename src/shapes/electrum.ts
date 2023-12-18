@@ -7,7 +7,7 @@ export const onMessageKeys: { [K in TMessageKeys]: K } = {
 	transactionSent: 'transactionSent',
 	rbf: 'rbf',
 	reorg: 'reorg',
-	onElectrumConnectionChange: 'onElectrumConnectionChange'
+	connectedToElectrum: 'connectedToElectrum'
 };
 
 export const POLLING_INTERVAL = 1000 * 20;

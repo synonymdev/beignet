@@ -25,14 +25,13 @@ export interface ISetupTransaction {
 	inputTxHashes?: string[]; // Used to pre-specify inputs to use by tx_hash
 	utxos?: IUtxo[]; // Used to pre-specify utxos to use
 	rbf?: boolean; // Enable or disable rbf
+	satsPerByte?: number; // Used to specify the fee rate in sats per vbyte
 }
 
 export enum EFeeId {
-	instant = 'instant',
 	fast = 'fast',
 	normal = 'normal',
 	slow = 'slow',
-	minimum = 'minimum',
 	custom = 'custom',
 	none = 'none'
 }

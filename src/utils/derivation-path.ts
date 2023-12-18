@@ -30,7 +30,7 @@ export const getKeyDerivationPathObject = ({
 	purpose?: TKeyDerivationPurpose;
 	changeAddress?: boolean;
 	index?: string;
-	network?: EAvailableNetworks;
+	network: EAvailableNetworks;
 }): Result<IKeyDerivationPath> => {
 	try {
 		const parsedPath = path.replace(/'/g, '').split('/');

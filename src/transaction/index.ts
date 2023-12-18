@@ -1,5 +1,7 @@
 import {
 	EAddressType,
+	EBoostType,
+	EFeeId,
 	IAddresses,
 	IOutput,
 	ISendTransaction,
@@ -51,15 +53,17 @@ export class Transaction {
 	 * @param {string[]} [inputTxHashes]
 	 * @param {IUtxo[]} [utxos]
 	 * @param {boolean} [rbf]
+	 * @param {number} [satsPerByte]
 	 * @returns {Promise<Result<Partial<ISendTransaction>>>}
 	 */
-	public setupTransaction({
+	public async setupTransaction({
 		inputTxHashes,
 		utxos,
-		rbf = true
-	}: ISetupTransaction = {}): TSetupTransactionResponse {
+		rbf = false,
+		satsPerByte = 1
+	}: ISetupTransaction = {}): Promise<TSetupTransactionResponse> {
 		try {
-			const addressType = this._wallet.addressType;
+			const addressType = this._wallet.data.addressType;
 
 			const currentWallet = this._wallet.data;
 
@@ -74,6 +78,8 @@ export class Transaction {
 				});
 			} else if (utxos) {
 				inputs = utxos;
+			} else {
+				inputs = currentWallet.utxos;
 			}
 
 			if (!inputs.length) {
@@ -82,6 +88,7 @@ export class Transaction {
 					inputs = transaction.inputs;
 				} else {
 					// Otherwise, lets use our available utxo's.
+					//inputs = currentWallet.utxos;
 					inputs = this.removeBlackListedUtxos(currentWallet.utxos);
 				}
 			}
@@ -129,30 +136,38 @@ export class Transaction {
 
 			// Set the minimum fee.
 			const fee = this.getTotalFee({
-				satsPerByte: 1,
+				satsPerByte,
 				message: ''
 			});
 
+			const lightningInvoice = currentWallet.transaction?.lightningInvoice;
+
 			let outputs = currentWallet.transaction.outputs || [];
-			//Remove any potential change address that may have been included from a previous tx attempt.
-			outputs = outputs.filter((output) => {
-				if (output.address && !changeAddressesArr.includes(output.address)) {
-					return output;
-				}
-			});
+			if (!lightningInvoice) {
+				//Remove any potential change address that may have been included from a previous tx attempt.
+				outputs = outputs.filter((output) => {
+					if (output.address && !changeAddressesArr.includes(output.address)) {
+						return output;
+					}
+				});
+			}
 
 			const payload = {
 				inputs,
 				changeAddress,
 				fee,
 				outputs,
-				rbf
+				rbf,
+				satsPerByte
 			};
 
 			this._data = {
 				...this._data,
 				...payload
 			};
+
+			// Save the transaction data.
+			await this._wallet.saveWalletData('transaction', this._data);
 
 			return ok(payload);
 		} catch (e) {
@@ -199,12 +214,12 @@ export class Transaction {
 	 * @returns {number}
 	 */
 	getTotalFee = ({
-		satsPerByte = this._wallet.feeEstimates.normal,
+		satsPerByte,
 		message = '',
-		transaction = this._data,
+		transaction = this.data,
 		fundingLightning = false
 	}: {
-		satsPerByte?: number;
+		satsPerByte: number;
 		message?: string;
 		transaction?: Partial<ISendTransaction>;
 		fundingLightning?: boolean;
@@ -254,7 +269,7 @@ export class Transaction {
 	getTotalFeeObj = ({
 		satsPerByte = this._wallet.feeEstimates.normal,
 		message = '',
-		transaction = this._data,
+		transaction = this.data,
 		fundingLightning = false
 	}: {
 		satsPerByte?: number;
@@ -265,7 +280,7 @@ export class Transaction {
 		try {
 			if (!transaction.inputs?.length) {
 				this.setupTransaction({});
-				transaction = this._data;
+				transaction = this.data;
 			}
 			const inputs = transaction.inputs || [];
 			const outputs = transaction.outputs || [];
@@ -288,7 +303,7 @@ export class Transaction {
 			//Determine the address type of each address and construct the object for fee calculation
 			const inputParam = constructByteCountParam(inputAddresses);
 			const outputParam = constructByteCountParam(outputAddresses, [
-				{ addrType: this._wallet.addressType, count: increaseAddressCount }
+				{ addrType: this._wallet.data.addressType, count: increaseAddressCount }
 			]);
 			//Increase P2WPKH output address by one for lightning funding calculation.
 			if (fundingLightning) {
@@ -346,7 +361,7 @@ export class Transaction {
 	 * @returns {Promise<Result<{id: string, hex: string}>>}
 	 */
 	createTransaction = async ({
-		transactionData = this._data,
+		transactionData = this.data,
 		shuffleOutputs = true
 	}: ICreateTransaction = {}): Promise<Result<{ id: string; hex: string }>> => {
 		//Remove any outputs that are below the dust limit and apply them to the fee.
@@ -417,7 +432,7 @@ export class Transaction {
 	getTransactionInputValue = ({ inputs }: { inputs?: IUtxo[] }): number => {
 		try {
 			if (!inputs) {
-				const transaction = this._data;
+				const transaction = this.data;
 				inputs = transaction.inputs;
 			}
 			if (inputs) {
@@ -445,7 +460,7 @@ export class Transaction {
 		psbt: Psbt;
 		bip32Interface: BIP32Interface;
 	}): Promise<Result<Psbt>> => {
-		const transactionDataRes = this._data;
+		const transactionDataRes = this.data;
 
 		const { inputs } = transactionDataRes;
 		for (const [index, input] of inputs.entries()) {
@@ -685,9 +700,13 @@ export class Transaction {
 	 * @param {number} [index]
 	 * @returns {IOutput}
 	 */
-	addOutput = ({ address, value, index = 0 }: IOutput): Result<string> => {
-		if (!this._data.inputs?.length) {
-			const setupRes = this.setupTransaction();
+	addOutput = async ({
+		address,
+		value,
+		index = 0
+	}: IOutput): Promise<Result<string>> => {
+		if (!this.data.inputs?.length) {
+			const setupRes = await this.setupTransaction();
 			if (setupRes.isErr()) return err(setupRes.error.message);
 		}
 		return this.updateSendTransaction({
@@ -709,7 +728,7 @@ export class Transaction {
 	} = {}): number => {
 		try {
 			if (!outputs) {
-				const transaction = this._data;
+				const transaction = this.data;
 				outputs = transaction.outputs;
 			}
 			const response = reduceValue({ arr: outputs, value: 'value' });
@@ -748,6 +767,8 @@ export class Transaction {
 				...transaction
 			};
 
+			this._wallet.saveWalletData('transaction', this.data).then();
+
 			return ok('Transaction updated');
 		} catch (e) {
 			return err(e);
@@ -757,16 +778,19 @@ export class Transaction {
 	/**
 	 * Updates the fee for the current transaction by the specified amount.
 	 * @param {number} [satsPerByte]
+	 * @param {EFeeId} [selectedFeeId]
 	 * @param {number} [index]
 	 * @param {ISendTransaction} [transaction]
+	 * @returns {Result<{ fee: number }>}
 	 */
-	//TODO: Check that selectedFeeID is working correctly.
 	public updateFee({
 		satsPerByte,
+		selectedFeeId = EFeeId.custom,
 		index = 0,
-		transaction = this._data
+		transaction = this.data
 	}: {
 		satsPerByte: number;
+		selectedFeeId?: EFeeId;
 		index?: number;
 		transaction?: ISendTransaction;
 	}): Result<{ fee: number }> {
@@ -795,7 +819,8 @@ export class Transaction {
 		const newTotalAmount = totalTransactionValue + newFee;
 		const _transaction: Partial<ISendTransaction> = {
 			satsPerByte,
-			fee: newFee
+			fee: newFee,
+			selectedFeeId
 		};
 
 		if (max) {
@@ -817,7 +842,7 @@ export class Transaction {
 	}
 
 	/**
-	 * Sends the max amount to the provided output index.
+	 * Toggles the max amount to the provided output index.
 	 * @param {string} [address] If left undefined, the current receiving address will be provided.
 	 * @param {ISendTransaction} [transaction]
 	 * @param {number} [index]
@@ -832,14 +857,14 @@ export class Transaction {
 		rbf = false
 	}: {
 		address?: string;
-		transaction?: Partial<ISendTransaction>;
+		transaction?: ISendTransaction;
 		index?: number;
 		satsPerByte?: number;
 		rbf?: boolean;
 	} = {}): Promise<Result<string>> => {
 		try {
 			if (!transaction) {
-				transaction = this._data;
+				transaction = this.data;
 			}
 			if (!transaction.inputs?.length) {
 				const setupRes = await this.setupTransaction({ rbf });
@@ -851,13 +876,15 @@ export class Transaction {
 				address = outputs[index]?.address ?? '';
 			}
 
-			const transactionCosts = this.estimateTransactionCosts({
-				customFeeRate: satsPerByte
+			const maxAmountResponse = this.getMaxSendAmount({
+				satsPerByte: satsPerByte ?? 1,
+				selectedFeeId: transaction.selectedFeeId,
+				transaction
 			});
-			if (transactionCosts.isErr()) {
-				return err(transactionCosts.error);
+			if (maxAmountResponse.isErr()) {
+				return err(maxAmountResponse.error);
 			}
-			const { amount, fee } = transactionCosts.value;
+			const { amount, fee } = maxAmountResponse.value;
 
 			if (!transaction.max) {
 				this.updateSendTransaction({
@@ -896,18 +923,17 @@ export class Transaction {
 	}): Result<{ amount: number; fee: number; satsPerByte: number }> => {
 		try {
 			if (!transaction) {
-				transaction = this._data;
+				transaction = this.data;
 			}
 
-			// onchain transaction
-			const onchainBalance = this._wallet.data.balance;
+			const currentWallet = this._wallet.data;
+			const onchainBalance = currentWallet.balance;
 
 			const inputValue = this.getTransactionInputValue({
 				inputs: transaction.inputs
 			});
 			const amount = onchainBalance > inputValue ? onchainBalance : inputValue;
 
-			const currentWallet = this._wallet.data;
 			let utxos: IUtxo[] = [];
 			//Ensure we add the larger utxo set for a more accurate fee.
 			if (transaction.inputs.length > currentWallet?.utxos.length) {
@@ -925,6 +951,7 @@ export class Transaction {
 					...transaction,
 					max: true,
 					inputs: utxos,
+					selectedFeeId,
 					satsPerByte
 				}
 			});
@@ -944,4 +971,108 @@ export class Transaction {
 			return err(e);
 		}
 	};
+
+	/**
+	 * Calculates the max amount able to send for the provided/current onchain transaction.
+	 * @param {number} satsPerByte
+	 * @param {EFeeId} [selectedFeeId]
+	 * @param {ISendTransaction} [transaction]
+	 * @returns {Result<{ amount: number; fee?: number }>}
+	 */
+	getMaxSendAmount({
+		satsPerByte,
+		selectedFeeId = EFeeId.none,
+		transaction
+	}: {
+		satsPerByte: number;
+		selectedFeeId?: EFeeId;
+		transaction?: ISendTransaction;
+	}): Result<{ amount: number; fee?: number }> {
+		try {
+			if (!transaction) {
+				transaction = this.data;
+			}
+
+			const currentWallet = this._wallet.data;
+			const onchainBalance = currentWallet.balance;
+
+			const inputValue = this.getTransactionInputValue({
+				inputs: transaction.inputs
+			});
+			const amount = onchainBalance > inputValue ? onchainBalance : inputValue;
+
+			let utxos: IUtxo[] = [];
+			//Ensure we add the larger utxo set for a more accurate fee.
+			if (transaction.inputs.length > currentWallet?.utxos.length) {
+				utxos = transaction.inputs;
+			} else {
+				utxos = currentWallet?.utxos ?? [];
+			}
+
+			const fee = this.getTotalFee({
+				satsPerByte,
+				message: transaction.message,
+				transaction: {
+					...transaction,
+					max: true,
+					inputs: utxos,
+					selectedFeeId,
+					satsPerByte
+				}
+			});
+
+			const maxAmount = {
+				amount: amount - fee,
+				fee
+			};
+
+			if (amount <= fee) {
+				return err('Balance is too low to spend.');
+			}
+
+			return ok(maxAmount);
+		} catch (e) {
+			return err(e);
+		}
+	}
+
+	/**
+	 * Sets up a CPFP transaction.
+	 * @param {string} [txid]
+	 * @param {number} [satsPerByte]
+	 */
+	async setupCpfp({
+		txid,
+		satsPerByte
+	}: {
+		txid?: string; // txid of utxo to include in the CPFP tx. Undefined will gather all utxo's.
+		satsPerByte?: number;
+	}): Promise<Result<ISendTransaction>> {
+		const response = await this.setupTransaction({
+			inputTxHashes: txid ? [txid] : undefined,
+			rbf: true
+		});
+
+		const receiveAddress = await this._wallet.getReceiveAddress({});
+		if (receiveAddress.isErr()) {
+			return err(receiveAddress.error.message);
+		}
+
+		this._data = {
+			...this._data,
+			...response,
+			satsPerByte: satsPerByte ?? this.data?.satsPerByte ?? 1,
+			boostType: EBoostType.cpfp
+		};
+
+		// Construct the tx to send funds back to ourselves using the assigned inputs, receive address and fee.
+		const sendMaxResponse = await this.sendMax({
+			address: receiveAddress.value
+		});
+		if (sendMaxResponse.isErr()) {
+			return err(sendMaxResponse.error.message);
+		}
+
+		return ok(this.data);
+	}
 }

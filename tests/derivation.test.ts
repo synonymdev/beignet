@@ -1,17 +1,21 @@
 import * as chai from 'chai';
-import { EAddressType, EAvailableNetworks } from '../src';
 import {
+	EAddressType,
+	EAvailableNetworks,
 	getAddressTypeFromPath,
+	getKeyDerivationPath,
 	getKeyDerivationPathObject,
 	getKeyDerivationPathString
 } from '../src';
-import { getKeyDerivationPath } from '../src';
 
 const expect = chai.expect;
 
 describe('Derivation Methods', () => {
 	it('Should return default derivation path object for p2wpkh', () => {
-		const pathRes = getKeyDerivationPath({ addressType: EAddressType.p2wpkh });
+		const pathRes = getKeyDerivationPath({
+			addressType: EAddressType.p2wpkh,
+			network: EAvailableNetworks.mainnet
+		});
 		expect(pathRes.isErr()).to.equal(false);
 		if (pathRes.isErr()) return;
 		expect(pathRes.value.purpose).to.equal('84');
@@ -21,7 +25,10 @@ describe('Derivation Methods', () => {
 		expect(pathRes.value.index).to.equal('0');
 	});
 	it('Should return default derivation path object for p2sh', () => {
-		const pathRes = getKeyDerivationPath({ addressType: EAddressType.p2sh });
+		const pathRes = getKeyDerivationPath({
+			addressType: EAddressType.p2sh,
+			network: EAvailableNetworks.mainnet
+		});
 		expect(pathRes.isErr()).to.equal(false);
 		if (pathRes.isErr()) return;
 		expect(pathRes.value.purpose).to.equal('49');
@@ -31,7 +38,10 @@ describe('Derivation Methods', () => {
 		expect(pathRes.value.index).to.equal('0');
 	});
 	it('Should return default derivation path object for p2pkh', () => {
-		const pathRes = getKeyDerivationPath({ addressType: EAddressType.p2pkh });
+		const pathRes = getKeyDerivationPath({
+			addressType: EAddressType.p2pkh,
+			network: EAvailableNetworks.mainnet
+		});
 		expect(pathRes.isErr()).to.equal(false);
 		if (pathRes.isErr()) return;
 		expect(pathRes.value.purpose).to.equal('44');
@@ -77,7 +87,8 @@ describe('Derivation Methods', () => {
 
 	it('Should return a valid mainnet bech32 change address derivation object at index 0', () => {
 		const pathRes = getKeyDerivationPathObject({
-			path: "m/84'/0'/0'/1/0"
+			path: "m/84'/0'/0'/1/0",
+			network: EAvailableNetworks.mainnet
 		});
 		expect(pathRes.isErr()).to.equal(false);
 		if (pathRes.isErr()) return;
@@ -89,7 +100,8 @@ describe('Derivation Methods', () => {
 	});
 	it('Should return a valid testnet p2sh derivation object at index 40', () => {
 		const pathRes = getKeyDerivationPathObject({
-			path: "m/49'/1'/0'/0/40"
+			path: "m/49'/1'/0'/0/40",
+			network: EAvailableNetworks.testnet
 		});
 		expect(pathRes.isErr()).to.equal(false);
 		if (pathRes.isErr()) return;
@@ -101,7 +113,8 @@ describe('Derivation Methods', () => {
 	});
 	it('Should return a valid mainnet p2pkh object at index 8', () => {
 		const pathRes = getKeyDerivationPathObject({
-			path: "m/44'/0'/0'/0/8"
+			path: "m/44'/0'/0'/0/8",
+			network: EAvailableNetworks.mainnet
 		});
 		expect(pathRes.isErr()).to.equal(false);
 		if (pathRes.isErr()) return;

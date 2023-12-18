@@ -9,6 +9,7 @@ import {
 	generateMnemonic
 } from '../src';
 import { TEST_MNEMONIC } from './constants';
+import { servers } from '../example/helpers';
 
 const expect = chai.expect;
 
@@ -225,7 +226,37 @@ describe('Wallet Library', async function () {
 		);
 	});
 
-	it('Should successfully switch from testnet to mainnet', async () => {
+	it('Should successfully switch from testnet to regtest', async () => {
+		expect(wallet.network).to.equal(EAvailableNetworks.testnet);
+		await wallet.switchNetwork(EAvailableNetworks.regtest, servers.regtest);
+		it('Should successfully create a wallet for the new network.', () => {
+			expect(wallet).not.to.be.null;
+		});
+		const address = await wallet.getAddress({
+			addressType: EAddressType.p2wpkh,
+			changeAddress: false,
+			index: '0'
+		});
+		expect(address).to.equal('bcrt1qmja98kkd540qtesjqdanfg0ywags845vm7s9dn');
+		expect(wallet.data.utxos.length).to.equal(0);
+		expect(wallet.data.balance).to.equal(0);
+		const expectedAddressIndex = {
+			address: 'bcrt1qmja98kkd540qtesjqdanfg0ywags845vm7s9dn',
+			path: "m/84'/1'/0'/0/0",
+			publicKey:
+				'02189e644b5fe9acf24374b35f01f652e011867568b6e01765cace9b7ef07809cc',
+			index: 0,
+			scriptHash:
+				'1cc3af572e4c847a1adf7ab3658fa7ae36926088c762821930dadc60e41217c2'
+		};
+		expect(wallet.data.addressIndex[wallet.data.addressType]).to.deep.equal(
+			expectedAddressIndex
+		);
+		expect(wallet.network).to.equal(EAvailableNetworks.regtest);
+	});
+
+	it('Should successfully switch from regtest to mainnet', async () => {
+		expect(wallet.network).to.equal(EAvailableNetworks.regtest);
 		await wallet.switchNetwork(EAvailableNetworks.mainnet);
 		it('Should successfully create a wallet for the new network.', () => {
 			expect(wallet).not.to.be.null;
@@ -247,9 +278,10 @@ describe('Wallet Library', async function () {
 			scriptHash:
 				'28f2ce1db4fd99ead11e0f5d165247c40999f52a899f8c02f1476c8541bd2fc5'
 		};
-		expect(wallet.data.addressIndex[wallet.addressType]).to.deep.equal(
+		expect(wallet.data.addressIndex[wallet.data.addressType]).to.deep.equal(
 			expectedAddressIndex
 		);
+		expect(wallet.network).to.equal(EAvailableNetworks.mainnet);
 	});
 
 	it('Should successfully return the private mainnet key for a given path', async () => {

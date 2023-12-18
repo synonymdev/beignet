@@ -51,6 +51,7 @@ import {
 	TServer,
 	TSetData,
 	TSetupTransactionResponse,
+	TTransactionMessage,
 	TWalletDataKeys
 } from '../types';
 import {
@@ -89,6 +90,8 @@ import { CHUNK_LIMIT, GAP_LIMIT, GENERATE_ADDRESS_AMOUNT } from './constants';
 import cloneDeep from 'lodash.clonedeep';
 import { btcToSats } from '../utils/conversion';
 import * as bip39 from 'bip39';
+import { TLSSocket } from 'tls';
+import { Server } from 'net';
 
 const bip32 = BIP32Factory(ecc);
 
@@ -108,11 +111,13 @@ export class Wallet {
 		data: ICustomGetScriptHash
 	) => Promise<string>; // For use with Bitkit.
 
+	public isSwitchingNetworks: boolean;
 	public readonly id: string;
 	public readonly name: string;
-	public addressType: EAddressType;
 	public electrumOptions?: {
 		servers?: TServer | TServer[];
+		tls?: TLSSocket;
+		net?: Server;
 	};
 	public electrum: Electrum;
 	public exchangeRates: IExchangeRates;
@@ -132,7 +137,7 @@ export class Wallet {
 		onMessage = (): null => null,
 		customGetAddress,
 		customGetScriptHash,
-		rbf = true,
+		rbf = false,
 		selectedFeeId = EFeeId.normal
 	}: IWallet) {
 		if (!mnemonic) throw new Error('No mnemonic specified.');
@@ -147,12 +152,11 @@ export class Wallet {
 			this._seed,
 			this.getBitcoinNetwork(this._network)
 		);
-		this._data = getDefaultWalletData();
+		this._data = { ...getDefaultWalletData(), addressType };
 		this._getData = storage?.getData ?? getDataFallback;
 		this._setData = storage?.setData;
 		if (customGetAddress) this._customGetAddress = customGetAddress;
 		if (customGetScriptHash) this._customGetScriptHash = customGetScriptHash;
-		this.addressType = addressType;
 		this.id = generateWalletId(this._seed);
 		this.name = name ?? this.id;
 		this.exchangeRates = {};
@@ -171,6 +175,7 @@ export class Wallet {
 		});
 		this.rbf = rbf;
 		this.selectedFeeId = selectedFeeId;
+		this.isSwitchingNetworks = false;
 	}
 
 	public get data(): IWalletData {
@@ -186,10 +191,8 @@ export class Wallet {
 			const wallet = new Wallet(params);
 			const res = await wallet.setWalletData();
 			if (res.isErr()) return err(res.error.message);
-			const exchangeRates = await getExchangeRates();
-			if (exchangeRates.isOk()) wallet.exchangeRates = exchangeRates.value;
-			const feeEstimates = await wallet.getFeeEstimates();
-			if (feeEstimates) wallet.feeEstimates = feeEstimates;
+			wallet.updateExchangeRates();
+			wallet.updateFeeEstimates();
 			console.log('Syncing Wallet...');
 			await wallet.refreshWallet({});
 			return ok(wallet);
@@ -202,16 +205,22 @@ export class Wallet {
 		network: EAvailableNetworks,
 		servers?: TServer | TServer[]
 	): Promise<Result<string>> {
+		this.isSwitchingNetworks = true;
 		// Disconnect from Electrum.
 		await this.electrum.disconnect();
 
 		this._network = network;
+		this._data = getDefaultWalletData();
 		const params: IWallet = {
 			...this,
 			mnemonic: this._mnemonic,
 			passphrase: this._passphrase,
 			network,
-			servers,
+			electrumOptions: {
+				servers,
+				tls: this.electrumOptions?.tls,
+				net: this.electrumOptions?.net
+			},
 			storage: {
 				getData: this._getData,
 				setData: this._setData
@@ -221,6 +230,8 @@ export class Wallet {
 		const createRes = await Wallet.create(params);
 		if (createRes.isErr()) return err(createRes.error.message);
 		Object.assign(this, createRes.value);
+		await this.updateFeeEstimates(true);
+		this.isSwitchingNetworks = false;
 		return ok(`Successfully switched to ${network}.`);
 	}
 
@@ -230,7 +241,7 @@ export class Wallet {
 	 * @returns {Promise<void>}
 	 */
 	async updateAddressType(addressType: EAddressType): Promise<void> {
-		this.addressType = addressType;
+		this._data.addressType = addressType;
 		await this.saveWalletData('addressType', addressType);
 		await this.refreshWallet({});
 	}
@@ -249,7 +260,7 @@ export class Wallet {
 			await this.setZeroIndexAddresses();
 			const addressType: undefined | EAddressType = updateAllAddressTypes
 				? undefined
-				: this.addressType;
+				: this.data.addressType;
 			const r1 = await this.updateAddressIndexes({ addressType });
 			if (r1.isErr()) return err(r1.error.message);
 			const r2 = await this.getUtxos({ scanAllAddresses });
@@ -269,14 +280,19 @@ export class Wallet {
 	 * @private
 	 */
 	private async setWalletData(): Promise<Result<boolean>> {
-		const storageIdCheckRes = await this.storageIdCheck(this.id);
-		if (storageIdCheckRes.isErr()) return err(storageIdCheckRes.error.message);
-		this._data = getDefaultWalletData();
-		const walletDataResponse = await this.getWalletData();
-		if (walletDataResponse.isErr())
-			return err(walletDataResponse.error.message);
-		this._data = walletDataResponse.value;
-		return ok(true);
+		try {
+			const storageIdCheckRes = await this.storageIdCheck(this.id);
+			if (storageIdCheckRes.isErr())
+				return err(storageIdCheckRes.error.message);
+			this._data = getDefaultWalletData();
+			const walletDataResponse = await this.getWalletData();
+			if (walletDataResponse.isErr())
+				return err(walletDataResponse.error.message);
+			this._data = walletDataResponse.value;
+			return ok(true);
+		} catch (e) {
+			return err(e);
+		}
 	}
 
 	/**
@@ -292,14 +308,17 @@ export class Wallet {
 		// No id found, it is safe to save to storage.
 		if (res.isErr() || !res.value) {
 			// Save id to storage.
+			this._data.id = id;
 			await this.saveWalletData('id', id);
 			return ok('Saved ID to storage.');
 		}
 		// If the ID saved in storage does not match return an error and notify the developer.
-		if (res.value !== id)
-			return err(
-				'Mismatched id found in storage. Change the wallet name or delete the old wallet from storage and try again.'
-			);
+		if (res.value !== id) {
+			const msg =
+				'Mismatched id found in storage. Change the wallet name or delete the old wallet from storage and try again.';
+			console.log(msg);
+			return err(msg);
+		}
 		return ok("ID's match, it's safe to continue.");
 	}
 
@@ -313,70 +332,87 @@ export class Wallet {
 	}
 
 	/**
-	 * Gets the wallet data object from storge if able.
+	 * Gets the wallet data object from storage if able.
 	 * Otherwise, it falls back to the default wallet data object.
 	 * @returns {Promise<Result<IWalletData>>}
 	 */
 	public async getWalletData(): Promise<Result<IWalletData>> {
-		const walletDataKeys = getDefaultWalletDataKeys();
-		const walletData: IWalletData = getDefaultWalletData();
-		for (const key of walletDataKeys) {
-			let dataResult;
-			try {
-				const walletDataKey = this.getWalletDataKey(key);
-				dataResult = await this._getData(walletDataKey);
-				if (dataResult.isErr()) return err(dataResult.error.message);
-			} catch {}
-			const data = dataResult?.value ?? walletData[key];
-			switch (key) {
-				case 'id':
-					walletData[key] = data as string;
-					break;
-				case 'addressType':
-					walletData[key] = data as EAddressType;
-					break;
-				case 'addresses':
-				case 'changeAddresses':
-					walletData[key] = data as TAddressTypeContent<IAddresses>;
-					break;
-				case 'addressIndex':
-				case 'changeAddressIndex':
-					walletData[key] = data as TAddressTypeContent<IAddress>;
-					break;
-				case 'lastUsedAddressIndex':
-				case 'lastUsedChangeAddressIndex':
-					walletData[key] = data as TAddressTypeContent<IAddress>;
-					break;
-				case 'utxos':
-					walletData[key] = data as IUtxo[];
-					break;
-				case 'blacklistedUtxos':
-					walletData[key] = data as IUtxo[];
-					break;
-				case 'unconfirmedTransactions':
-				case 'transactions':
-					walletData[key] = data as IFormattedTransactions;
-					break;
-				case 'transaction':
-					walletData[key] = data as ISendTransaction;
-					break;
-				case 'balance':
-					walletData[key] = data as number;
-					break;
-				case 'header':
-					walletData[key] = data as IHeader;
-					break;
-				case 'boostedTransactions':
-					walletData[key] = data as IBoostedTransactions;
-					break;
-				case 'selectedFeeId':
-					walletData[key] = data as EFeeId;
-					break;
-				default:
-					return err(`Unhandled key in getWalletData: ${key}`);
+		try {
+			const walletDataKeys = getDefaultWalletDataKeys();
+			const walletData: IWalletData = getDefaultWalletData();
+			for (const key of walletDataKeys) {
+				let dataResult;
+				try {
+					const walletDataKey = this.getWalletDataKey(key);
+					const getDataRes = await this._getData(walletDataKey);
+					if (getDataRes.isErr()) {
+						//dataResult = getDataRes?.value ?? walletData[key];
+						return err(dataResult.error.message);
+					}
+					dataResult = getDataRes?.value;
+				} catch (e) {
+					console.log(e);
+				}
+				const data = dataResult ?? walletData[key];
+				switch (key) {
+					case 'id':
+						walletData[key] = data as string;
+						break;
+					case 'addressType':
+						walletData[key] = data as EAddressType;
+						break;
+					case 'addresses':
+					case 'changeAddresses':
+						walletData[key] = data as TAddressTypeContent<IAddresses>;
+						break;
+					case 'addressIndex':
+					case 'changeAddressIndex':
+						walletData[key] = data as TAddressTypeContent<IAddress>;
+						break;
+					case 'lastUsedAddressIndex':
+					case 'lastUsedChangeAddressIndex':
+						walletData[key] = data as TAddressTypeContent<IAddress>;
+						break;
+					case 'utxos':
+						walletData[key] = data as IUtxo[];
+						break;
+					case 'blacklistedUtxos':
+						walletData[key] = data as IUtxo[];
+						break;
+					case 'unconfirmedTransactions':
+					case 'transactions':
+						walletData[key] = data as IFormattedTransactions;
+						break;
+					case 'transaction':
+						walletData[key] = data as ISendTransaction;
+						break;
+					case 'balance':
+						walletData[key] = data as number;
+						break;
+					case 'header':
+						walletData[key] = data as IHeader;
+						break;
+					case 'boostedTransactions':
+						walletData[key] = data as IBoostedTransactions;
+						break;
+					case 'selectedFeeId':
+						walletData[key] = data as EFeeId;
+						break;
+					case 'exchangeRates':
+						walletData[key] = data as IExchangeRates;
+						break;
+					case 'feeEstimates':
+						walletData[key] = data as IOnchainFees;
+						break;
+					default:
+						return err(`Unhandled key in getWalletData: ${key}`);
+				}
 			}
+			return ok(walletData);
+		} catch (e) {
+			console.log(e);
+			return err(e);
 		}
-		return ok(walletData);
 	}
 
 	/**
@@ -474,7 +510,7 @@ export class Wallet {
 	public async getAddress({
 		index,
 		changeAddress = false,
-		addressType = this.addressType
+		addressType = this.data.addressType
 	}: IGetAddress = {}): Promise<string> {
 		try {
 			if (index === undefined) {
@@ -668,7 +704,7 @@ export class Wallet {
 		addressIndex = 0,
 		changeAddressIndex = 0,
 		keyDerivationPath,
-		addressType = this.addressType
+		addressType = this.data.addressType
 	}: IGenerateAddresses): Promise<Result<IGenerateAddressesResponse>> {
 		const network = this._network;
 		try {
@@ -710,7 +746,7 @@ export class Wallet {
 					}
 					const scriptHash = await this.getScriptHash({
 						address: address.value.address,
-						network: this._network
+						network
 					});
 					if (!scriptHash) {
 						throw new Error('Unable to get script hash.');
@@ -793,7 +829,7 @@ export class Wallet {
 		if (checkRes.isErr()) return err(checkRes.error.message);
 		try {
 			const network = this._network;
-			addressType = addressType ?? this.addressType;
+			addressType = addressType ?? this.data.addressType;
 			const currentWallet = this.data;
 			const { path } = addressTypes[addressType]; // Assuming addressTypes is globally defined.
 			const result = formatKeyDerivationPath({ path, network });
@@ -1141,12 +1177,14 @@ export class Wallet {
 		keyDerivationPath
 	}: IGenerateAddresses): Promise<Result<IGenerateAddressesResponse>> {
 		if (!addressType) {
-			addressType = this.addressType;
+			addressType = this.data.addressType;
 		}
+		const network = this._network;
 		const { path, type } = addressTypes[addressType];
 		if (!keyDerivationPath) {
 			const keyDerivationPathResponse = getKeyDerivationPathObject({
-				path
+				path,
+				network
 			});
 			if (keyDerivationPathResponse.isErr()) {
 				return err(keyDerivationPathResponse.error.message);
@@ -1386,19 +1424,13 @@ export class Wallet {
 	 * @private
 	 * @returns {void}
 	 */
-	private async resetAddressIndexes(): Promise<void> {
-		const addressTypeKeys = Object.values(EAddressType);
+	public async resetAddressIndexes(): Promise<void> {
 		const defaultWalletShape = getDefaultWalletData();
-		for (const addressType of addressTypeKeys) {
-			this._data.addressIndex[addressType] =
-				defaultWalletShape.addressIndex[addressType];
-			this._data.changeAddressIndex[addressType] =
-				defaultWalletShape.changeAddressIndex[addressType];
-			this._data.lastUsedAddressIndex[addressType] =
-				defaultWalletShape.lastUsedAddressIndex[addressType];
-			this._data.lastUsedChangeAddressIndex[addressType] =
-				defaultWalletShape.lastUsedChangeAddressIndex[addressType];
-		}
+		this._data.addressIndex = defaultWalletShape.addressIndex;
+		this._data.changeAddressIndex = defaultWalletShape.changeAddressIndex;
+		this._data.lastUsedAddressIndex = defaultWalletShape.lastUsedAddressIndex;
+		this._data.lastUsedChangeAddressIndex =
+			defaultWalletShape.lastUsedChangeAddressIndex;
 		await Promise.all([
 			this.saveWalletData('addressIndex', this._data.addressIndex),
 			this.saveWalletData('changeAddressIndex', this._data.changeAddressIndex),
@@ -1421,7 +1453,7 @@ export class Wallet {
 	 * @returns {Promise<Result<IAddress>>}
 	 */
 	public async generateNewReceiveAddress({
-		addressType = this.addressType,
+		addressType = this.data.addressType,
 		keyDerivationPath
 	}: {
 		addressType?: EAddressType;
@@ -1515,7 +1547,7 @@ export class Wallet {
 	}): Result<{ addressDelta: number; changeAddressDelta: number }> {
 		try {
 			if (!addressType) {
-				addressType = this.addressType;
+				addressType = this.data.addressType;
 			}
 			const currentWallet = this.data;
 			const addressIndex = currentWallet.addressIndex[addressType].index;
@@ -1553,8 +1585,8 @@ export class Wallet {
 		if (getUtxosRes.isErr()) {
 			return err(getUtxosRes.error.message);
 		}
-		const utxos = getUtxosRes.value.utxos;
-		const balance = getUtxosRes.value.balance;
+		const utxos = getUtxosRes.value?.utxos ?? [];
+		const balance = getUtxosRes.value?.balance ?? 0;
 		this._data.utxos = utxos;
 		this._data.balance = balance;
 		await Promise.all([
@@ -1666,6 +1698,9 @@ export class Wallet {
 
 		let notificationTxid: string | undefined;
 		const storedTransactions = this.data.transactions;
+		const confirmedTxs: TTransactionMessage[] = [];
+		const receivedTxs: TTransactionMessage[] = [];
+		const sentTxs: TTransactionMessage[] = [];
 
 		Object.keys(transactions).forEach((txid) => {
 			//If the tx is new or the tx now has a block height (state changed to confirmed)
@@ -1681,13 +1716,19 @@ export class Wallet {
 						transactions[txid]?.timestamp ??
 						Date.now()
 				};
+				if (this.onMessage && formattedTransactions[txid]?.height > 0)
+					confirmedTxs.push({ transaction: formattedTransactions[txid] });
 			}
 
 			// if the tx is new, incoming but not from a transfer - show notification
-			if (
-				!storedTransactions[txid] &&
-				transactions[txid].type === EPaymentType.received
-			) {
+			if (!(txid in storedTransactions)) {
+				if (this.onMessage) {
+					if (transactions[txid].type === EPaymentType.received) {
+						receivedTxs.push({ transaction: transactions[txid] });
+					} else if (transactions[txid].type === EPaymentType.sent) {
+						sentTxs.push({ transaction: transactions[txid] });
+					}
+				}
 				notificationTxid = txid;
 			}
 		});
@@ -1698,10 +1739,26 @@ export class Wallet {
 		}
 
 		this._data.transactions = {
-			...this.data.transactions,
+			...this._data.transactions,
 			...formattedTransactions
 		};
 		await this.saveWalletData('transactions', this._data.transactions);
+
+		if (this.onMessage) {
+			confirmedTxs.forEach((tx) => {
+				// @ts-ignore
+				this.onMessage('transactionConfirmed', tx);
+			});
+			sentTxs.forEach((tx) => {
+				// @ts-ignore
+				this.onMessage('transactionSent', tx);
+			});
+			receivedTxs.forEach((tx) => {
+				// @ts-ignore
+				this.onMessage('transactionReceived', tx);
+			});
+		}
+
 		return ok(notificationTxid);
 	}
 
@@ -1721,25 +1778,26 @@ export class Wallet {
 			}
 
 			const { unconfirmedTxs, outdatedTxs, ghostTxs } = processRes.value;
-			if (outdatedTxs.length) {
+			if (outdatedTxs.length > 0) {
 				if (this.onMessage) this.onMessage('reorg', outdatedTxs);
 				//We need to update the height of the transactions that were reorg'd out.
 				await this.updateTransactionHeights(outdatedTxs);
 			}
-			if (ghostTxs.length) {
+			if (ghostTxs.length > 0) {
 				if (this.onMessage) this.onMessage('rbf', ghostTxs);
 				//We need to update the ghost transactions in the store & activity-list and rescan the addresses to get the correct balance.
 				await this.updateGhostTransactions({
 					txIds: ghostTxs
 				});
+			} else {
+				this._data.unconfirmedTransactions = unconfirmedTxs;
+				await Promise.all([
+					this.saveWalletData(
+						'unconfirmedTransactions',
+						this._data.unconfirmedTransactions
+					)
+				]);
 			}
-			this._data.unconfirmedTransactions = unconfirmedTxs;
-			await Promise.all([
-				this.saveWalletData(
-					'unconfirmedTransactions',
-					this._data.unconfirmedTransactions
-				)
-			]);
 			return ok('Successfully updated unconfirmed transactions.');
 		} catch (e) {
 			return err(e);
@@ -1855,6 +1913,16 @@ export class Wallet {
 	}
 
 	/**
+	 * Updates & Saves header information to storage.
+	 * @param headerData
+	 * @returns {Promise<void>}
+	 */
+	public async updateHeader(headerData: IHeader): Promise<void> {
+		this._data.header = headerData;
+		await this.saveWalletData('header', headerData);
+	}
+
+	/**
 	 * Removes transactions from the store and activity list.
 	 * @private
 	 * @async
@@ -1867,9 +1935,8 @@ export class Wallet {
 		txIds: string[];
 	}): Promise<Result<string>> {
 		try {
-			const transactions = this._data.transactions;
-			const unconfirmedTransactions = this._data.unconfirmedTransactions;
-
+			const transactions = this.data.transactions;
+			const unconfirmedTransactions = this.data.unconfirmedTransactions;
 			txIds.forEach((txId) => {
 				if (txId in transactions) {
 					transactions[txId]['exists'] = false;
@@ -1878,7 +1945,9 @@ export class Wallet {
 					delete unconfirmedTransactions[txId];
 				}
 			});
+			this._data.transactions = transactions;
 			await this.saveWalletData('transactions', transactions);
+			this._data.unconfirmedTransactions = unconfirmedTransactions;
 			await this.saveWalletData(
 				'unconfirmedTransactions',
 				unconfirmedTransactions
@@ -1977,7 +2046,7 @@ export class Wallet {
 	 */
 	private async updateTransactionHeights(txs: IUtxo[]): Promise<string> {
 		let needsSave = false;
-		const transactions = this._data.transactions;
+		const transactions = this.data.transactions;
 		txs.forEach((tx) => {
 			const txId = tx.tx_hash;
 			if (txId in transactions) {
@@ -1986,7 +2055,7 @@ export class Wallet {
 			}
 		});
 		if (needsSave) {
-			await this.saveWalletData('transactions', this._data.transactions);
+			await this.saveWalletData('transactions', transactions);
 		}
 		return 'Successfully updated reorg transactions.';
 	}
@@ -2167,8 +2236,8 @@ export class Wallet {
 				const _addresses = scriptPubKey.addresses
 					? scriptPubKey.addresses
 					: scriptPubKey.address
-					? [scriptPubKey.address]
-					: [];
+						? [scriptPubKey.address]
+						: [];
 				totalOutputValue = totalOutputValue + value;
 				_addresses.map((address) => {
 					if (address in combinedAddressObj) {
@@ -2186,7 +2255,8 @@ export class Wallet {
 			const value = Number(totalMatchedValue.toFixed(8));
 			const totalValue = totalInputValue - totalOutputValue;
 			const fee = Number(Math.abs(totalValue).toFixed(8));
-			const satsPerByte = btcToSats(fee) / result.vsize;
+			const vsize = result.vsize;
+			const satsPerByte = Math.round(btcToSats(fee) / vsize);
 			const { address, height, scriptHash } = data;
 			let timestamp = Date.now();
 			let confirmTimestamp: number | undefined;
@@ -2216,7 +2286,9 @@ export class Wallet {
 				timestamp,
 				confirmTimestamp,
 				vin: result.vin,
-				rbf
+				rbf,
+				exists: true,
+				vsize
 			};
 		});
 
@@ -2252,8 +2324,8 @@ export class Wallet {
 					const addresses = vout.scriptPubKey.addresses
 						? vout.scriptPubKey.addresses
 						: vout.scriptPubKey.address
-						? [vout.scriptPubKey.address]
-						: [];
+							? [vout.scriptPubKey.address]
+							: [];
 					const value = vout.value;
 					const key = `${data.tx_hash}${vout.n}`;
 					inputData[key] = { addresses, value };
@@ -2297,7 +2369,7 @@ export class Wallet {
 	 * @returns {Promise<Result<IAddress>>}
 	 */
 	public async getChangeAddress(
-		addressType = this.addressType
+		addressType = this.data.addressType
 	): Promise<Result<IAddress>> {
 		const currentWallet = this.data;
 
@@ -2329,10 +2401,8 @@ export class Wallet {
 	 * @async
 	 * @returns {Promise<IOnchainFees>}
 	 */
-	public async getFeeEstimates(): Promise<IOnchainFees> {
+	public async getFeeEstimates(network = this._network): Promise<IOnchainFees> {
 		try {
-			const network = this._network;
-
 			if (network === EAvailableNetworks.bitcoinRegtest) {
 				return {
 					fast: 60,
@@ -2366,10 +2436,10 @@ export class Wallet {
 	 * @param {ISetupTransaction} params
 	 * @returns {TSetupTransactionResponse}
 	 */
-	public setupTransaction(
+	public async setupTransaction(
 		params: ISetupTransaction = {}
-	): TSetupTransactionResponse {
-		return this.transaction.setupTransaction(params);
+	): Promise<TSetupTransactionResponse> {
+		return await this.transaction.setupTransaction(params);
 	}
 
 	/**
@@ -2421,7 +2491,7 @@ export class Wallet {
 		broadcast?: boolean;
 		shuffleOutputs?: boolean;
 	}): Promise<Result<string>> {
-		const setupTransactionRes = this.transaction.setupTransaction({
+		const setupTransactionRes = await this.transaction.setupTransaction({
 			rbf
 		});
 		if (setupTransactionRes.isErr()) {
@@ -2539,50 +2609,65 @@ export class Wallet {
 	private async setZeroIndexAddresses(): Promise<Result<string>> {
 		const types = Object.values(EAddressType);
 		const currentWallet = this.data;
+		let saveAddressIndexes = false;
+		let saveChangeAddressIndexes = false;
 
 		for (const addressType of types) {
 			const addressIndex = currentWallet.addressIndex[addressType];
 			const changeAddressIndex = currentWallet.changeAddressIndex[addressType];
 
-			if (addressIndex?.index >= 0 && changeAddressIndex?.index >= 0) {
-				return ok('No need to set indexes.');
-			}
-
 			if (addressIndex?.index < 0) {
-				const address = await this.addAddresses({
-					addressAmount: GENERATE_ADDRESS_AMOUNT,
-					addressIndex: 0,
-					changeAddressAmount: 0,
-					changeAddressIndex: 0,
-					addressType
-				});
-				if (address.isOk()) {
-					this._data.addressIndex[addressType] =
-						address.value.addresses[Object.keys(address.value.addresses)[0]];
-					await this.saveWalletData('addressIndex', this._data.addressIndex);
-				}
+				await this.updateAddressIndex(addressType, false);
+				saveAddressIndexes = true;
 			}
 			if (changeAddressIndex?.index < 0) {
-				const changeAddress = await this.addAddresses({
-					addressAmount: 0,
-					addressIndex: 0,
-					changeAddressAmount: GENERATE_ADDRESS_AMOUNT,
-					changeAddressIndex: 0,
-					addressType
-				});
-				if (changeAddress.isOk()) {
-					this._data.changeAddressIndex[addressType] =
-						changeAddress.value.changeAddresses[
-							Object.keys(changeAddress.value.changeAddresses)[0]
-						];
-					await this.saveWalletData(
-						'changeAddressIndex',
-						this._data.changeAddressIndex
-					);
-				}
+				await this.updateAddressIndex(addressType, true);
+				saveChangeAddressIndexes = true;
 			}
 		}
+
+		if (saveAddressIndexes) {
+			await this.saveWalletData('addressIndex', this._data.addressIndex);
+		}
+		if (saveChangeAddressIndexes) {
+			await this.saveWalletData(
+				'changeAddressIndex',
+				this._data.changeAddressIndex
+			);
+		}
+
 		return ok('Set Zero Index Addresses.');
+	}
+
+	/**
+	 * Updates the address index for a given address type.
+	 * @private
+	 * @async
+	 * @param {EAddressType} addressType
+	 * @param {boolean} isChangeAddress
+	 * @param {number} [index]
+	 * @returns {Promise<void>}
+	 */
+	private async updateAddressIndex(
+		addressType: EAddressType,
+		isChangeAddress: boolean,
+		index = 0
+	): Promise<void> {
+		const address = await this.generateAddresses({
+			addressAmount: isChangeAddress ? 0 : 1,
+			addressIndex: index,
+			changeAddressAmount: isChangeAddress ? 1 : 0,
+			changeAddressIndex: index,
+			addressType
+		});
+		if (address.isOk()) {
+			const indexToUpdate = isChangeAddress
+				? 'changeAddressIndex'
+				: 'addressIndex';
+			const key = isChangeAddress ? 'changeAddresses' : 'addresses';
+			this._data[indexToUpdate][addressType] =
+				address.value[key][Object.keys(address.value[key])[0]];
+		}
 	}
 
 	/**
@@ -2590,7 +2675,7 @@ export class Wallet {
 	 * @returns {TAddressIndexInfo}
 	 */
 	public getAddressIndexInfo(): TAddressIndexInfo {
-		const addressType = this.addressType;
+		const addressType = this.data.addressType;
 		const currentWallet = this.data;
 		const addressIndex = currentWallet.addressIndex[addressType];
 		const changeAddressIndex = currentWallet.addressIndex[addressType];
@@ -2612,14 +2697,11 @@ export class Wallet {
 	 * @returns {Promise<Result<string>>}
 	 */
 	getReceiveAddress = async ({
-		addressType
+		addressType = this.data.addressType
 	}: {
 		addressType?: EAddressType;
 	}): Promise<Result<string>> => {
 		try {
-			if (!addressType) {
-				addressType = this.addressType;
-			}
 			const wallet = this.data;
 			const addressIndex = wallet.addressIndex;
 			const receiveAddress = addressIndex[addressType].address;
@@ -2662,7 +2744,6 @@ export class Wallet {
 	 * @param {ITxHash} txHash
 	 * @returns {Promise<Result<IRbfData>>}
 	 */
-
 	public async getRbfData({
 		txHash
 	}: {
@@ -2850,10 +2931,11 @@ export class Wallet {
 	}: {
 		txid: string;
 	}): Promise<void> {
-		if (txid in this._data.transactions) {
-			delete this._data.transactions[txid];
+		const transactions = this.data.transactions;
+		if (txid in transactions) {
+			delete transactions[txid];
 		}
-		await this.saveWalletData('transactions', this._data.transactions);
+		await this.saveWalletData('transactions', transactions);
 	}
 
 	/**
@@ -3055,7 +3137,7 @@ export class Wallet {
 	}
 
 	/**
-	 * Removes a specified tag to the current transaction.
+	 * Removes a specified tag from the current transaction.
 	 * @param {string} tag
 	 * @returns {Result<string>}
 	 */
@@ -3080,18 +3162,29 @@ export class Wallet {
 
 	/**
 	 * Updates the fee rate for the current transaction to the preferred value if none set.
+	 * @param {number} [satsPerByte]
+	 * @param {EFeeId} [selectedFeeId]
 	 * @returns {Result<string>}
 	 */
-	setupFeeForOnChainTransaction(): Result<string> {
+	setupFeeForOnChainTransaction({
+		satsPerByte,
+		selectedFeeId
+	}: {
+		satsPerByte?: number;
+		selectedFeeId?: EFeeId;
+	}): Result<string> {
 		try {
 			const transactionData = this.transaction.data;
-			let satsPerByte = transactionData?.satsPerByte ?? 1;
-			satsPerByte =
-				this.selectedFeeId === EFeeId.none
-					? satsPerByte
-					: this.feeEstimates[this.selectedFeeId];
+			if (!satsPerByte) {
+				satsPerByte = transactionData?.satsPerByte ?? 1;
+				satsPerByte =
+					this.selectedFeeId === EFeeId.none
+						? satsPerByte
+						: this.feeEstimates[this.selectedFeeId];
+			}
 			const res = this.transaction.updateFee({
-				satsPerByte
+				satsPerByte: satsPerByte ?? 1,
+				selectedFeeId
 			});
 			if (res.isErr()) {
 				console.log(res.error.message);
@@ -3102,5 +3195,58 @@ export class Wallet {
 		} catch (e) {
 			return err(e);
 		}
+	}
+
+	/**
+	 * Used to temporarily update the balance until the Electrum server catches up after sending a transaction.
+	 * @param {number} balance
+	 * @returns {Result<string>}
+	 */
+	public updateWalletBalance({ balance }: { balance: number }): Result<string> {
+		try {
+			this._data.balance = balance;
+			this.saveWalletData('balance', balance);
+			return ok('Successfully updated balance.');
+		} catch (e) {
+			return err(e);
+		}
+	}
+
+	/**
+	 * Updates the exchange rates for the current network.
+	 * @public
+	 * @async
+	 * @returns {Promise<Result<IExchangeRates>>}
+	 */
+	public async updateExchangeRates(): Promise<Result<IExchangeRates>> {
+		const exchangeRates = await getExchangeRates();
+		if (exchangeRates.isErr()) return err(exchangeRates.error.message);
+		this.exchangeRates = exchangeRates.value;
+		await this.saveWalletData('exchangeRates', this.exchangeRates);
+		return ok(this.exchangeRates);
+	}
+
+	/**
+	 * Updates the fee estimates for the current network.
+	 * @public
+	 * @async
+	 * @param {true} [forceUpdate] Ignores the timestamp if set true and forces the update
+	 * @returns {Promise<Result<IOnchainFees>>}
+	 */
+	public async updateFeeEstimates(
+		forceUpdate = false
+	): Promise<Result<IOnchainFees>> {
+		const timestamp = this.feeEstimates.timestamp;
+		const difference = Math.floor((Date.now() - timestamp) / 1000);
+		if (!forceUpdate && difference < 1800) {
+			return ok(this.feeEstimates);
+		}
+		const feeEstimates = await this.getFeeEstimates();
+		if (!feeEstimates) {
+			return err('Unable to retrieve fee estimates.');
+		}
+		this.feeEstimates = feeEstimates;
+		await this.saveWalletData('feeEstimates', feeEstimates);
+		return ok(feeEstimates);
 	}
 }

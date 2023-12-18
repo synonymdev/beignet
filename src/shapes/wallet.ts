@@ -64,7 +64,8 @@ export const defaultSendTransaction: ISendTransaction = {
 	minFee: 1,
 	max: false,
 	tags: [],
-	lightningInvoice: ''
+	lightningInvoice: '',
+	selectedFeeId: EFeeId.none
 };
 
 export const getDefaultSendTransaction = (): ISendTransaction => {
@@ -111,7 +112,15 @@ export const defaultWalletData: Readonly<IWalletData> = {
 	boostedTransactions: {},
 	transaction: getDefaultSendTransaction(),
 	balance: 0,
-	selectedFeeId: EFeeId.normal
+	selectedFeeId: EFeeId.normal,
+	feeEstimates: {
+		fast: 5,
+		normal: 4,
+		slow: 3,
+		minimum: 2,
+		timestamp: 0
+	},
+	exchangeRates: {}
 };
 
 export const defaultFeesShape: IOnchainFees = {

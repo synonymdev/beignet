@@ -100,7 +100,7 @@ export const getKeyDerivationPath = ({
 	network
 }: {
 	addressType: EAddressType;
-	network?: EAvailableNetworks;
+	network: EAvailableNetworks;
 }): Result<IKeyDerivationPath> => {
 	try {
 		const keyDerivationPathResponse = getKeyDerivationPathObject({

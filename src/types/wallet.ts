@@ -97,6 +97,7 @@ export interface IFormattedTransaction {
 	confirmTimestamp?: number;
 	exists?: boolean;
 	rbf?: boolean;
+	vsize: number;
 }
 
 export interface IFormattedTransactions {
@@ -121,6 +122,7 @@ export interface ISendTransaction {
 	fiatAmount: number;
 	fee: number; //Total fee in sats
 	satsPerByte: number;
+	selectedFeeId: EFeeId;
 	message: string; // OP_RETURN data for a given transaction.
 	label: string; // User set label for a given transaction.
 	rbf: boolean;
@@ -162,6 +164,8 @@ export interface IWalletData {
 	transaction: ISendTransaction;
 	balance: number;
 	selectedFeeId: EFeeId;
+	exchangeRates: IExchangeRates;
+	feeEstimates: IOnchainFees;
 }
 
 export type TWalletDataKeys = keyof IWalletData;
@@ -435,13 +439,11 @@ export type TMessageDataMap = {
 	transactionSent: TTransactionMessage;
 	reorg: IUtxo[];
 	rbf: string[];
-	onElectrumConnectionChange: boolean;
+	connectedToElectrum: boolean; // True if connected, false if disconnected.
 };
 
 export type TTransactionMessage = {
-	address: IAddress;
-	balance: IGetAddressBalanceRes;
-	txs: TTxResult[];
+	transaction: IFormattedTransaction;
 };
 
 // MIT License

@@ -47,7 +47,8 @@ describe('Transaction Test', async function (): Promise<void> {
 			amount: 5000,
 			satsPerByte: 5,
 			broadcast: false,
-			shuffleOutputs: false
+			shuffleOutputs: false,
+			rbf: true
 		});
 		expect(sendRes.isErr()).to.equal(false);
 		if (sendRes.isErr()) return;
@@ -118,7 +119,8 @@ describe('Transaction Test', async function (): Promise<void> {
 			],
 			broadcast: false,
 			shuffleOutputs: false,
-			satsPerByte: 5
+			satsPerByte: 5,
+			rbf: true
 		});
 		expect(sendManyRes.isErr()).to.equal(false);
 		if (sendManyRes.isErr()) return;

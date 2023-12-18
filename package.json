@@ -21,14 +21,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/coreyphillips/beignet.git"
+    "url": "git+https://github.com/coreyphillips/beignet.git",
+    "baseUrl": "https://github.com/synonymdev/beignet"
   },
   "keywords": [
     "Bitcoin",
     "wallet"
   ],
   "types": "dist/types/index.d.ts",
-  "author": "Synonym",
+  "author": "synonymdev",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/coreyphillips/beignet/issues"

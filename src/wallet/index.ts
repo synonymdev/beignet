@@ -110,7 +110,11 @@ export class Wallet {
 	private _customGetScriptHash?: (
 		data: ICustomGetScriptHash
 	) => Promise<string>; // For use with Bitkit.
+	private _pendingRefreshPromises: Array<
+		(result: Result<IWalletData>) => void
+	> = [];
 
+	public isRefreshing: boolean;
 	public isSwitchingNetworks: boolean;
 	public readonly id: string;
 	public readonly name: string;
@@ -175,6 +179,7 @@ export class Wallet {
 		});
 		this.rbf = rbf;
 		this.selectedFeeId = selectedFeeId;
+		this.isRefreshing = false;
 		this.isSwitchingNetworks = false;
 	}
 
@@ -254,24 +259,53 @@ export class Wallet {
 	 */
 	public async refreshWallet({
 		scanAllAddresses = false,
-		updateAllAddressTypes = false
+		updateAllAddressTypes = true
 	} = {}): Promise<Result<IWalletData>> {
+		if (this.isRefreshing) {
+			return new Promise((resolve) => {
+				this._pendingRefreshPromises.push(resolve);
+			});
+		}
+		this.isRefreshing = true;
 		try {
 			await this.setZeroIndexAddresses();
 			const addressType: undefined | EAddressType = updateAllAddressTypes
 				? undefined
 				: this.data.addressType;
 			const r1 = await this.updateAddressIndexes({ addressType });
-			if (r1.isErr()) return err(r1.error.message);
+			if (r1.isErr()) {
+				return this._handleRefreshError(r1.error.message);
+			}
 			const r2 = await this.getUtxos({ scanAllAddresses });
-			if (r2.isErr()) return err(r2.error.message);
+			if (r2.isErr()) {
+				return this._handleRefreshError(r2.error.message);
+			}
 			const r3 = await this.updateTransactions({ scanAllAddresses });
-			if (r3.isErr()) return err(r3.error.message);
+			if (r3.isErr()) {
+				return this._handleRefreshError(r3.error.message);
+			}
 			await this.electrum.subscribeToAddresses();
+			this._resolveAllPendingRefreshPromises(ok(this.data));
 			return ok(this.data);
 		} catch (e) {
-			return err(e);
+			return this._handleRefreshError(e);
 		}
+	}
+
+	private _resolveAllPendingRefreshPromises(result: Result<IWalletData>): void {
+		this.isRefreshing = false;
+		while (this._pendingRefreshPromises.length > 0) {
+			const resolve = this._pendingRefreshPromises.shift();
+			if (resolve) {
+				resolve(result);
+			}
+		}
+	}
+
+	private _handleRefreshError(errorMessage: string): Result<IWalletData> {
+		this.isRefreshing = false;
+		this._resolveAllPendingRefreshPromises(err(errorMessage));
+		return err(errorMessage);
 	}
 
 	/**
@@ -2660,13 +2694,31 @@ export class Wallet {
 			changeAddressIndex: index,
 			addressType
 		});
+		const indexToUpdate = isChangeAddress
+			? 'changeAddressIndex'
+			: 'addressIndex';
 		if (address.isOk()) {
-			const indexToUpdate = isChangeAddress
-				? 'changeAddressIndex'
-				: 'addressIndex';
 			const key = isChangeAddress ? 'changeAddresses' : 'addresses';
 			this._data[indexToUpdate][addressType] =
 				address.value[key][Object.keys(address.value[key])[0]];
+		}
+		// Ensure we have addresses to pull from.
+		let addresses = {};
+		if (indexToUpdate === 'addressIndex') {
+			addresses = this.data.addresses[addressType];
+		} else {
+			addresses = this.data.changeAddresses[addressType];
+		}
+		if (!Object.keys(addresses).length) {
+			await this.addAddresses({
+				addressAmount:
+					indexToUpdate === 'addressIndex' ? GENERATE_ADDRESS_AMOUNT : 0,
+				addressIndex: index,
+				changeAddressAmount:
+					indexToUpdate === 'changeAddressIndex' ? GENERATE_ADDRESS_AMOUNT : 0,
+				changeAddressIndex: index,
+				addressType
+			});
 		}
 	}
 

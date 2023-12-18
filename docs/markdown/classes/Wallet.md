@@ -20,12 +20,12 @@
 - [\_root](Wallet.md#_root)
 - [\_seed](Wallet.md#_seed)
 - [\_setData](Wallet.md#_setdata)
-- [addressType](Wallet.md#addresstype)
 - [electrum](Wallet.md#electrum)
 - [electrumOptions](Wallet.md#electrumoptions)
 - [exchangeRates](Wallet.md#exchangerates)
 - [feeEstimates](Wallet.md#feeestimates)
 - [id](Wallet.md#id)
+- [isSwitchingNetworks](Wallet.md#isswitchingnetworks)
 - [name](Wallet.md#name)
 - [onMessage](Wallet.md#onmessage)
 - [rbf](Wallet.md#rbf)
@@ -104,13 +104,19 @@
 - [setZeroIndexAddresses](Wallet.md#setzeroindexaddresses)
 - [setupFeeForOnChainTransaction](Wallet.md#setupfeeforonchaintransaction)
 - [setupTransaction](Wallet.md#setuptransaction)
+- [storageIdCheck](Wallet.md#storageidcheck)
 - [switchNetwork](Wallet.md#switchnetwork)
+- [updateAddressIndex](Wallet.md#updateaddressindex)
 - [updateAddressIndexes](Wallet.md#updateaddressindexes)
 - [updateAddressType](Wallet.md#updateaddresstype)
 - [updateAndSaveWalletData](Wallet.md#updateandsavewalletdata)
+- [updateExchangeRates](Wallet.md#updateexchangerates)
+- [updateFeeEstimates](Wallet.md#updatefeeestimates)
 - [updateGhostTransactions](Wallet.md#updateghosttransactions)
+- [updateHeader](Wallet.md#updateheader)
 - [updateTransactionHeights](Wallet.md#updatetransactionheights)
 - [updateTransactions](Wallet.md#updatetransactions)
+- [updateWalletBalance](Wallet.md#updatewalletbalance)
 - [validateAddress](Wallet.md#validateaddress)
 - [create](Wallet.md#create)
 
@@ -128,17 +134,17 @@
 
 #### Defined in
 
-[wallet/index.ts:124](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L124)
+[wallet/index.ts:129](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L129)
 
 ## Properties
 
 ### \_customGetAddress
 
-• `Private` `Optional` **\_customGetAddress**: (`data`: [`ICustomGetAddress`](../interfaces/ICustomGetAddress.md)) => `Promise`<[`Result`](../README.md#result)<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>\>
+• `Private` `Optional` **\_customGetAddress**: (`data`: [`ICustomGetAddress`](../interfaces/ICustomGetAddress.md)) => `Promise`\<[`Result`](../README.md#result)\<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>\>
 
 #### Type declaration
 
-▸ (`data`): `Promise`<[`Result`](../README.md#result)<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>\>
+▸ (`data`): `Promise`\<[`Result`](../README.md#result)\<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>\>
 
 ##### Parameters
 
@@ -148,21 +154,21 @@
 
 ##### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>\>
 
 #### Defined in
 
-[wallet/index.ts:104](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L104)
+[wallet/index.ts:107](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L107)
 
 ___
 
 ### \_customGetScriptHash
 
-• `Private` `Optional` **\_customGetScriptHash**: (`data`: [`ICustomGetScriptHash`](../interfaces/ICustomGetScriptHash.md)) => `Promise`<`string`\>
+• `Private` `Optional` **\_customGetScriptHash**: (`data`: [`ICustomGetScriptHash`](../interfaces/ICustomGetScriptHash.md)) => `Promise`\<`string`\>
 
 #### Type declaration
 
-▸ (`data`): `Promise`<`string`\>
+▸ (`data`): `Promise`\<`string`\>
 
 ##### Parameters
 
@@ -172,11 +178,11 @@ ___
 
 ##### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 #### Defined in
 
-[wallet/index.ts:107](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L107)
+[wallet/index.ts:110](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L110)
 
 ___
 
@@ -186,7 +192,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:101](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L101)
+[wallet/index.ts:104](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L104)
 
 ___
 
@@ -196,7 +202,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:102](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L102)
+[wallet/index.ts:105](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L105)
 
 ___
 
@@ -206,7 +212,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:97](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L97)
+[wallet/index.ts:100](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L100)
 
 ___
 
@@ -216,7 +222,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:96](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L96)
+[wallet/index.ts:99](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L99)
 
 ___
 
@@ -226,7 +232,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:98](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L98)
+[wallet/index.ts:101](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L101)
 
 ___
 
@@ -236,7 +242,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:100](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L100)
+[wallet/index.ts:103](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L103)
 
 ___
 
@@ -246,7 +252,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:99](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L99)
+[wallet/index.ts:102](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L102)
 
 ___
 
@@ -256,17 +262,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:103](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L103)
-
-___
-
-### addressType
-
-• **addressType**: [`EAddressType`](../enums/EAddressType.md)
-
-#### Defined in
-
-[wallet/index.ts:113](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L113)
+[wallet/index.ts:106](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L106)
 
 ___
 
@@ -276,7 +272,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:117](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L117)
+[wallet/index.ts:122](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L122)
 
 ___
 
@@ -288,11 +284,13 @@ ___
 
 | Name | Type |
 | :------ | :------ |
+| `net?` | `Server` |
 | `servers?` | [`TServer`](../README.md#tserver) \| [`TServer`](../README.md#tserver)[] |
+| `tls?` | `TLSSocket` |
 
 #### Defined in
 
-[wallet/index.ts:114](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L114)
+[wallet/index.ts:117](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L117)
 
 ___
 
@@ -302,7 +300,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:118](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L118)
+[wallet/index.ts:123](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L123)
 
 ___
 
@@ -312,7 +310,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:121](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L121)
+[wallet/index.ts:126](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L126)
 
 ___
 
@@ -322,7 +320,17 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:111](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L111)
+[wallet/index.ts:115](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L115)
+
+___
+
+### isSwitchingNetworks
+
+• **isSwitchingNetworks**: `boolean`
+
+#### Defined in
+
+[wallet/index.ts:114](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L114)
 
 ___
 
@@ -332,7 +340,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:112](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L112)
+[wallet/index.ts:116](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L116)
 
 ___
 
@@ -342,7 +350,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:119](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L119)
+[wallet/index.ts:124](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L124)
 
 ___
 
@@ -352,7 +360,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:122](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L122)
+[wallet/index.ts:127](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L127)
 
 ___
 
@@ -362,7 +370,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:123](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L123)
+[wallet/index.ts:128](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L128)
 
 ___
 
@@ -372,7 +380,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:120](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L120)
+[wallet/index.ts:125](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L125)
 
 ## Accessors
 
@@ -386,7 +394,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:176](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L176)
+[wallet/index.ts:181](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L181)
 
 ___
 
@@ -400,13 +408,13 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:180](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L180)
+[wallet/index.ts:185](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L185)
 
 ## Methods
 
 ### \_getAddress
 
-▸ `Private` **_getAddress**(`path`, `addressType`): `Promise`<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>
+▸ `Private` **_getAddress**(`path`, `addressType`): `Promise`\<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>
 
 Returns the address for the specified path and address type.
 
@@ -419,17 +427,17 @@ Returns the address for the specified path and address type.
 
 #### Returns
 
-`Promise`<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>
+`Promise`\<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>
 
 #### Defined in
 
-[wallet/index.ts:379](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L379)
+[wallet/index.ts:444](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L444)
 
 ___
 
 ### addAddresses
 
-▸ `Private` **addAddresses**(`«destructured»?`): `Promise`<[`Result`](../README.md#result)<[`IGenerateAddressesResponse`](../interfaces/IGenerateAddressesResponse.md)\>\>
+▸ `Private` **addAddresses**(`«destructured»?`): `Promise`\<[`Result`](../README.md#result)\<[`IGenerateAddressesResponse`](../interfaces/IGenerateAddressesResponse.md)\>\>
 
 This method will generate addresses as specified and return an object of filtered addresses to ensure no duplicates are returned.
 
@@ -441,19 +449,19 @@ This method will generate addresses as specified and return an object of filtere
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IGenerateAddressesResponse`](../interfaces/IGenerateAddressesResponse.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IGenerateAddressesResponse`](../interfaces/IGenerateAddressesResponse.md)\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:1106](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1106)
+[wallet/index.ts:1171](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1171)
 
 ___
 
 ### addBoostedTransaction
 
-▸ **addBoostedTransaction**(`«destructured»`): `Promise`<[`Result`](../README.md#result)<[`IBoostedTransaction`](../interfaces/IBoostedTransaction.md)\>\>
+▸ **addBoostedTransaction**(`«destructured»`): `Promise`\<[`Result`](../README.md#result)\<[`IBoostedTransaction`](../interfaces/IBoostedTransaction.md)\>\>
 
 Adds a boosted transaction id to the boostedTransactions object.
 
@@ -469,17 +477,17 @@ Adds a boosted transaction id to the boostedTransactions object.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IBoostedTransaction`](../interfaces/IBoostedTransaction.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IBoostedTransaction`](../interfaces/IBoostedTransaction.md)\>\>
 
 #### Defined in
 
-[wallet/index.ts:2849](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2849)
+[wallet/index.ts:2960](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2960)
 
 ___
 
 ### addGhostTransaction
 
-▸ **addGhostTransaction**(`txid`): `Promise`<`void`\>
+▸ **addGhostTransaction**(`txid`): `Promise`\<`void`\>
 
 Sets "exists" to false for a given on-chain transaction id.
 
@@ -492,17 +500,17 @@ Sets "exists" to false for a given on-chain transaction id.
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 
-[wallet/index.ts:2834](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2834)
+[wallet/index.ts:2945](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2945)
 
 ___
 
 ### addTxInput
 
-▸ **addTxInput**(`input`): [`Result`](../README.md#result)<[`IUtxo`](../interfaces/IUtxo.md)[]\>
+▸ **addTxInput**(`input`): [`Result`](../README.md#result)\<[`IUtxo`](../interfaces/IUtxo.md)[]\>
 
 Adds a specified input to the current transaction.
 
@@ -515,17 +523,17 @@ Adds a specified input to the current transaction.
 
 #### Returns
 
-[`Result`](../README.md#result)<[`IUtxo`](../interfaces/IUtxo.md)[]\>
+[`Result`](../README.md#result)\<[`IUtxo`](../interfaces/IUtxo.md)[]\>
 
 #### Defined in
 
-[wallet/index.ts:2962](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2962)
+[wallet/index.ts:3073](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3073)
 
 ___
 
 ### addTxTag
 
-▸ **addTxTag**(`tag`): [`Result`](../README.md#result)<`string`\>
+▸ **addTxTag**(`tag`): [`Result`](../README.md#result)\<`string`\>
 
 Adds a specified tag to the current transaction.
 
@@ -538,17 +546,17 @@ Adds a specified tag to the current transaction.
 
 #### Returns
 
-[`Result`](../README.md#result)<`string`\>
+[`Result`](../README.md#result)\<`string`\>
 
 #### Defined in
 
-[wallet/index.ts:3010](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L3010)
+[wallet/index.ts:3121](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3121)
 
 ___
 
 ### addUnconfirmedTransactions
 
-▸ `Private` **addUnconfirmedTransactions**(`transactions`): `Promise`<[`Result`](../README.md#result)<`string`\>\>
+▸ `Private` **addUnconfirmedTransactions**(`transactions`): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 Parses and adds unconfirmed transactions to the store.
 
@@ -561,13 +569,13 @@ Parses and adds unconfirmed transactions to the store.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`string`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:1972](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1972)
+[wallet/index.ts:2070](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2070)
 
 ___
 
@@ -591,30 +599,30 @@ Returns the number of confirmations for a given block height.
 
 #### Defined in
 
-[wallet/index.ts:2014](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2014)
+[wallet/index.ts:2112](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2112)
 
 ___
 
 ### checkElectrumConnection
 
-▸ **checkElectrumConnection**(): `Promise`<[`Result`](../README.md#result)<`string`\>\>
+▸ **checkElectrumConnection**(): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 Ensures the connection to Electrum is still available.
 Will attempt to reconnect if not initially available.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`string`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 #### Defined in
 
-[wallet/index.ts:744](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L744)
+[wallet/index.ts:809](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L809)
 
 ___
 
 ### checkUnconfirmedTransactions
 
-▸ `Private` **checkUnconfirmedTransactions**(): `Promise`<[`Result`](../README.md#result)<`string`\>\>
+▸ `Private` **checkUnconfirmedTransactions**(): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 Checks existing unconfirmed transactions that have been received and removes any that have >= 6 confirmations.
 If the tx is reorg'd or bumped from the mempool and no longer exists, the transaction
@@ -622,65 +630,65 @@ will be removed from the store and updated in the activity list.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`string`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:1687](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1687)
+[wallet/index.ts:1773](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1773)
 
 ___
 
 ### clearAddresses
 
-▸ `Private` **clearAddresses**(): `Promise`<`string`\>
+▸ `Private` **clearAddresses**(): `Promise`\<`string`\>
 
 Clears the addresses and changeAddresses object for a given wallet and network.
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:1932](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1932)
+[wallet/index.ts:2030](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2030)
 
 ___
 
 ### clearTransactions
 
-▸ `Private` **clearTransactions**(): `Promise`<`string`\>
+▸ `Private` **clearTransactions**(): `Promise`\<`string`\>
 
 Clears the transactions object for a given wallet and network from storage.
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 #### Defined in
 
-[wallet/index.ts:1920](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1920)
+[wallet/index.ts:2018](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2018)
 
 ___
 
 ### clearUtxos
 
-▸ `Private` **clearUtxos**(): `Promise`<`string`\>
+▸ `Private` **clearUtxos**(): `Promise`\<`string`\>
 
 Clears the UTXO array and balance from storage.
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:1905](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1905)
+[wallet/index.ts:2003](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2003)
 
 ___
 
@@ -704,13 +712,13 @@ Returns the block height for a given number of confirmations from storage.
 
 #### Defined in
 
-[wallet/index.ts:1811](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1811)
+[wallet/index.ts:1898](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1898)
 
 ___
 
 ### connectToElectrum
 
-▸ **connectToElectrum**(`servers?`): `Promise`<[`Result`](../README.md#result)<`string`\>\>
+▸ **connectToElectrum**(`servers?`): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 Attempts to connect to the specified Electrum server(s).
 
@@ -722,17 +730,17 @@ Attempts to connect to the specified Electrum server(s).
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`string`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 #### Defined in
 
-[wallet/index.ts:505](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L505)
+[wallet/index.ts:570](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L570)
 
 ___
 
 ### deleteOnChainTransactionById
 
-▸ **deleteOnChainTransactionById**(`txid`): `Promise`<`void`\>
+▸ **deleteOnChainTransactionById**(`txid`): `Promise`\<`void`\>
 
 Deletes a given on-chain transaction by id.
 
@@ -745,17 +753,17 @@ Deletes a given on-chain transaction by id.
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 
-[wallet/index.ts:2819](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2819)
+[wallet/index.ts:2929](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2929)
 
 ___
 
 ### formatTransactions
 
-▸ **formatTransactions**(`transactions`): `Promise`<[`Result`](../README.md#result)<[`IFormattedTransactions`](../interfaces/IFormattedTransactions.md)\>\>
+▸ **formatTransactions**(`transactions`): `Promise`\<[`Result`](../README.md#result)\<[`IFormattedTransactions`](../interfaces/IFormattedTransactions.md)\>\>
 
 Formats the provided transaction.
 
@@ -764,23 +772,23 @@ Formats the provided transaction.
 | Name | Type |
 | :------ | :------ |
 | `transactions` | `Object` |
-| `transactions.transactions` | [`ITransaction`](../interfaces/ITransaction.md)<[`IUtxo`](../interfaces/IUtxo.md)\>[] |
+| `transactions.transactions` | [`ITransaction`](../interfaces/ITransaction.md)\<[`IUtxo`](../interfaces/IUtxo.md)\>[] |
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IFormattedTransactions`](../interfaces/IFormattedTransactions.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IFormattedTransactions`](../interfaces/IFormattedTransactions.md)\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:2040](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2040)
+[wallet/index.ts:2138](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2138)
 
 ___
 
 ### generateAddresses
 
-▸ **generateAddresses**(`«destructured»`): `Promise`<[`Result`](../README.md#result)<[`IGenerateAddressesResponse`](../interfaces/IGenerateAddressesResponse.md)\>\>
+▸ **generateAddresses**(`«destructured»`): `Promise`\<[`Result`](../README.md#result)\<[`IGenerateAddressesResponse`](../interfaces/IGenerateAddressesResponse.md)\>\>
 
 Generates a series of addresses based on the specified params.
 
@@ -792,19 +800,19 @@ Generates a series of addresses based on the specified params.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IGenerateAddressesResponse`](../interfaces/IGenerateAddressesResponse.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IGenerateAddressesResponse`](../interfaces/IGenerateAddressesResponse.md)\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:636](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L636)
+[wallet/index.ts:701](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L701)
 
 ___
 
 ### generateNewReceiveAddress
 
-▸ **generateNewReceiveAddress**(`«destructured»`): `Promise`<[`Result`](../README.md#result)<[`IAddress`](../interfaces/IAddress.md)\>\>
+▸ **generateNewReceiveAddress**(`«destructured»`): `Promise`\<[`Result`](../README.md#result)\<[`IAddress`](../interfaces/IAddress.md)\>\>
 
 Generate a new receive address for the provided addresstype up to the set gap limit.
 
@@ -818,19 +826,19 @@ Generate a new receive address for the provided addresstype up to the set gap li
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IAddress`](../interfaces/IAddress.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IAddress`](../interfaces/IAddress.md)\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:1394](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1394)
+[wallet/index.ts:1455](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1455)
 
 ___
 
 ### getAddress
 
-▸ **getAddress**(`«destructured»?`): `Promise`<`string`\>
+▸ **getAddress**(`«destructured»?`): `Promise`\<`string`\>
 
 Returns a single Bitcoin address based on the provided address type,
 index and whether it is a change address.
@@ -843,17 +851,17 @@ index and whether it is a change address.
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 #### Defined in
 
-[wallet/index.ts:445](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L445)
+[wallet/index.ts:510](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L510)
 
 ___
 
 ### getAddressBalance
 
-▸ **getAddressBalance**(`address`): `Promise`<[`Result`](../README.md#result)<[`IGetAddressBalanceRes`](../interfaces/IGetAddressBalanceRes.md)\>\>
+▸ **getAddressBalance**(`address`): `Promise`\<[`Result`](../README.md#result)\<[`IGetAddressBalanceRes`](../interfaces/IGetAddressBalanceRes.md)\>\>
 
 Returns the address balance for the specified address.
 
@@ -865,17 +873,17 @@ Returns the address balance for the specified address.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IGetAddressBalanceRes`](../interfaces/IGetAddressBalanceRes.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IGetAddressBalanceRes`](../interfaces/IGetAddressBalanceRes.md)\>\>
 
 #### Defined in
 
-[wallet/index.ts:526](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L526)
+[wallet/index.ts:591](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L591)
 
 ___
 
 ### getAddressByPath
 
-▸ **getAddressByPath**(`«destructured»`): `Promise`<[`Result`](../README.md#result)<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>\>
+▸ **getAddressByPath**(`«destructured»`): `Promise`\<[`Result`](../README.md#result)\<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>\>
 
 Get address for a given keyPair, network and type.
 
@@ -887,11 +895,11 @@ Get address for a given keyPair, network and type.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IGetAddressResponse`](../interfaces/IGetAddressResponse.md)\>\>
 
 #### Defined in
 
-[wallet/index.ts:479](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L479)
+[wallet/index.ts:544](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L544)
 
 ___
 
@@ -913,7 +921,7 @@ Returns the address from a provided script hash in storage.
 
 #### Defined in
 
-[wallet/index.ts:2490](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2490)
+[wallet/index.ts:2589](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2589)
 
 ___
 
@@ -929,13 +937,13 @@ Returns current address index information.
 
 #### Defined in
 
-[wallet/index.ts:2563](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2563)
+[wallet/index.ts:2677](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2677)
 
 ___
 
 ### getAddressesBalance
 
-▸ **getAddressesBalance**(`addresses?`): `Promise`<[`Result`](../README.md#result)<`number`\>\>
+▸ **getAddressesBalance**(`addresses?`): `Promise`\<[`Result`](../README.md#result)\<`number`\>\>
 
 Returns combined balance of provided addresses.
 
@@ -947,13 +955,13 @@ Returns combined balance of provided addresses.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`number`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`number`\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:544](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L544)
+[wallet/index.ts:609](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L609)
 
 ___
 
@@ -969,23 +977,23 @@ Returns the known balance from storage.
 
 #### Defined in
 
-[wallet/index.ts:620](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L620)
+[wallet/index.ts:685](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L685)
 
 ___
 
 ### getBip32Interface
 
-▸ **getBip32Interface**(): `Promise`<[`Result`](../README.md#result)<`BIP32Interface`\>\>
+▸ **getBip32Interface**(): `Promise`\<[`Result`](../README.md#result)\<`BIP32Interface`\>\>
 
 Creates a BIP32Interface from the selected wallet's mnemonic and passphrase
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`BIP32Interface`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`BIP32Interface`\>\>
 
 #### Defined in
 
-[wallet/index.ts:2950](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2950)
+[wallet/index.ts:3061](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3061)
 
 ___
 
@@ -1007,7 +1015,7 @@ Returns the Network object of the currently selected network (bitcoin or testnet
 
 #### Defined in
 
-[wallet/index.ts:358](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L358)
+[wallet/index.ts:423](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L423)
 
 ___
 
@@ -1028,7 +1036,7 @@ Returns an array of transactions that can be boosted with cpfp and rbf.
 
 #### Defined in
 
-[wallet/index.ts:2933](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2933)
+[wallet/index.ts:3044](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3044)
 
 ___
 
@@ -1052,7 +1060,7 @@ Returns an array of parents for a boosted transaction id.
 
 #### Defined in
 
-[wallet/index.ts:2896](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2896)
+[wallet/index.ts:3007](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3007)
 
 ___
 
@@ -1068,13 +1076,13 @@ Returns boosted transactions object.
 
 #### Defined in
 
-[wallet/index.ts:2917](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2917)
+[wallet/index.ts:3028](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3028)
 
 ___
 
 ### getChangeAddress
 
-▸ **getChangeAddress**(`addressType?`): `Promise`<[`Result`](../README.md#result)<[`IAddress`](../interfaces/IAddress.md)\>\>
+▸ **getChangeAddress**(`addressType?`): `Promise`\<[`Result`](../README.md#result)\<[`IAddress`](../interfaces/IAddress.md)\>\>
 
 Retrieves the next available change address data.
 
@@ -1086,13 +1094,13 @@ Retrieves the next available change address data.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IAddress`](../interfaces/IAddress.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IAddress`](../interfaces/IAddress.md)\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:2270](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2270)
+[wallet/index.ts:2371](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2371)
 
 ___
 
@@ -1114,31 +1122,37 @@ Returns exchange rate data from storage.
 
 #### Defined in
 
-[wallet/index.ts:2244](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2244)
+[wallet/index.ts:2345](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2345)
 
 ___
 
 ### getFeeEstimates
 
-▸ **getFeeEstimates**(): `Promise`<[`IOnchainFees`](../interfaces/IOnchainFees.md)\>
+▸ **getFeeEstimates**(`network?`): `Promise`\<[`IOnchainFees`](../interfaces/IOnchainFees.md)\>
 
 Returns the current fee estimates for the provided network.
 
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `network` | [`EAvailableNetworks`](../enums/EAvailableNetworks.md) |
+
 #### Returns
 
-`Promise`<[`IOnchainFees`](../interfaces/IOnchainFees.md)\>
+`Promise`\<[`IOnchainFees`](../interfaces/IOnchainFees.md)\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:2303](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2303)
+[wallet/index.ts:2404](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2404)
 
 ___
 
 ### getFeeInfo
 
-▸ **getFeeInfo**(`«destructured»?`): [`Result`](../README.md#result)<[`TGetTotalFeeObj`](../README.md#tgettotalfeeobj)\>
+▸ **getFeeInfo**(`«destructured»?`): [`Result`](../README.md#result)\<[`TGetTotalFeeObj`](../README.md#tgettotalfeeobj)\>
 
 Returns a fee object for the current transaction.
 
@@ -1150,21 +1164,21 @@ Returns a fee object for the current transaction.
 | › `fundingLightning?` | `boolean` |
 | › `message?` | `string` |
 | › `satsPerByte?` | `number` |
-| › `transaction?` | `Partial`<[`ISendTransaction`](../interfaces/ISendTransaction.md)\> |
+| › `transaction?` | `Partial`\<[`ISendTransaction`](../interfaces/ISendTransaction.md)\> |
 
 #### Returns
 
-[`Result`](../README.md#result)<[`TGetTotalFeeObj`](../README.md#tgettotalfeeobj)\>
+[`Result`](../README.md#result)\<[`TGetTotalFeeObj`](../README.md#tgettotalfeeobj)\>
 
 #### Defined in
 
-[wallet/index.ts:2354](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2354)
+[wallet/index.ts:2453](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2453)
 
 ___
 
 ### getGapLimit
 
-▸ `Private` **getGapLimit**(`addressType?`): [`Result`](../README.md#result)<{ `addressDelta`: `number` ; `changeAddressDelta`: `number`  }\>
+▸ `Private` **getGapLimit**(`addressType?`): [`Result`](../README.md#result)\<\{ `addressDelta`: `number` ; `changeAddressDelta`: `number`  }\>
 
 Returns the difference between the current address index and the last used address index.
 
@@ -1177,17 +1191,17 @@ Returns the difference between the current address index and the last used addre
 
 #### Returns
 
-[`Result`](../README.md#result)<{ `addressDelta`: `number` ; `changeAddressDelta`: `number`  }\>
+[`Result`](../README.md#result)\<\{ `addressDelta`: `number` ; `changeAddressDelta`: `number`  }\>
 
 #### Defined in
 
-[wallet/index.ts:1482](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1482)
+[wallet/index.ts:1543](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1543)
 
 ___
 
 ### getHighestStoredAddressIndex
 
-▸ **getHighestStoredAddressIndex**(`addressType`): [`Result`](../README.md#result)<{ `addressIndex`: [`IAddress`](../interfaces/IAddress.md) ; `changeAddressIndex`: [`IAddress`](../interfaces/IAddress.md)  }\>
+▸ **getHighestStoredAddressIndex**(`addressType`): [`Result`](../README.md#result)\<\{ `addressIndex`: [`IAddress`](../interfaces/IAddress.md) ; `changeAddressIndex`: [`IAddress`](../interfaces/IAddress.md)  }\>
 
 Returns the highest address and change address index stored in the app for the specified wallet and network.
 Retrives the highest stored address index for the provided address type.
@@ -1201,17 +1215,17 @@ Retrives the highest stored address index for the provided address type.
 
 #### Returns
 
-[`Result`](../README.md#result)<{ `addressIndex`: [`IAddress`](../interfaces/IAddress.md) ; `changeAddressIndex`: [`IAddress`](../interfaces/IAddress.md)  }\>
+[`Result`](../README.md#result)\<\{ `addressIndex`: [`IAddress`](../interfaces/IAddress.md) ; `changeAddressIndex`: [`IAddress`](../interfaces/IAddress.md)  }\>
 
 #### Defined in
 
-[wallet/index.ts:1067](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1067)
+[wallet/index.ts:1132](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1132)
 
 ___
 
 ### getInputData
 
-▸ **getInputData**(`inputs`): `Promise`<[`Result`](../README.md#result)<[`InputData`](../README.md#inputdata)\>\>
+▸ **getInputData**(`inputs`): `Promise`\<[`Result`](../README.md#result)\<[`InputData`](../README.md#inputdata)\>\>
 
 Returns formatted input data from the inputs array.
 
@@ -1220,23 +1234,23 @@ Returns formatted input data from the inputs array.
 | Name | Type |
 | :------ | :------ |
 | `inputs` | `Object` |
-| `inputs.inputs` | { `tx_hash`: `string` ; `vout`: `number`  }[] |
+| `inputs.inputs` | \{ `tx_hash`: `string` ; `vout`: `number`  }[] |
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`InputData`](../README.md#inputdata)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`InputData`](../README.md#inputdata)\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:2203](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2203)
+[wallet/index.ts:2304](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2304)
 
 ___
 
 ### getNextAvailableAddress
 
-▸ **getNextAvailableAddress**(`addressType?`): `Promise`<[`Result`](../README.md#result)<[`IGetNextAvailableAddressResponse`](../interfaces/IGetNextAvailableAddressResponse.md)\>\>
+▸ **getNextAvailableAddress**(`addressType?`): `Promise`\<[`Result`](../README.md#result)\<[`IGetNextAvailableAddressResponse`](../interfaces/IGetNextAvailableAddressResponse.md)\>\>
 
 Returns the next available address for the given addresstype.
 
@@ -1248,11 +1262,11 @@ Returns the next available address for the given addresstype.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IGetNextAvailableAddressResponse`](../interfaces/IGetNextAvailableAddressResponse.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IGetNextAvailableAddressResponse`](../interfaces/IGetNextAvailableAddressResponse.md)\>\>
 
 #### Defined in
 
-[wallet/index.ts:760](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L760)
+[wallet/index.ts:825](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L825)
 
 ___
 
@@ -1274,13 +1288,13 @@ Returns private key for the provided path.
 
 #### Defined in
 
-[wallet/index.ts:598](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L598)
+[wallet/index.ts:663](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L663)
 
 ___
 
 ### getRbfData
 
-▸ **getRbfData**(`txHash`): `Promise`<[`Result`](../README.md#result)<[`IRbfData`](../interfaces/IRbfData.md)\>\>
+▸ **getRbfData**(`txHash`): `Promise`\<[`Result`](../README.md#result)\<[`IRbfData`](../interfaces/IRbfData.md)\>\>
 
 Using a tx_hash this method will return the necessary data to create a
 replace-by-fee transaction for any 0-conf, RBF-enabled tx.
@@ -1294,17 +1308,17 @@ replace-by-fee transaction for any 0-conf, RBF-enabled tx.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IRbfData`](../interfaces/IRbfData.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IRbfData`](../interfaces/IRbfData.md)\>\>
 
 #### Defined in
 
-[wallet/index.ts:2637](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2637)
+[wallet/index.ts:2747](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2747)
 
 ___
 
 ### getReceiveAddress
 
-▸ **getReceiveAddress**(`addressType?`): `Promise`<[`Result`](../README.md#result)<`string`\>\>
+▸ **getReceiveAddress**(`addressType?`): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 Returns the next available receive address.
 
@@ -1317,17 +1331,17 @@ Returns the next available receive address.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`string`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 #### Defined in
 
-[wallet/index.ts:2585](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2585)
+[wallet/index.ts:2699](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2699)
 
 ___
 
 ### getScriptHash
 
-▸ **getScriptHash**(`«destructured»`): `Promise`<`string`\>
+▸ **getScriptHash**(`«destructured»`): `Promise`\<`string`\>
 
 Get scriptHash for a given address
 
@@ -1341,17 +1355,17 @@ Get scriptHash for a given address
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 #### Defined in
 
-[wallet/index.ts:579](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L579)
+[wallet/index.ts:644](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L644)
 
 ___
 
 ### getScriptHashBalance
 
-▸ **getScriptHashBalance**(`scriptHash`): `Promise`<[`Result`](../README.md#result)<[`IGetAddressBalanceRes`](../interfaces/IGetAddressBalanceRes.md)\>\>
+▸ **getScriptHashBalance**(`scriptHash`): `Promise`\<[`Result`](../README.md#result)\<[`IGetAddressBalanceRes`](../interfaces/IGetAddressBalanceRes.md)\>\>
 
 Returns the balance for the specified scriptHash.
 
@@ -1363,11 +1377,11 @@ Returns the balance for the specified scriptHash.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IGetAddressBalanceRes`](../interfaces/IGetAddressBalanceRes.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IGetAddressBalanceRes`](../interfaces/IGetAddressBalanceRes.md)\>\>
 
 #### Defined in
 
-[wallet/index.ts:608](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L608)
+[wallet/index.ts:673](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L673)
 
 ___
 
@@ -1383,13 +1397,13 @@ Returns the current wallet's unconfirmed transactions from storage.
 
 #### Defined in
 
-[wallet/index.ts:1799](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1799)
+[wallet/index.ts:1886](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1886)
 
 ___
 
 ### getUtxos
 
-▸ **getUtxos**(`scanAllAddresses`): `Promise`<[`Result`](../README.md#result)<[`IGetUtxosResponse`](../interfaces/IGetUtxosResponse.md)\>\>
+▸ **getUtxos**(`scanAllAddresses`): `Promise`\<[`Result`](../README.md#result)\<[`IGetUtxosResponse`](../interfaces/IGetUtxosResponse.md)\>\>
 
 Retrieves and sets UTXO's for the current wallet from Electrum.
 
@@ -1401,28 +1415,28 @@ Retrieves and sets UTXO's for the current wallet from Electrum.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IGetUtxosResponse`](../interfaces/IGetUtxosResponse.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IGetUtxosResponse`](../interfaces/IGetUtxosResponse.md)\>\>
 
 #### Defined in
 
-[wallet/index.ts:1518](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1518)
+[wallet/index.ts:1579](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1579)
 
 ___
 
 ### getWalletData
 
-▸ **getWalletData**(): `Promise`<[`Result`](../README.md#result)<[`IWalletData`](../interfaces/IWalletData.md)\>\>
+▸ **getWalletData**(): `Promise`\<[`Result`](../README.md#result)\<[`IWalletData`](../interfaces/IWalletData.md)\>\>
 
-Gets the wallet data object from storge if able.
+Gets the wallet data object from storage if able.
 Otherwise, it falls back to the default wallet data object.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IWalletData`](../interfaces/IWalletData.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IWalletData`](../interfaces/IWalletData.md)\>\>
 
 #### Defined in
 
-[wallet/index.ts:294](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L294)
+[wallet/index.ts:339](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L339)
 
 ___
 
@@ -1444,7 +1458,7 @@ Returns the key used for storing wallet data in the key/value pair.
 
 #### Defined in
 
-[wallet/index.ts:285](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L285)
+[wallet/index.ts:330](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L330)
 
 ___
 
@@ -1466,7 +1480,7 @@ Ensures the provided mnemonic matches the one stored in the wallet and is valid.
 
 #### Defined in
 
-[wallet/index.ts:368](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L368)
+[wallet/index.ts:433](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L433)
 
 ___
 
@@ -1482,13 +1496,13 @@ Returns the current wallet's UTXO's from storage.
 
 #### Defined in
 
-[wallet/index.ts:1542](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1542)
+[wallet/index.ts:1603](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1603)
 
 ___
 
 ### processUnconfirmedTransactions
 
-▸ `Private` **processUnconfirmedTransactions**(): `Promise`<[`Result`](../README.md#result)<[`TProcessUnconfirmedTransactions`](../README.md#tprocessunconfirmedtransactions)\>\>
+▸ `Private` **processUnconfirmedTransactions**(): `Promise`\<[`Result`](../README.md#result)\<[`TProcessUnconfirmedTransactions`](../README.md#tprocessunconfirmedtransactions)\>\>
 
 This method processes all transactions with less than 6 confirmations and returns the following:
 1. Transactions that still have less than 6 confirmations and can be considered unconfirmed. (unconfirmedTxs)
@@ -1497,19 +1511,19 @@ This method processes all transactions with less than 6 confirmations and return
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`TProcessUnconfirmedTransactions`](../README.md#tprocessunconfirmedtransactions)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`TProcessUnconfirmedTransactions`](../README.md#tprocessunconfirmedtransactions)\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:1729](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1729)
+[wallet/index.ts:1816](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1816)
 
 ___
 
 ### refreshWallet
 
-▸ **refreshWallet**(`«destructured»?`): `Promise`<[`Result`](../README.md#result)<[`IWalletData`](../interfaces/IWalletData.md)\>\>
+▸ **refreshWallet**(`«destructured»?`): `Promise`\<[`Result`](../README.md#result)\<[`IWalletData`](../interfaces/IWalletData.md)\>\>
 
 Refreshes/Syncs the wallet data.
 
@@ -1523,17 +1537,17 @@ Refreshes/Syncs the wallet data.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IWalletData`](../interfaces/IWalletData.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IWalletData`](../interfaces/IWalletData.md)\>\>
 
 #### Defined in
 
-[wallet/index.ts:244](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L244)
+[wallet/index.ts:255](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L255)
 
 ___
 
 ### removeDuplicateAddresses
 
-▸ `Private` **removeDuplicateAddresses**(`«destructured»`): `Promise`<[`Result`](../README.md#result)<[`IGenerateAddressesResponse`](../interfaces/IGenerateAddressesResponse.md)\>\>
+▸ `Private` **removeDuplicateAddresses**(`«destructured»`): `Promise`\<[`Result`](../README.md#result)\<[`IGenerateAddressesResponse`](../interfaces/IGenerateAddressesResponse.md)\>\>
 
 This method will compare a set of specified addresses to the currently stored addresses and remove any duplicates.
 
@@ -1547,19 +1561,19 @@ This method will compare a set of specified addresses to the currently stored ad
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IGenerateAddressesResponse`](../interfaces/IGenerateAddressesResponse.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IGenerateAddressesResponse`](../interfaces/IGenerateAddressesResponse.md)\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:1175](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1175)
+[wallet/index.ts:1242](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1242)
 
 ___
 
 ### removeTxInput
 
-▸ **removeTxInput**(`input`): [`Result`](../README.md#result)<[`IUtxo`](../interfaces/IUtxo.md)[]\>
+▸ **removeTxInput**(`input`): [`Result`](../README.md#result)\<[`IUtxo`](../interfaces/IUtxo.md)[]\>
 
 Removes the specified input from the current transaction.
 
@@ -1572,19 +1586,19 @@ Removes the specified input from the current transaction.
 
 #### Returns
 
-[`Result`](../README.md#result)<[`IUtxo`](../interfaces/IUtxo.md)[]\>
+[`Result`](../README.md#result)\<[`IUtxo`](../interfaces/IUtxo.md)[]\>
 
 #### Defined in
 
-[wallet/index.ts:2984](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2984)
+[wallet/index.ts:3095](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3095)
 
 ___
 
 ### removeTxTag
 
-▸ **removeTxTag**(`tag`): [`Result`](../README.md#result)<`string`\>
+▸ **removeTxTag**(`tag`): [`Result`](../README.md#result)\<`string`\>
 
-Removes a specified tag to the current transaction.
+Removes a specified tag from the current transaction.
 
 #### Parameters
 
@@ -1595,17 +1609,17 @@ Removes a specified tag to the current transaction.
 
 #### Returns
 
-[`Result`](../README.md#result)<`string`\>
+[`Result`](../README.md#result)\<`string`\>
 
 #### Defined in
 
-[wallet/index.ts:3033](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L3033)
+[wallet/index.ts:3144](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3144)
 
 ___
 
 ### rescanAddresses
 
-▸ **rescanAddresses**(`«destructured»?`): `Promise`<[`Result`](../README.md#result)<[`IWalletData`](../interfaces/IWalletData.md)\>\>
+▸ **rescanAddresses**(`«destructured»?`): `Promise`\<[`Result`](../README.md#result)\<[`IWalletData`](../interfaces/IWalletData.md)\>\>
 
 This method will clear the utxo array for each address type and reset the
 address indexes back to the original/default app values. Once cleared & reset
@@ -1621,51 +1635,51 @@ the app will rescan the wallet's addresses from index zero.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`IWalletData`](../interfaces/IWalletData.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`IWalletData`](../interfaces/IWalletData.md)\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:1877](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1877)
+[wallet/index.ts:1975](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1975)
 
 ___
 
 ### resetAddressIndexes
 
-▸ `Private` **resetAddressIndexes**(): `Promise`<`void`\>
+▸ `Private` **resetAddressIndexes**(): `Promise`\<`void`\>
 
 Resets address indexes back to the app's default/original state.
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 
-[wallet/index.ts:1360](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1360)
+[wallet/index.ts:1427](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1427)
 
 ___
 
 ### resetSendTransaction
 
-▸ **resetSendTransaction**(): `Promise`<[`Result`](../README.md#result)<`string`\>\>
+▸ **resetSendTransaction**(): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 This completely resets the send transaction state.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`string`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 #### Defined in
 
-[wallet/index.ts:2925](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2925)
+[wallet/index.ts:3036](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3036)
 
 ___
 
 ### saveWalletData
 
-▸ `Private` **saveWalletData**<`K`\>(`key`, `data`): `Promise`<`void`\>
+▸ `Private` **saveWalletData**\<`K`\>(`key`, `data`): `Promise`\<`void`\>
 
 Saves the wallet data object to storage if able.
 
@@ -1684,19 +1698,19 @@ Saves the wallet data object to storage if able.
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:1554](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1554)
+[wallet/index.ts:1615](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1615)
 
 ___
 
 ### send
 
-▸ **send**(`«destructured»`): `Promise`<[`Result`](../README.md#result)<`string`\>\>
+▸ **send**(`«destructured»`): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 Sets up and creates a transaction to a single output/recipient.
 
@@ -1715,19 +1729,19 @@ Sets up and creates a transaction to a single output/recipient.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`string`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:2459](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2459)
+[wallet/index.ts:2558](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2558)
 
 ___
 
 ### sendMany
 
-▸ **sendMany**(`«destructured»`): `Promise`<[`Result`](../README.md#result)<`string`\>\>
+▸ **sendMany**(`«destructured»`): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 Sets up and creates a transaction to multiple outputs.
 
@@ -1744,68 +1758,76 @@ Sets up and creates a transaction to multiple outputs.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`string`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 #### Defined in
 
-[wallet/index.ts:2382](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2382)
+[wallet/index.ts:2481](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2481)
 
 ___
 
 ### setWalletData
 
-▸ `Private` **setWalletData**(): `Promise`<[`Result`](../README.md#result)<`boolean`\>\>
+▸ `Private` **setWalletData**(): `Promise`\<[`Result`](../README.md#result)\<`boolean`\>\>
 
 Sets the wallet data object.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`boolean`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`boolean`\>\>
 
 #### Defined in
 
-[wallet/index.ts:271](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L271)
+[wallet/index.ts:282](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L282)
 
 ___
 
 ### setZeroIndexAddresses
 
-▸ `Private` **setZeroIndexAddresses**(): `Promise`<[`Result`](../README.md#result)<`string`\>\>
+▸ `Private` **setZeroIndexAddresses**(): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 Will ensure that both address and change address indexes are set at index 0.
 Will also generate and store address and changeAddress at index 0.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`string`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:2510](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2510)
+[wallet/index.ts:2609](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2609)
 
 ___
 
 ### setupFeeForOnChainTransaction
 
-▸ **setupFeeForOnChainTransaction**(): [`Result`](../README.md#result)<`string`\>
+▸ **setupFeeForOnChainTransaction**(`«destructured»?`): [`Result`](../README.md#result)\<`string`\>
 
 Updates the fee rate for the current transaction to the preferred value if none set.
 
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `«destructured»` | `Object` |
+| › `satsPerByte?` | `number` |
+| › `selectedFeeId?` | [`EFeeId`](../enums/EFeeId.md) |
+
 #### Returns
 
-[`Result`](../README.md#result)<`string`\>
+[`Result`](../README.md#result)\<`string`\>
 
 #### Defined in
 
-[wallet/index.ts:3056](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L3056)
+[wallet/index.ts:3169](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3169)
 
 ___
 
 ### setupTransaction
 
-▸ **setupTransaction**(`params?`): [`TSetupTransactionResponse`](../README.md#tsetuptransactionresponse)
+▸ **setupTransaction**(`params?`): `Promise`\<[`TSetupTransactionResponse`](../README.md#tsetuptransactionresponse)\>
 
 Sets up the transaction object with existing inputs and change address information
 @async.
@@ -1818,17 +1840,41 @@ Sets up the transaction object with existing inputs and change address informati
 
 #### Returns
 
-[`TSetupTransactionResponse`](../README.md#tsetuptransactionresponse)
+`Promise`\<[`TSetupTransactionResponse`](../README.md#tsetuptransactionresponse)\>
 
 #### Defined in
 
-[wallet/index.ts:2340](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2340)
+[wallet/index.ts:2439](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2439)
+
+___
+
+### storageIdCheck
+
+▸ `Private` **storageIdCheck**(`id`): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
+
+Ensure we are not overwriting wallet data of a different wallet by checking that the wallet id's match.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `string` |
+
+#### Returns
+
+`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
+
+**`Async`**
+
+#### Defined in
+
+[wallet/index.ts:305](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L305)
 
 ___
 
 ### switchNetwork
 
-▸ **switchNetwork**(`network`, `servers?`): `Promise`<[`Result`](../README.md#result)<`string`\>\>
+▸ **switchNetwork**(`network`, `servers?`): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 #### Parameters
 
@@ -1839,17 +1885,43 @@ ___
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`string`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 #### Defined in
 
-[wallet/index.ts:201](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L201)
+[wallet/index.ts:204](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L204)
+
+___
+
+### updateAddressIndex
+
+▸ `Private` **updateAddressIndex**(`addressType`, `isChangeAddress`, `index?`): `Promise`\<`void`\>
+
+Updates the address index for a given address type.
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `addressType` | [`EAddressType`](../enums/EAddressType.md) | `undefined` |
+| `isChangeAddress` | `boolean` | `undefined` |
+| `index?` | `number` | `0` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+**`Async`**
+
+#### Defined in
+
+[wallet/index.ts:2651](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2651)
 
 ___
 
 ### updateAddressIndexes
 
-▸ `Private` **updateAddressIndexes**(`addressType?`): `Promise`<[`Result`](../README.md#result)<`string`\>\>
+▸ `Private` **updateAddressIndexes**(`addressType?`): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 This method updates the next available (zero-balance) address & changeAddress index.
 
@@ -1862,19 +1934,19 @@ This method updates the next available (zero-balance) address & changeAddress in
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`string`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:1225](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1225)
+[wallet/index.ts:1292](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1292)
 
 ___
 
 ### updateAddressType
 
-▸ **updateAddressType**(`addressType`): `Promise`<`void`\>
+▸ **updateAddressType**(`addressType`): `Promise`\<`void`\>
 
 Updates the address type for the current wallet.
 
@@ -1886,17 +1958,17 @@ Updates the address type for the current wallet.
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 
-[wallet/index.ts:232](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L232)
+[wallet/index.ts:243](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L243)
 
 ___
 
 ### updateAndSaveWalletData
 
-▸ `Private` **updateAndSaveWalletData**(`key`, `data`, `addressType?`): `Promise`<`void`\>
+▸ `Private` **updateAndSaveWalletData**(`key`, `data`, `addressType?`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -1908,17 +1980,59 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 
-[wallet/index.ts:1565](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1565)
+[wallet/index.ts:1626](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1626)
+
+___
+
+### updateExchangeRates
+
+▸ **updateExchangeRates**(): `Promise`\<[`Result`](../README.md#result)\<[`IExchangeRates`](../interfaces/IExchangeRates.md)\>\>
+
+Updates the exchange rates for the current network.
+
+#### Returns
+
+`Promise`\<[`Result`](../README.md#result)\<[`IExchangeRates`](../interfaces/IExchangeRates.md)\>\>
+
+**`Async`**
+
+#### Defined in
+
+[wallet/index.ts:3221](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3221)
+
+___
+
+### updateFeeEstimates
+
+▸ **updateFeeEstimates**(`forceUpdate?`): `Promise`\<[`Result`](../README.md#result)\<[`IOnchainFees`](../interfaces/IOnchainFees.md)\>\>
+
+Updates the fee estimates for the current network.
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `forceUpdate?` | `boolean` | `false` | Ignores the timestamp if set true and forces the update |
+
+#### Returns
+
+`Promise`\<[`Result`](../README.md#result)\<[`IOnchainFees`](../interfaces/IOnchainFees.md)\>\>
+
+**`Async`**
+
+#### Defined in
+
+[wallet/index.ts:3236](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3236)
 
 ___
 
 ### updateGhostTransactions
 
-▸ `Private` **updateGhostTransactions**(`txIds`): `Promise`<[`Result`](../README.md#result)<`string`\>\>
+▸ `Private` **updateGhostTransactions**(`txIds`): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 Removes transactions from the store and activity list.
 
@@ -1931,19 +2045,41 @@ Removes transactions from the store and activity list.
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`string`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:1835](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1835)
+[wallet/index.ts:1932](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1932)
+
+___
+
+### updateHeader
+
+▸ **updateHeader**(`headerData`): `Promise`\<`void`\>
+
+Updates & Saves header information to storage.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `headerData` | [`IHeader`](../interfaces/IHeader.md) |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[wallet/index.ts:1920](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1920)
 
 ___
 
 ### updateTransactionHeights
 
-▸ `Private` **updateTransactionHeights**(`txs`): `Promise`<`string`\>
+▸ `Private` **updateTransactionHeights**(`txs`): `Promise`\<`string`\>
 
 Updates the confirmation state of activity item transactions that were reorg'd out.
 
@@ -1955,19 +2091,19 @@ Updates the confirmation state of activity item transactions that were reorg'd o
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 **`Async`**
 
 #### Defined in
 
-[wallet/index.ts:1949](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1949)
+[wallet/index.ts:2047](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2047)
 
 ___
 
 ### updateTransactions
 
-▸ **updateTransactions**(`«destructured»?`): `Promise`<[`Result`](../README.md#result)<`undefined` \| `string`\>\>
+▸ **updateTransactions**(`«destructured»?`): `Promise`\<[`Result`](../README.md#result)\<`undefined` \| `string`\>\>
 
 Retrieves, formats & stores the transaction history for the selected wallet/network.
 
@@ -1981,11 +2117,34 @@ Retrieves, formats & stores the transaction history for the selected wallet/netw
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<`undefined` \| `string`\>\>
+`Promise`\<[`Result`](../README.md#result)\<`undefined` \| `string`\>\>
 
 #### Defined in
 
-[wallet/index.ts:1586](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L1586)
+[wallet/index.ts:1647](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1647)
+
+___
+
+### updateWalletBalance
+
+▸ **updateWalletBalance**(`balance`): [`Result`](../README.md#result)\<`string`\>
+
+Used to temporarily update the balance until the Electrum server catches up after sending a transaction.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `balance` | `Object` |
+| `balance.balance` | `number` |
+
+#### Returns
+
+[`Result`](../README.md#result)\<`string`\>
+
+#### Defined in
+
+[wallet/index.ts:3205](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3205)
 
 ___
 
@@ -2007,13 +2166,13 @@ Attempts to validate a given address.
 
 #### Defined in
 
-[wallet/index.ts:2260](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L2260)
+[wallet/index.ts:2361](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2361)
 
 ___
 
 ### create
 
-▸ `Static` **create**(`params`): `Promise`<[`Result`](../README.md#result)<[`Wallet`](Wallet.md)\>\>
+▸ `Static` **create**(`params`): `Promise`\<[`Result`](../README.md#result)\<[`Wallet`](Wallet.md)\>\>
 
 #### Parameters
 
@@ -2023,8 +2182,8 @@ ___
 
 #### Returns
 
-`Promise`<[`Result`](../README.md#result)<[`Wallet`](Wallet.md)\>\>
+`Promise`\<[`Result`](../README.md#result)\<[`Wallet`](Wallet.md)\>\>
 
 #### Defined in
 
-[wallet/index.ts:184](https://github.com/synonymdev/beignet/blob/e4162f7/src/wallet/index.ts#L184)
+[wallet/index.ts:189](https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L189)

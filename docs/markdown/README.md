@@ -138,6 +138,7 @@ beignet
 - [formatKeyDerivationPath](README.md#formatkeyderivationpath)
 - [formatPeerData](README.md#formatpeerdata)
 - [generateMnemonic](README.md#generatemnemonic)
+- [generateWalletId](README.md#generatewalletid)
 - [getAddressFromScriptPubKey](README.md#getaddressfromscriptpubkey)
 - [getAddressTypeFromPath](README.md#getaddresstypefrompath)
 - [getByteCount](README.md#getbytecount)
@@ -188,7 +189,7 @@ beignet
 
 #### Defined in
 
-[types/electrum.ts:128](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/electrum.ts#L128)
+[types/electrum.ts:128](https://github.com/synonymdev/beignet/blob/7c83290/src/types/electrum.ts#L128)
 
 ___
 
@@ -204,7 +205,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:135](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/electrum.ts#L135)
+[types/electrum.ts:135](https://github.com/synonymdev/beignet/blob/7c83290/src/types/electrum.ts#L135)
 
 ___
 
@@ -214,17 +215,17 @@ ___
 
 #### Index signature
 
-▪ [key: `string`]: { `addresses`: `string`[] ; `value`: `number`  }
+▪ [key: `string`]: \{ `addresses`: `string`[] ; `value`: `number`  }
 
 #### Defined in
 
-[types/wallet.ts:374](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L374)
+[types/wallet.ts:379](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L379)
 
 ___
 
 ### ObjectKeys
 
-Ƭ **ObjectKeys**<`T`\>: \`${Exclude<keyof T, symbol\>}\`
+Ƭ **ObjectKeys**\<`T`\>: \`$\{Exclude\<keyof T, symbol\>}\`
 
 #### Type parameters
 
@@ -234,13 +235,13 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:449](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L449)
+[types/wallet.ts:452](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L452)
 
 ___
 
 ### Result
 
-Ƭ **Result**<`T`\>: `Ok`<`T`\> \| `Err`<`T`\>
+Ƭ **Result**\<`T`\>: `Ok`\<`T`\> \| `Err`\<`T`\>
 
 Represents a result that can be successful (Ok) or contain an error (Err).
 
@@ -252,7 +253,7 @@ Represents a result that can be successful (Ok) or contain an error (Err).
 
 #### Defined in
 
-[utils/result.ts:4](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/result.ts#L4)
+[utils/result.ts:4](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/result.ts#L4)
 
 ___
 
@@ -271,7 +272,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:470](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L470)
+[types/wallet.ts:473](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L473)
 
 ___
 
@@ -281,7 +282,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:15](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L15)
+[types/wallet.ts:15](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L15)
 
 ___
 
@@ -291,13 +292,13 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:14](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L14)
+[types/wallet.ts:14](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L14)
 
 ___
 
 ### TAddressTypeContent
 
-Ƭ **TAddressTypeContent**<`T`\>: { [key in EAddressType]: T }
+Ƭ **TAddressTypeContent**\<`T`\>: \{ [key in EAddressType]: T }
 
 #### Type parameters
 
@@ -307,17 +308,17 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:46](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L46)
+[types/wallet.ts:46](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L46)
 
 ___
 
 ### TAddressTypes
 
-Ƭ **TAddressTypes**: { [key in EAddressType]: Readonly<IAddressTypeData\> }
+Ƭ **TAddressTypes**: \{ [key in EAddressType]: Readonly\<IAddressTypeData\> }
 
 #### Defined in
 
-[types/wallet.ts:21](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L21)
+[types/wallet.ts:21](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L21)
 
 ___
 
@@ -327,7 +328,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:13](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L13)
+[types/wallet.ts:13](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L13)
 
 ___
 
@@ -337,7 +338,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:11](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/electrum.ts#L11)
+[types/electrum.ts:11](https://github.com/synonymdev/beignet/blob/7c83290/src/types/electrum.ts#L11)
 
 ___
 
@@ -361,7 +362,7 @@ ___
 
 #### Defined in
 
-[types/transaction.ts:42](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/transaction.ts#L42)
+[types/transaction.ts:41](https://github.com/synonymdev/beignet/blob/7c83290/src/types/transaction.ts#L41)
 
 ___
 
@@ -371,7 +372,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:9](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/electrum.ts#L9)
+[types/electrum.ts:9](https://github.com/synonymdev/beignet/blob/7c83290/src/types/electrum.ts#L9)
 
 ___
 
@@ -388,27 +389,27 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:139](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/electrum.ts#L139)
+[types/electrum.ts:139](https://github.com/synonymdev/beignet/blob/7c83290/src/types/electrum.ts#L139)
 
 ___
 
 ### TGetByteCountInput
 
-Ƭ **TGetByteCountInput**: \`MULTISIG-P2SH:${number}-${number}\` \| \`MULTISIG-P2WSH:${number}-${number}\` \| \`MULTISIG-P2SH-P2WSH:${number}-${number}\` \| ``"P2SH-P2WPKH"`` \| ``"P2PKH"`` \| ``"p2pkh"`` \| ``"P2WPKH"`` \| ``"p2wpkh"`` \| ``"P2SH"`` \| ``"p2sh"`` \| ``"P2TR"`` \| ``"p2tr"``
+Ƭ **TGetByteCountInput**: \`MULTISIG-P2SH:$\{number}-$\{number}\` \| \`MULTISIG-P2WSH:$\{number}-$\{number}\` \| \`MULTISIG-P2SH-P2WSH:$\{number}-$\{number}\` \| ``"P2SH-P2WPKH"`` \| ``"P2PKH"`` \| ``"p2pkh"`` \| ``"P2WPKH"`` \| ``"p2wpkh"`` \| ``"P2SH"`` \| ``"p2sh"`` \| ``"P2TR"`` \| ``"p2tr"``
 
 #### Defined in
 
-[types/wallet.ts:389](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L389)
+[types/wallet.ts:394](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L394)
 
 ___
 
 ### TGetByteCountInputs
 
-Ƭ **TGetByteCountInputs**: { [key in TGetByteCountInput]?: number }
+Ƭ **TGetByteCountInputs**: \{ [key in TGetByteCountInput]?: number }
 
 #### Defined in
 
-[types/wallet.ts:381](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L381)
+[types/wallet.ts:386](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L386)
 
 ___
 
@@ -418,27 +419,27 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:403](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L403)
+[types/wallet.ts:408](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L408)
 
 ___
 
 ### TGetByteCountOutputs
 
-Ƭ **TGetByteCountOutputs**: { [key in TGetByteCountOutput]?: number }
+Ƭ **TGetByteCountOutputs**: \{ [key in TGetByteCountOutput]?: number }
 
 #### Defined in
 
-[types/wallet.ts:385](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L385)
+[types/wallet.ts:390](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L390)
 
 ___
 
 ### TGetData
 
-Ƭ **TGetData**: <K\>(`key`: `string`) => `Promise`<[`Result`](README.md#result)<[`IWalletData`](interfaces/IWalletData.md)[`K`]\>\>
+Ƭ **TGetData**: \<K\>(`key`: `string`) => `Promise`\<[`Result`](README.md#result)\<[`IWalletData`](interfaces/IWalletData.md)[`K`]\>\>
 
 #### Type declaration
 
-▸ <`K`\>(`key`): `Promise`<[`Result`](README.md#result)<[`IWalletData`](interfaces/IWalletData.md)[`K`]\>\>
+▸ \<`K`\>(`key`): `Promise`\<[`Result`](README.md#result)\<[`IWalletData`](interfaces/IWalletData.md)[`K`]\>\>
 
 ##### Type parameters
 
@@ -454,11 +455,11 @@ ___
 
 ##### Returns
 
-`Promise`<[`Result`](README.md#result)<[`IWalletData`](interfaces/IWalletData.md)[`K`]\>\>
+`Promise`\<[`Result`](README.md#result)\<[`IWalletData`](interfaces/IWalletData.md)[`K`]\>\>
 
 #### Defined in
 
-[types/wallet.ts:168](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L168)
+[types/wallet.ts:173](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L173)
 
 ___
 
@@ -477,7 +478,7 @@ ___
 
 #### Defined in
 
-[types/transaction.ts:54](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/transaction.ts#L54)
+[types/transaction.ts:53](https://github.com/synonymdev/beignet/blob/7c83290/src/types/transaction.ts#L53)
 
 ___
 
@@ -487,7 +488,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:18](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L18)
+[types/wallet.ts:18](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L18)
 
 ___
 
@@ -497,7 +498,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:19](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L19)
+[types/wallet.ts:19](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L19)
 
 ___
 
@@ -507,7 +508,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:17](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L17)
+[types/wallet.ts:17](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L17)
 
 ___
 
@@ -517,7 +518,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:20](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L20)
+[types/wallet.ts:20](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L20)
 
 ___
 
@@ -527,7 +528,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:16](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L16)
+[types/wallet.ts:16](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L16)
 
 ___
 
@@ -539,8 +540,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
+| `connectedToElectrum` | `boolean` |
 | `newBlock` | [`INewBlock`](interfaces/INewBlock.md) |
-| `onElectrumConnectionChange` | `boolean` |
 | `rbf` | `string`[] |
 | `reorg` | [`IUtxo`](interfaces/IUtxo.md)[] |
 | `transactionConfirmed` | [`TTransactionMessage`](README.md#ttransactionmessage) |
@@ -549,7 +550,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:430](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L430)
+[types/wallet.ts:435](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L435)
 
 ___
 
@@ -559,17 +560,17 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:457](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L457)
+[types/wallet.ts:460](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L460)
 
 ___
 
 ### TOnMessage
 
-Ƭ **TOnMessage**: <K\>(`key`: `K`, `data`: [`TMessageDataMap`](README.md#tmessagedatamap)[`K`]) => `void`
+Ƭ **TOnMessage**: \<K\>(`key`: `K`, `data`: [`TMessageDataMap`](README.md#tmessagedatamap)[`K`]) => `void`
 
 #### Type declaration
 
-▸ <`K`\>(`key`, `data`): `void`
+▸ \<`K`\>(`key`, `data`): `void`
 
 ##### Type parameters
 
@@ -590,7 +591,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:452](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L452)
+[types/wallet.ts:455](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L455)
 
 ___
 
@@ -608,7 +609,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:352](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L352)
+[types/wallet.ts:357](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L357)
 
 ___
 
@@ -618,7 +619,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:23](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/electrum.ts#L23)
+[types/electrum.ts:23](https://github.com/synonymdev/beignet/blob/7c83290/src/types/electrum.ts#L23)
 
 ___
 
@@ -637,17 +638,17 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:17](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/electrum.ts#L17)
+[types/electrum.ts:17](https://github.com/synonymdev/beignet/blob/7c83290/src/types/electrum.ts#L17)
 
 ___
 
 ### TSetData
 
-Ƭ **TSetData**: <K\>(`key`: `string`, `value`: [`IWalletData`](interfaces/IWalletData.md)[`K`]) => `Promise`<[`Result`](README.md#result)<`boolean`\>\>
+Ƭ **TSetData**: \<K\>(`key`: `string`, `value`: [`IWalletData`](interfaces/IWalletData.md)[`K`]) => `Promise`\<[`Result`](README.md#result)\<`boolean`\>\>
 
 #### Type declaration
 
-▸ <`K`\>(`key`, `value`): `Promise`<[`Result`](README.md#result)<`boolean`\>\>
+▸ \<`K`\>(`key`, `value`): `Promise`\<[`Result`](README.md#result)\<`boolean`\>\>
 
 ##### Type parameters
 
@@ -664,21 +665,21 @@ ___
 
 ##### Returns
 
-`Promise`<[`Result`](README.md#result)<`boolean`\>\>
+`Promise`\<[`Result`](README.md#result)\<`boolean`\>\>
 
 #### Defined in
 
-[types/wallet.ts:171](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L171)
+[types/wallet.ts:176](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L176)
 
 ___
 
 ### TSetupTransactionResponse
 
-Ƭ **TSetupTransactionResponse**: [`Result`](README.md#result)<`Partial`<[`ISendTransaction`](interfaces/ISendTransaction.md)\>\>
+Ƭ **TSetupTransactionResponse**: [`Result`](README.md#result)\<`Partial`\<[`ISendTransaction`](interfaces/ISendTransaction.md)\>\>
 
 #### Defined in
 
-[types/transaction.ts:40](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/transaction.ts#L40)
+[types/transaction.ts:39](https://github.com/synonymdev/beignet/blob/7c83290/src/types/transaction.ts#L39)
 
 ___
 
@@ -695,7 +696,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:477](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L477)
+[types/wallet.ts:480](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L480)
 
 ___
 
@@ -705,7 +706,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:112](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/electrum.ts#L112)
+[types/electrum.ts:112](https://github.com/synonymdev/beignet/blob/7c83290/src/types/electrum.ts#L112)
 
 ___
 
@@ -717,13 +718,11 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `address` | [`IAddress`](interfaces/IAddress.md) |
-| `balance` | [`IGetAddressBalanceRes`](interfaces/IGetAddressBalanceRes.md) |
-| `txs` | [`TTxResult`](README.md#ttxresult)[] |
+| `transaction` | [`IFormattedTransaction`](interfaces/IFormattedTransaction.md) |
 
 #### Defined in
 
-[types/wallet.ts:440](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L440)
+[types/wallet.ts:445](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L445)
 
 ___
 
@@ -743,7 +742,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:51](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/electrum.ts#L51)
+[types/electrum.ts:51](https://github.com/synonymdev/beignet/blob/7c83290/src/types/electrum.ts#L51)
 
 ___
 
@@ -760,7 +759,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:38](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/electrum.ts#L38)
+[types/electrum.ts:38](https://github.com/synonymdev/beignet/blob/7c83290/src/types/electrum.ts#L38)
 
 ___
 
@@ -774,7 +773,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:34](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/electrum.ts#L34)
+[types/electrum.ts:34](https://github.com/synonymdev/beignet/blob/7c83290/src/types/electrum.ts#L34)
 
 ___
 
@@ -784,7 +783,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:166](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L166)
+[types/wallet.ts:171](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L171)
 
 ## Variables
 
@@ -794,7 +793,7 @@ ___
 
 #### Defined in
 
-[utils/electrum.ts:14](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/electrum.ts#L14)
+[utils/electrum.ts:14](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/electrum.ts#L14)
 
 ___
 
@@ -809,7 +808,7 @@ If connection was lost this will try to reconnect in the specified interval
 
 #### Defined in
 
-[utils/electrum.ts:133](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/electrum.ts#L133)
+[utils/electrum.ts:133](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/electrum.ts#L133)
 
 ___
 
@@ -821,30 +820,30 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `CAD` | { `currencySymbol`: `string` = '$'; `quote`: `string` = 'CAD'; `quoteName`: `string` = 'Canadian Dollar' } |
+| `CAD` | \{ `currencySymbol`: `string` = '$'; `quote`: `string` = 'CAD'; `quoteName`: `string` = 'Canadian Dollar' } |
 | `CAD.currencySymbol` | `string` |
 | `CAD.quote` | `string` |
 | `CAD.quoteName` | `string` |
-| `CNY` | { `currencySymbol`: `string` = '¥'; `quote`: `string` = 'CNY'; `quoteName`: `string` = 'Chinese Yuan Renminbi' } |
+| `CNY` | \{ `currencySymbol`: `string` = '¥'; `quote`: `string` = 'CNY'; `quoteName`: `string` = 'Chinese Yuan Renminbi' } |
 | `CNY.currencySymbol` | `string` |
 | `CNY.quote` | `string` |
 | `CNY.quoteName` | `string` |
-| `EUR` | { `currencySymbol`: `string` = '€'; `quote`: `string` = 'EUR'; `quoteName`: `string` = 'Euro' } |
+| `EUR` | \{ `currencySymbol`: `string` = '€'; `quote`: `string` = 'EUR'; `quoteName`: `string` = 'Euro' } |
 | `EUR.currencySymbol` | `string` |
 | `EUR.quote` | `string` |
 | `EUR.quoteName` | `string` |
-| `GBP` | { `currencySymbol`: `string` = '£'; `quote`: `string` = 'GBP'; `quoteName`: `string` = 'Great British Pound' } |
+| `GBP` | \{ `currencySymbol`: `string` = '£'; `quote`: `string` = 'GBP'; `quoteName`: `string` = 'Great British Pound' } |
 | `GBP.currencySymbol` | `string` |
 | `GBP.quote` | `string` |
 | `GBP.quoteName` | `string` |
-| `USD` | { `currencySymbol`: `string` = '$'; `quote`: `string` = 'USD'; `quoteName`: `string` = 'US Dollar' } |
+| `USD` | \{ `currencySymbol`: `string` = '$'; `quote`: `string` = 'USD'; `quoteName`: `string` = 'US Dollar' } |
 | `USD.currencySymbol` | `string` |
 | `USD.quote` | `string` |
 | `USD.quoteName` | `string` |
 
 #### Defined in
 
-[utils/exchange-rate.ts:5](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/exchange-rate.ts#L5)
+[utils/exchange-rate.ts:5](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/exchange-rate.ts#L5)
 
 ## Functions
 
@@ -860,7 +859,7 @@ Returns an array of all available networks from the networks object.
 
 #### Defined in
 
-[utils/wallet.ts:204](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L204)
+[utils/wallet.ts:207](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L207)
 
 ___
 
@@ -875,7 +874,7 @@ Constructs the parameter for getByteCount via an array of addresses.
 | Name | Type | Default value |
 | :------ | :------ | :------ |
 | `addresses` | `string`[] | `undefined` |
-| `increaseAddressCount` | { `addrType`: [`EAddressType`](enums/EAddressType.md) ; `count`: `number`  }[] | `[]` |
+| `increaseAddressCount` | \{ `addrType`: [`EAddressType`](enums/EAddressType.md) ; `count`: `number`  }[] | `[]` |
 
 #### Returns
 
@@ -885,7 +884,7 @@ y
 
 #### Defined in
 
-[utils/transaction.ts:146](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/transaction.ts#L146)
+[utils/transaction.ts:147](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/transaction.ts#L147)
 
 ___
 
@@ -905,13 +904,13 @@ ___
 
 #### Defined in
 
-[utils/wallet.ts:259](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L259)
+[utils/wallet.ts:262](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L262)
 
 ___
 
 ### decodeRawTransaction
 
-▸ **decodeRawTransaction**(`hex`, `_network?`): [`Result`](README.md#result)<[`TDecodeRawTx`](README.md#tdecoderawtx)\>
+▸ **decodeRawTransaction**(`hex`, `_network?`): [`Result`](README.md#result)\<[`TDecodeRawTx`](README.md#tdecoderawtx)\>
 
 Attempts to decode a raw tx hex.
 Source: https://github.com/bitcoinjs/bitcoinjs-lib/issues/1606#issuecomment-664740672
@@ -925,17 +924,17 @@ Source: https://github.com/bitcoinjs/bitcoinjs-lib/issues/1606#issuecomment-6647
 
 #### Returns
 
-[`Result`](README.md#result)<[`TDecodeRawTx`](README.md#tdecoderawtx)\>
+[`Result`](README.md#result)\<[`TDecodeRawTx`](README.md#tdecoderawtx)\>
 
 #### Defined in
 
-[utils/transaction.ts:372](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/transaction.ts#L372)
+[utils/transaction.ts:373](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/transaction.ts#L373)
 
 ___
 
 ### err
 
-▸ **err**<`T`\>(`error`): `Err`<`T`\>
+▸ **err**\<`T`\>(`error`): `Err`\<`T`\>
 
 Construct a new Err result value.
 
@@ -953,19 +952,19 @@ Construct a new Err result value.
 
 #### Returns
 
-`Err`<`T`\>
+`Err`\<`T`\>
 
 An Err result containing the given error.
 
 #### Defined in
 
-[utils/result.ts:74](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/result.ts#L74)
+[utils/result.ts:74](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/result.ts#L74)
 
 ___
 
 ### formatKeyDerivationPath
 
-▸ **formatKeyDerivationPath**(`«destructured»`): [`Result`](README.md#result)<[`IKeyDerivationPathData`](interfaces/IKeyDerivationPathData.md)\>
+▸ **formatKeyDerivationPath**(`«destructured»`): [`Result`](README.md#result)\<[`IKeyDerivationPathData`](interfaces/IKeyDerivationPathData.md)\>
 
 Formats and returns the provided derivation path string and object.
 
@@ -983,19 +982,19 @@ Formats and returns the provided derivation path string and object.
 
 #### Returns
 
-[`Result`](README.md#result)<[`IKeyDerivationPathData`](interfaces/IKeyDerivationPathData.md)\>
+[`Result`](README.md#result)\<[`IKeyDerivationPathData`](interfaces/IKeyDerivationPathData.md)\>
 
 Derivation Path Data
 
 #### Defined in
 
-[utils/wallet.ts:72](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L72)
+[utils/wallet.ts:75](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L75)
 
 ___
 
 ### formatPeerData
 
-▸ **formatPeerData**(`data`): [`Result`](README.md#result)<[`IFormattedPeerData`](interfaces/IFormattedPeerData.md)\>
+▸ **formatPeerData**(`data`): [`Result`](README.md#result)\<[`IFormattedPeerData`](interfaces/IFormattedPeerData.md)\>
 
 Formats the peer data response from an Electrum server.
 
@@ -1007,13 +1006,13 @@ Formats the peer data response from an Electrum server.
 
 #### Returns
 
-[`Result`](README.md#result)<[`IFormattedPeerData`](interfaces/IFormattedPeerData.md)\>
+[`Result`](README.md#result)\<[`IFormattedPeerData`](interfaces/IFormattedPeerData.md)\>
 
 Result<IFormattedPeerData>
 
 #### Defined in
 
-[utils/electrum.ts:59](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/electrum.ts#L59)
+[utils/electrum.ts:59](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/electrum.ts#L59)
 
 ___
 
@@ -1037,7 +1036,27 @@ Extends bip39's generateMnemonic function.
 
 #### Defined in
 
-[utils/helpers.ts:150](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/helpers.ts#L150)
+[utils/helpers.ts:150](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/helpers.ts#L150)
+
+___
+
+### generateWalletId
+
+▸ **generateWalletId**(`seed`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `seed` | `Buffer` |
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[utils/wallet.ts:310](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L310)
 
 ___
 
@@ -1060,13 +1079,13 @@ Get address for a given scriptPubKey.
 
 #### Defined in
 
-[utils/helpers.ts:16](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/helpers.ts#L16)
+[utils/helpers.ts:16](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/helpers.ts#L16)
 
 ___
 
 ### getAddressTypeFromPath
 
-▸ **getAddressTypeFromPath**(`path`): [`Result`](README.md#result)<[`EAddressType`](enums/EAddressType.md)\>
+▸ **getAddressTypeFromPath**(`path`): [`Result`](README.md#result)\<[`EAddressType`](enums/EAddressType.md)\>
 
 Returns the address type from the specified derivation path.
 
@@ -1078,11 +1097,11 @@ Returns the address type from the specified derivation path.
 
 #### Returns
 
-[`Result`](README.md#result)<[`EAddressType`](enums/EAddressType.md)\>
+[`Result`](README.md#result)\<[`EAddressType`](enums/EAddressType.md)\>
 
 #### Defined in
 
-[utils/derivation-path.ts:147](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/derivation-path.ts#L147)
+[utils/derivation-path.ts:147](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/derivation-path.ts#L147)
 
 ___
 
@@ -1104,13 +1123,13 @@ ___
 
 #### Defined in
 
-[utils/transaction.ts:180](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/transaction.ts#L180)
+[utils/transaction.ts:181](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/transaction.ts#L181)
 
 ___
 
 ### getDataFallback
 
-▸ **getDataFallback**<`K`\>(`key`): `Promise`<[`Result`](README.md#result)<[`IWalletData`](interfaces/IWalletData.md)[`K`]\>\>
+▸ **getDataFallback**\<`K`\>(`key`): `Promise`\<[`Result`](README.md#result)\<[`IWalletData`](interfaces/IWalletData.md)[`K`]\>\>
 
 #### Type parameters
 
@@ -1126,11 +1145,11 @@ ___
 
 #### Returns
 
-`Promise`<[`Result`](README.md#result)<[`IWalletData`](interfaces/IWalletData.md)[`K`]\>\>
+`Promise`\<[`Result`](README.md#result)\<[`IWalletData`](interfaces/IWalletData.md)[`K`]\>\>
 
 #### Defined in
 
-[types/wallet.ts:168](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L168)
+[types/wallet.ts:173](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L173)
 
 ___
 
@@ -1153,7 +1172,7 @@ Returns the default port for the given network and protocol.
 
 #### Defined in
 
-[utils/electrum.ts:22](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/electrum.ts#L22)
+[utils/electrum.ts:22](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/electrum.ts#L22)
 
 ___
 
@@ -1169,7 +1188,7 @@ Returns the default wallet data object.
 
 #### Defined in
 
-[utils/wallet.ts:31](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L31)
+[utils/wallet.ts:34](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L34)
 
 ___
 
@@ -1185,29 +1204,29 @@ keyof [`IWalletData`](interfaces/IWalletData.md)[]
 
 #### Defined in
 
-[utils/wallet.ts:39](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L39)
+[utils/wallet.ts:42](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L42)
 
 ___
 
 ### getExchangeRates
 
-▸ **getExchangeRates**(): `Promise`<[`Result`](README.md#result)<[`IExchangeRates`](interfaces/IExchangeRates.md)\>\>
+▸ **getExchangeRates**(): `Promise`\<[`Result`](README.md#result)\<[`IExchangeRates`](interfaces/IExchangeRates.md)\>\>
 
 Returns the exchange rate for the given currency
 
 #### Returns
 
-`Promise`<[`Result`](README.md#result)<[`IExchangeRates`](interfaces/IExchangeRates.md)\>\>
+`Promise`\<[`Result`](README.md#result)\<[`IExchangeRates`](interfaces/IExchangeRates.md)\>\>
 
 #### Defined in
 
-[utils/exchange-rate.ts:45](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/exchange-rate.ts#L45)
+[utils/exchange-rate.ts:45](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/exchange-rate.ts#L45)
 
 ___
 
 ### getHighestUsedIndexFromTxHashes
 
-▸ **getHighestUsedIndexFromTxHashes**(`«destructured»`): [`Result`](README.md#result)<[`IIndexes`](interfaces/IIndexes.md)\>
+▸ **getHighestUsedIndexFromTxHashes**(`«destructured»`): [`Result`](README.md#result)\<[`IIndexes`](interfaces/IIndexes.md)\>
 
 Returns the highest used index from the provided txHashes.
 
@@ -1224,17 +1243,17 @@ Returns the highest used index from the provided txHashes.
 
 #### Returns
 
-[`Result`](README.md#result)<[`IIndexes`](interfaces/IIndexes.md)\>
+[`Result`](README.md#result)\<[`IIndexes`](interfaces/IIndexes.md)\>
 
 #### Defined in
 
-[utils/wallet.ts:130](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L130)
+[utils/wallet.ts:133](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L133)
 
 ___
 
 ### getKeyDerivationPath
 
-▸ **getKeyDerivationPath**(`«destructured»`): [`Result`](README.md#result)<[`IKeyDerivationPath`](interfaces/IKeyDerivationPath.md)\>
+▸ **getKeyDerivationPath**(`«destructured»`): [`Result`](README.md#result)\<[`IKeyDerivationPath`](interfaces/IKeyDerivationPath.md)\>
 
 Returns the derivation path object for the specified addressType and network.
 
@@ -1244,23 +1263,23 @@ Returns the derivation path object for the specified addressType and network.
 | :------ | :------ |
 | `«destructured»` | `Object` |
 | › `addressType` | [`EAddressType`](enums/EAddressType.md) |
-| › `network?` | [`EAvailableNetworks`](enums/EAvailableNetworks.md) |
+| › `network` | [`EAvailableNetworks`](enums/EAvailableNetworks.md) |
 
 #### Returns
 
-[`Result`](README.md#result)<[`IKeyDerivationPath`](interfaces/IKeyDerivationPath.md)\>
+[`Result`](README.md#result)\<[`IKeyDerivationPath`](interfaces/IKeyDerivationPath.md)\>
 
 Result<IKeyDerivationPath>
 
 #### Defined in
 
-[utils/helpers.ts:98](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/helpers.ts#L98)
+[utils/helpers.ts:98](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/helpers.ts#L98)
 
 ___
 
 ### getKeyDerivationPathObject
 
-▸ **getKeyDerivationPathObject**(`«destructured»`): [`Result`](README.md#result)<[`IKeyDerivationPath`](interfaces/IKeyDerivationPath.md)\>
+▸ **getKeyDerivationPathObject**(`«destructured»`): [`Result`](README.md#result)\<[`IKeyDerivationPath`](interfaces/IKeyDerivationPath.md)\>
 
 Parses a key derivation path in string format Ex: "m/84'/0'/0'/0/0" and returns IKeyDerivationPath.
 
@@ -1271,23 +1290,23 @@ Parses a key derivation path in string format Ex: "m/84'/0'/0'/0/0" and returns 
 | `«destructured»` | `Object` |
 | › `changeAddress?` | `boolean` |
 | › `index?` | `string` |
-| › `network?` | [`EAvailableNetworks`](enums/EAvailableNetworks.md) |
+| › `network` | [`EAvailableNetworks`](enums/EAvailableNetworks.md) |
 | › `path` | `string` |
 | › `purpose?` | `string` |
 
 #### Returns
 
-[`Result`](README.md#result)<[`IKeyDerivationPath`](interfaces/IKeyDerivationPath.md)\>
+[`Result`](README.md#result)\<[`IKeyDerivationPath`](interfaces/IKeyDerivationPath.md)\>
 
 #### Defined in
 
-[utils/derivation-path.ts:22](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/derivation-path.ts#L22)
+[utils/derivation-path.ts:22](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/derivation-path.ts#L22)
 
 ___
 
 ### getKeyDerivationPathString
 
-▸ **getKeyDerivationPathString**(`«destructured»`): [`Result`](README.md#result)<`string`\>
+▸ **getKeyDerivationPathString**(`«destructured»`): [`Result`](README.md#result)\<`string`\>
 
 Parses a key derivation path object and returns it in string format. Ex: "m/84'/0'/0'/0/0"
 
@@ -1306,11 +1325,11 @@ Parses a key derivation path object and returns it in string format. Ex: "m/84'/
 
 #### Returns
 
-[`Result`](README.md#result)<`string`\>
+[`Result`](README.md#result)\<`string`\>
 
 #### Defined in
 
-[utils/derivation-path.ts:80](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/derivation-path.ts#L80)
+[utils/derivation-path.ts:80](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/derivation-path.ts#L80)
 
 ___
 
@@ -1332,13 +1351,13 @@ Returns last value between hyphens in a string.
 
 #### Defined in
 
-[utils/wallet.ts:48](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L48)
+[utils/wallet.ts:51](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L51)
 
 ___
 
 ### getPeers
 
-▸ **getPeers**(`selectedNetwork?`): `Promise`<[`Result`](README.md#result)<[`IFormattedPeerData`](interfaces/IFormattedPeerData.md)[]\>\>
+▸ **getPeers**(`selectedNetwork?`): `Promise`\<[`Result`](README.md#result)\<[`IFormattedPeerData`](interfaces/IFormattedPeerData.md)[]\>\>
 
 Returns an array of peers.
 If unable to acquire peers from an Electrum server the method will default to the hardcoded peers in peers.json.
@@ -1352,13 +1371,13 @@ If unable to acquire peers from an Electrum server the method will default to th
 
 #### Returns
 
-`Promise`<[`Result`](README.md#result)<[`IFormattedPeerData`](interfaces/IFormattedPeerData.md)[]\>\>
+`Promise`\<[`Result`](README.md#result)\<[`IFormattedPeerData`](interfaces/IFormattedPeerData.md)[]\>\>
 
 Promise<Result<IFormattedPeerData[]>>
 
 #### Defined in
 
-[utils/electrum.ts:95](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/electrum.ts#L95)
+[utils/electrum.ts:95](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/electrum.ts#L95)
 
 ___
 
@@ -1381,7 +1400,7 @@ Returns the protocol for the given network and default port.
 
 #### Defined in
 
-[utils/electrum.ts:39](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/electrum.ts#L39)
+[utils/electrum.ts:39](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/electrum.ts#L39)
 
 ___
 
@@ -1405,7 +1424,7 @@ Get scriptHash for a given address
 
 #### Defined in
 
-[utils/helpers.ts:125](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/helpers.ts#L125)
+[utils/helpers.ts:125](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/helpers.ts#L125)
 
 ___
 
@@ -1428,7 +1447,7 @@ Returns the seed for a given mnemonic and passphrase.
 
 #### Defined in
 
-[utils/wallet.ts:292](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L292)
+[utils/wallet.ts:295](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L295)
 
 ___
 
@@ -1450,7 +1469,7 @@ Returns the seed hash for a given mnemonic and passphrase.
 
 #### Defined in
 
-[utils/wallet.ts:301](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L301)
+[utils/wallet.ts:304](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L304)
 
 ___
 
@@ -1472,7 +1491,7 @@ Get sha256 hash of a given string.
 
 #### Defined in
 
-[utils/helpers.ts:32](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/helpers.ts#L32)
+[utils/helpers.ts:32](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/helpers.ts#L32)
 
 ___
 
@@ -1498,7 +1517,7 @@ ___
 
 #### Defined in
 
-[utils/wallet.ts:315](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L315)
+[utils/wallet.ts:324](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L324)
 
 ___
 
@@ -1522,7 +1541,7 @@ Returns the total fee in sats for a transaction at a given size (transactionByte
 
 #### Defined in
 
-[utils/wallet.ts:336](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L336)
+[utils/wallet.ts:345](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L345)
 
 ___
 
@@ -1544,7 +1563,7 @@ ___
 
 #### Defined in
 
-[utils/wallet.ts:307](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L307)
+[utils/wallet.ts:316](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L316)
 
 ___
 
@@ -1571,13 +1590,13 @@ Returns if the provided string is a valid Bech32m encoded string (taproot/p2tr a
 
 #### Defined in
 
-[utils/wallet.ts:182](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L182)
+[utils/wallet.ts:185](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L185)
 
 ___
 
 ### objectKeys
 
-▸ **objectKeys**<`Type`\>(`value`): \`${Exclude<keyof Type, symbol\>}\`[]
+▸ **objectKeys**\<`Type`\>(`value`): \`$\{Exclude\<keyof Type, symbol\>}\`[]
 
 Returns the keys of a given object.
 
@@ -1595,11 +1614,11 @@ Returns the keys of a given object.
 
 #### Returns
 
-\`${Exclude<keyof Type, symbol\>}\`[]
+\`$\{Exclude\<keyof Type, symbol\>}\`[]
 
 #### Defined in
 
-[utils/wallet.ts:59](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L59)
+[utils/wallet.ts:62](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L62)
 
 ___
 
@@ -1624,13 +1643,13 @@ boolean
 
 #### Defined in
 
-[utils/helpers.ts:177](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/helpers.ts#L177)
+[utils/helpers.ts:177](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/helpers.ts#L177)
 
 ___
 
 ### ok
 
-▸ **ok**<`T`\>(`value`): `Ok`<`T`\>
+▸ **ok**\<`T`\>(`value`): `Ok`\<`T`\>
 
 Construct a new Ok result value.
 
@@ -1648,19 +1667,19 @@ Construct a new Ok result value.
 
 #### Returns
 
-`Ok`<`T`\>
+`Ok`\<`T`\>
 
 An Ok result containing the given value.
 
 #### Defined in
 
-[utils/result.ts:67](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/result.ts#L67)
+[utils/result.ts:67](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/result.ts#L67)
 
 ___
 
 ### parseOnChainPaymentRequest
 
-▸ **parseOnChainPaymentRequest**(`data`, `network?`): [`Result`](README.md#result)<{ `address`: `string` ; `message`: `string` ; `network`: [`EAvailableNetworks`](enums/EAvailableNetworks.md) ; `sats`: `number`  }\>
+▸ **parseOnChainPaymentRequest**(`data`, `network?`): [`Result`](README.md#result)\<\{ `address`: `string` ; `message`: `string` ; `network`: [`EAvailableNetworks`](enums/EAvailableNetworks.md) ; `sats`: `number`  }\>
 
 #### Parameters
 
@@ -1671,17 +1690,17 @@ ___
 
 #### Returns
 
-[`Result`](README.md#result)<{ `address`: `string` ; `message`: `string` ; `network`: [`EAvailableNetworks`](enums/EAvailableNetworks.md) ; `sats`: `number`  }\>
+[`Result`](README.md#result)\<\{ `address`: `string` ; `message`: `string` ; `network`: [`EAvailableNetworks`](enums/EAvailableNetworks.md) ; `sats`: `number`  }\>
 
 #### Defined in
 
-[utils/transaction.ts:63](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/transaction.ts#L63)
+[utils/transaction.ts:64](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/transaction.ts#L64)
 
 ___
 
 ### reduceValue
 
-▸ **reduceValue**<`T`\>(`«destructured»`): [`Result`](README.md#result)<`number`\>
+▸ **reduceValue**\<`T`\>(`«destructured»`): [`Result`](README.md#result)\<`number`\>
 
 Sum a specific value in an array of objects.
 
@@ -1701,11 +1720,11 @@ Sum a specific value in an array of objects.
 
 #### Returns
 
-[`Result`](README.md#result)<`number`\>
+[`Result`](README.md#result)\<`number`\>
 
 #### Defined in
 
-[utils/wallet.ts:213](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L213)
+[utils/wallet.ts:216](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L216)
 
 ___
 
@@ -1727,7 +1746,7 @@ Removes outputs that are below the dust limit.
 
 #### Defined in
 
-[utils/transaction.ts:292](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/transaction.ts#L292)
+[utils/transaction.ts:293](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/transaction.ts#L293)
 
 ___
 
@@ -1751,13 +1770,13 @@ Sets RBF for the provided psbt.
 
 #### Defined in
 
-[utils/transaction.ts:27](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/transaction.ts#L27)
+[utils/transaction.ts:28](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/transaction.ts#L28)
 
 ___
 
 ### shuffleArray
 
-▸ **shuffleArray**<`T`\>(`array`): `T`[]
+▸ **shuffleArray**\<`T`\>(`array`): `T`[]
 
 Shuffles a given array.
 
@@ -1779,7 +1798,7 @@ Shuffles a given array.
 
 #### Defined in
 
-[utils/wallet.ts:239](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/wallet.ts#L239)
+[utils/wallet.ts:242](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/wallet.ts#L242)
 
 ___
 
@@ -1809,7 +1828,7 @@ If no address is provided, it will attempt to validate the address for all avail
 
 #### Defined in
 
-[utils/helpers.ts:45](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/helpers.ts#L45)
+[utils/helpers.ts:45](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/helpers.ts#L45)
 
 ___
 
@@ -1831,13 +1850,13 @@ Attempts to validate the provided mnemonic.
 
 #### Defined in
 
-[utils/helpers.ts:163](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/helpers.ts#L163)
+[utils/helpers.ts:163](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/helpers.ts#L163)
 
 ___
 
 ### validateTransaction
 
-▸ **validateTransaction**(`transaction`): [`Result`](README.md#result)<`string`\>
+▸ **validateTransaction**(`transaction`): [`Result`](README.md#result)\<`string`\>
 
 Used to validate transaction form data.
 
@@ -1849,8 +1868,8 @@ Used to validate transaction form data.
 
 #### Returns
 
-[`Result`](README.md#result)<`string`\>
+[`Result`](README.md#result)\<`string`\>
 
 #### Defined in
 
-[utils/transaction.ts:303](https://github.com/synonymdev/beignet/blob/e4162f7/src/utils/transaction.ts#L303)
+[utils/transaction.ts:304](https://github.com/synonymdev/beignet/blob/7c83290/src/utils/transaction.ts#L304)

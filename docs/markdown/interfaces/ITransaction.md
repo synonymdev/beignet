@@ -1,6 +1,6 @@
 [beignet](../README.md) / ITransaction
 
-# Interface: ITransaction<T\>
+# Interface: ITransaction\<T\>
 
 ## Type parameters
 
@@ -26,7 +26,7 @@
 
 #### Defined in
 
-[types/wallet.ts:320](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L320)
+[types/wallet.ts:325](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L325)
 
 ___
 
@@ -36,7 +36,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:317](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L317)
+[types/wallet.ts:322](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L322)
 
 ___
 
@@ -46,7 +46,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:318](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L318)
+[types/wallet.ts:323](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L323)
 
 ___
 
@@ -56,7 +56,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:319](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L319)
+[types/wallet.ts:324](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L324)
 
 ___
 
@@ -85,4 +85,4 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:321](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/wallet.ts#L321)
+[types/wallet.ts:326](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L326)

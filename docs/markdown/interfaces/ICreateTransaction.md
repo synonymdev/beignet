@@ -17,7 +17,7 @@
 
 #### Defined in
 
-[types/transaction.ts:8](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/transaction.ts#L8)
+[types/transaction.ts:8](https://github.com/synonymdev/beignet/blob/7c83290/src/types/transaction.ts#L8)
 
 ___
 
@@ -27,4 +27,4 @@ ___
 
 #### Defined in
 
-[types/transaction.ts:7](https://github.com/synonymdev/beignet/blob/e4162f7/src/types/transaction.ts#L7)
+[types/transaction.ts:7](https://github.com/synonymdev/beignet/blob/7c83290/src/types/transaction.ts#L7)

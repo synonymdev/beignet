@@ -58,16 +58,18 @@ export type TTxResponse = {
 
 export interface IGetAddressScriptHashBalances {
 	error: boolean;
-	data: Array<{
-		id: number;
-		jsonrpc: string;
-		result: {
-			confirmed: number;
-			unconfirmed: number;
-		};
-		param: string;
-		data: object;
-	}>;
+	data:
+		| Array<{
+				id: number;
+				jsonrpc: string;
+				result: {
+					confirmed: number;
+					unconfirmed: number;
+				};
+				param: string;
+				data: Record<string, unknown>;
+		  }>
+		| string;
 	id: number;
 	method: string;
 	network: TElectrumNetworks;

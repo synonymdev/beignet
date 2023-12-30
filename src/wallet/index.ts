@@ -654,8 +654,8 @@ export class Wallet {
 			);
 			const res =
 				await this.electrum.getAddressScriptHashBalances(scriptHashes);
-			if (res.error) {
-				return err(res.data);
+			if (res.error || typeof res.data === 'string') {
+				return err(JSON.stringify(res.data));
 			}
 			return ok(
 				res.data.reduce((acc, cur) => {

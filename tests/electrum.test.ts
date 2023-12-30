@@ -3,6 +3,7 @@ import { Wallet } from '../';
 import { EAvailableNetworks, EAddressType, IGetUtxosResponse } from '../src';
 import { TEST_MNEMONIC } from './constants';
 import { Result } from '../src';
+import { servers } from '../example/helpers';
 const expect = chai.expect;
 
 const testTimeout = 60000;
@@ -14,7 +15,10 @@ before(async function () {
 	const res = await Wallet.create({
 		mnemonic: TEST_MNEMONIC,
 		network: EAvailableNetworks.testnet,
-		addressType: EAddressType.p2wpkh
+		addressType: EAddressType.p2wpkh,
+		electrumOptions: {
+			servers: servers[EAvailableNetworks.testnet]
+		}
 	});
 	if (res.isErr()) {
 		console.log('error: ', res.error.message);

@@ -130,8 +130,8 @@ export interface ISendTransaction {
 	minFee: number; // (sats) Used for RBF/CPFP transactions where the fee needs to be greater than the original.
 	max: boolean; // If the user intends to send the max amount.
 	tags: string[];
-	slashTagsUrl?: string;
-	lightningInvoice?: string;
+	slashTagsUrl?: string; // TODO: Remove after migration.
+	lightningInvoice?: string; // TODO: Remove after migration.
 }
 
 export interface IAddresses {
@@ -270,6 +270,7 @@ export interface IGenerateAddresses {
 	changeAddressIndex?: number;
 	keyDerivationPath?: IKeyDerivationPath;
 	addressType?: EAddressType;
+	saveAddresses?: boolean;
 }
 
 export interface IKeyDerivationPathData {

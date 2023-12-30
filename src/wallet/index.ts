@@ -374,74 +374,76 @@ export class Wallet {
 		try {
 			const walletDataKeys = getDefaultWalletDataKeys();
 			const walletData: IWalletData = getDefaultWalletData();
-			for (const key of walletDataKeys) {
-				let dataResult;
-				try {
-					const walletDataKey = this.getWalletDataKey(key);
-					const getDataRes = await this._getData(walletDataKey);
-					if (getDataRes.isErr()) {
-						//dataResult = getDataRes?.value ?? walletData[key];
-						return err(dataResult.error.message);
+			await Promise.all(
+				walletDataKeys.map(async (key) => {
+					let dataResult;
+					try {
+						const walletDataKey = this.getWalletDataKey(key);
+						const getDataRes = await this._getData(walletDataKey);
+						if (getDataRes.isErr()) {
+							//dataResult = getDataRes?.value ?? walletData[key];
+							return err(dataResult.error.message);
+						}
+						dataResult = getDataRes?.value;
+					} catch (e) {
+						console.log(e);
 					}
-					dataResult = getDataRes?.value;
-				} catch (e) {
-					console.log(e);
-				}
-				const data = dataResult ?? walletData[key];
-				switch (key) {
-					case 'id':
-						walletData[key] = data as string;
-						break;
-					case 'addressType':
-						walletData[key] = data as EAddressType;
-						break;
-					case 'addresses':
-					case 'changeAddresses':
-						walletData[key] = data as TAddressTypeContent<IAddresses>;
-						break;
-					case 'addressIndex':
-					case 'changeAddressIndex':
-						walletData[key] = data as TAddressTypeContent<IAddress>;
-						break;
-					case 'lastUsedAddressIndex':
-					case 'lastUsedChangeAddressIndex':
-						walletData[key] = data as TAddressTypeContent<IAddress>;
-						break;
-					case 'utxos':
-						walletData[key] = data as IUtxo[];
-						break;
-					case 'blacklistedUtxos':
-						walletData[key] = data as IUtxo[];
-						break;
-					case 'unconfirmedTransactions':
-					case 'transactions':
-						walletData[key] = data as IFormattedTransactions;
-						break;
-					case 'transaction':
-						walletData[key] = data as ISendTransaction;
-						break;
-					case 'balance':
-						walletData[key] = data as number;
-						break;
-					case 'header':
-						walletData[key] = data as IHeader;
-						break;
-					case 'boostedTransactions':
-						walletData[key] = data as IBoostedTransactions;
-						break;
-					case 'selectedFeeId':
-						walletData[key] = data as EFeeId;
-						break;
-					case 'exchangeRates':
-						walletData[key] = data as IExchangeRates;
-						break;
-					case 'feeEstimates':
-						walletData[key] = data as IOnchainFees;
-						break;
-					default:
-						return err(`Unhandled key in getWalletData: ${key}`);
-				}
-			}
+					const data = dataResult ?? walletData[key];
+					switch (key) {
+						case 'id':
+							walletData[key] = data as string;
+							break;
+						case 'addressType':
+							walletData[key] = data as EAddressType;
+							break;
+						case 'addresses':
+						case 'changeAddresses':
+							walletData[key] = data as TAddressTypeContent<IAddresses>;
+							break;
+						case 'addressIndex':
+						case 'changeAddressIndex':
+							walletData[key] = data as TAddressTypeContent<IAddress>;
+							break;
+						case 'lastUsedAddressIndex':
+						case 'lastUsedChangeAddressIndex':
+							walletData[key] = data as TAddressTypeContent<IAddress>;
+							break;
+						case 'utxos':
+							walletData[key] = data as IUtxo[];
+							break;
+						case 'blacklistedUtxos':
+							walletData[key] = data as IUtxo[];
+							break;
+						case 'unconfirmedTransactions':
+						case 'transactions':
+							walletData[key] = data as IFormattedTransactions;
+							break;
+						case 'transaction':
+							walletData[key] = data as ISendTransaction;
+							break;
+						case 'balance':
+							walletData[key] = data as number;
+							break;
+						case 'header':
+							walletData[key] = data as IHeader;
+							break;
+						case 'boostedTransactions':
+							walletData[key] = data as IBoostedTransactions;
+							break;
+						case 'selectedFeeId':
+							walletData[key] = data as EFeeId;
+							break;
+						case 'exchangeRates':
+							walletData[key] = data as IExchangeRates;
+							break;
+						case 'feeEstimates':
+							walletData[key] = data as IOnchainFees;
+							break;
+						default:
+							return err(`Unhandled key in getWalletData: ${key}`);
+					}
+				})
+			);
 			return ok(walletData);
 		} catch (e) {
 			console.log(e);
@@ -940,7 +942,8 @@ export class Wallet {
 					addressIndex: addressIndex.index,
 					changeAddressIndex: 0,
 					keyDerivationPath,
-					addressType
+					addressType,
+					saveAddresses: false
 				});
 				if (newAddresses.isOk()) {
 					addresses = newAddresses.value.addresses;
@@ -961,7 +964,8 @@ export class Wallet {
 					addressIndex: 0,
 					changeAddressIndex: changeAddressIndex.index,
 					keyDerivationPath,
-					addressType
+					addressType,
+					saveAddresses: false
 				});
 				if (newChangeAddresses.isOk()) {
 					changeAddresses = newChangeAddresses.value.changeAddresses;
@@ -1117,7 +1121,8 @@ export class Wallet {
 						addressIndex: highestStoredIndex.value.addressIndex.index,
 						changeAddressIndex: 0,
 						keyDerivationPath,
-						addressType
+						addressType,
+						saveAddresses: false
 					});
 					if (newAddresses.isOk()) {
 						addresses = newAddresses.value.addresses || {};
@@ -1132,7 +1137,8 @@ export class Wallet {
 						changeAddressIndex:
 							highestStoredIndex.value.changeAddressIndex.index,
 						keyDerivationPath,
-						addressType
+						addressType,
+						saveAddresses: false
 					});
 					if (newChangeAddresses.isOk()) {
 						changeAddresses = newChangeAddresses.value.changeAddresses || {};
@@ -1150,6 +1156,11 @@ export class Wallet {
 				allAddresses = [...allAddresses, ...addressesToScan];
 				allChangeAddresses = [...allChangeAddresses, ...changeAddressesToScan];
 			}
+
+			await Promise.all([
+				this.saveWalletData('addresses', this._data.addresses),
+				this.saveWalletData('changeAddresses', this._data.changeAddresses)
+			]);
 
 			return lastKnownIndexes;
 		} catch (e) {
@@ -1200,6 +1211,7 @@ export class Wallet {
 	 * @param {number} [changeAddressIndex]
 	 * @param {IKeyDerivationPath} [keyDerivationPath]
 	 * @param {EAddressType} [addressType]
+	 * @param {boolean} [saveAddresses] If true (default), will save new addresses to storage. When batching address-saves false is used.
 	 * @returns {Promise<Result<IGenerateAddressesResponse>>}
 	 */
 	private async addAddresses({
@@ -1208,7 +1220,8 @@ export class Wallet {
 		addressIndex = 0,
 		changeAddressIndex = 0,
 		addressType,
-		keyDerivationPath
+		keyDerivationPath,
+		saveAddresses = true
 	}: IGenerateAddresses): Promise<Result<IGenerateAddressesResponse>> {
 		if (!addressType) {
 			addressType = this.data.addressType;
@@ -1252,14 +1265,19 @@ export class Wallet {
 				...this.data.addresses[addressType],
 				...addresses
 			};
-			await this.saveWalletData('addresses', this._data.addresses);
+			if (saveAddresses)
+				await this.saveWalletData('addresses', this._data.addresses);
 		}
 		if (Object.keys(changeAddresses).length) {
 			this._data.changeAddresses[addressType] = {
 				...this.data.changeAddresses[addressType],
 				...changeAddresses
 			};
-			await this.saveWalletData('changeAddresses', this._data.changeAddresses);
+			if (saveAddresses)
+				await this.saveWalletData(
+					'changeAddresses',
+					this._data.changeAddresses
+				);
 		}
 
 		return ok({ ...generatedAddresses.value, addressType: type });
@@ -1425,6 +1443,12 @@ export class Wallet {
 				this._data.lastUsedAddressIndex[addressTypeKey] = lastUsedAddressIndex;
 				this._data.lastUsedChangeAddressIndex[addressTypeKey] =
 					lastUsedChangeAddressIndex;
+				updated = true;
+			}
+		});
+		try {
+			await Promise.all(promises);
+			if (updated) {
 				await Promise.all([
 					this.saveWalletData('addressIndex', this._data.addressIndex),
 					this.saveWalletData(
@@ -1440,11 +1464,7 @@ export class Wallet {
 						this._data.lastUsedChangeAddressIndex
 					)
 				]);
-				updated = true;
 			}
-		});
-		try {
-			await Promise.all(promises);
 			return ok(
 				updated ? 'Successfully updated indexes.' : 'No update needed.'
 			);
@@ -1534,9 +1554,7 @@ export class Wallet {
 			if (nextAddressIndex) {
 				// Update addressIndex and return the address content.
 				this._data.addressIndex[addressType] = nextAddressIndex;
-				await Promise.all([
-					this.saveWalletData('addressIndex', this._data.addressIndex)
-				]);
+				await this.saveWalletData('addressIndex', this._data.addressIndex);
 				return ok(nextAddressIndex);
 			}
 
@@ -1552,17 +1570,17 @@ export class Wallet {
 			if (addAddressesRes.isErr()) {
 				return err(addAddressesRes.error.message);
 			}
-			const addressKeys = Object.keys(addAddressesRes.value.addresses);
-			// If for any reason the phone was unable to generate the new address, return error.
-			if (!addressKeys.length) {
+			const addressIndex = Object.values(this.data.addresses[addressType]).find(
+				(addr) => addr.index === currentAddressIndex + 1
+			);
+
+			// If for any reason we're unable to generate the new address, return error.
+			if (!addressIndex) {
 				return err('Unable to generate addresses at this time.');
 			}
-			const newAddressIndex: IAddress =
-				addAddressesRes.value.addresses[addressKeys[0]];
-			this._data.addressIndex[addressType] = newAddressIndex;
-
+			this._data.addressIndex[addressType] = addressIndex;
 			await this.saveWalletData('addressIndex', this._data.addressIndex);
-			return ok(newAddressIndex);
+			return ok(addressIndex);
 		} catch (e) {
 			return err(e);
 		}
@@ -1646,13 +1664,35 @@ export class Wallet {
 	 * @param {IWalletData[K]} data
 	 * @returns {Promise<void>}
 	 */
+	private savingOperations: Record<string, Promise<string>> = {};
 	public async saveWalletData<K extends keyof IWalletData>(
 		key: TWalletDataKeys,
 		data: IWalletData[K]
-	): Promise<void> {
-		if (!this._setData) return;
+	): Promise<string> {
+		if (!this._setData) return 'No setData method has been provided';
+
+		// Check if there's an ongoing save operation for the same key
+		if (key in this.savingOperations) {
+			// Wait for the ongoing operation to complete
+			await this.savingOperations[key];
+		}
+
 		const walletDataKey = this.getWalletDataKey(key);
-		await this._setData(walletDataKey, data);
+		// Create a new save operation
+		this.savingOperations[key] = this._setData(walletDataKey, data)
+			.then(() => {
+				return `${walletDataKey} data saved successfully`;
+			})
+			.catch((error) => {
+				return `Error saving wallet data for ${walletDataKey}: ${error}`;
+			})
+			.finally(() => {
+				// Remove the operation once it's completed
+				delete this.savingOperations[key];
+			});
+
+		// Wait for the save operation to complete
+		return await this.savingOperations[key];
 	}
 
 	//TODO: Implement this as a way to better update and save state so we can consolidate this.data[key] updates.
@@ -1779,10 +1819,6 @@ export class Wallet {
 		await this.saveWalletData('transactions', this._data.transactions);
 
 		if (this.onMessage) {
-			confirmedTxs.forEach((tx) => {
-				// @ts-ignore
-				this.onMessage('transactionConfirmed', tx);
-			});
 			sentTxs.forEach((tx) => {
 				// @ts-ignore
 				this.onMessage('transactionSent', tx);
@@ -1790,6 +1826,10 @@ export class Wallet {
 			receivedTxs.forEach((tx) => {
 				// @ts-ignore
 				this.onMessage('transactionReceived', tx);
+			});
+			confirmedTxs.forEach((tx) => {
+				// @ts-ignore
+				this.onMessage('transactionConfirmed', tx);
 			});
 		}
 
@@ -1825,12 +1865,10 @@ export class Wallet {
 				});
 			} else {
 				this._data.unconfirmedTransactions = unconfirmedTxs;
-				await Promise.all([
-					this.saveWalletData(
-						'unconfirmedTransactions',
-						this._data.unconfirmedTransactions
-					)
-				]);
+				await this.saveWalletData(
+					'unconfirmedTransactions',
+					this._data.unconfirmedTransactions
+				);
 			}
 			return ok('Successfully updated unconfirmed transactions.');
 		} catch (e) {
@@ -2270,8 +2308,8 @@ export class Wallet {
 				const _addresses = scriptPubKey.addresses
 					? scriptPubKey.addresses
 					: scriptPubKey.address
-						? [scriptPubKey.address]
-						: [];
+					? [scriptPubKey.address]
+					: [];
 				totalOutputValue = totalOutputValue + value;
 				_addresses.map((address) => {
 					if (address in combinedAddressObj) {
@@ -2358,8 +2396,8 @@ export class Wallet {
 					const addresses = vout.scriptPubKey.addresses
 						? vout.scriptPubKey.addresses
 						: vout.scriptPubKey.address
-							? [vout.scriptPubKey.address]
-							: [];
+						? [vout.scriptPubKey.address]
+						: [];
 					const value = vout.value;
 					const key = `${data.tx_hash}${vout.n}`;
 					inputData[key] = { addresses, value };
@@ -2478,8 +2516,8 @@ export class Wallet {
 
 	/**
 	 * Returns a fee object for the current transaction.
-	 * @param {number} satsPerByte
-	 * @param {string} message
+	 * @param {number} [satsPerByte]
+	 * @param {string} [message]
 	 * @param {Partial<ISendTransaction>} transaction
 	 * @param {boolean} fundingLightning
 	 * @returns {Result<TGetTotalFeeObj>}
@@ -2525,6 +2563,9 @@ export class Wallet {
 		broadcast?: boolean;
 		shuffleOutputs?: boolean;
 	}): Promise<Result<string>> {
+		if (!this.data.utxos.length) {
+			return err('No UTXOs available.');
+		}
 		const setupTransactionRes = await this.transaction.setupTransaction({
 			rbf
 		});
@@ -2564,6 +2605,58 @@ export class Wallet {
 
 		const createRes = await this.transaction.createTransaction({
 			shuffleOutputs
+		});
+		if (createRes.isErr()) return err(createRes.error.message);
+		const { hex } = createRes.value;
+		if (!broadcast) {
+			return ok(hex);
+		}
+		const broadcastRes = await this.electrum.broadcastTransaction({
+			rawTx: hex
+		});
+		if (broadcastRes.isErr()) return err(broadcastRes.error.message);
+		return ok(broadcastRes.value);
+	}
+
+	/**
+	 * Sends the maximum amount of sats to a given address at the specified satsPerByte.
+	 * @param {string} address
+	 * @param {number} satsPerByte
+	 * @param [rbf]
+	 * @param {boolean} [broadcast]
+	 * @returns {Promise<Result<string>>}
+	 */
+	public async sendMax({
+		address,
+		satsPerByte,
+		rbf = false,
+		broadcast = true
+	}: {
+		address?: string;
+		satsPerByte?: number;
+		rbf?: boolean;
+		broadcast?: boolean;
+	} = {}): Promise<Result<string>> {
+		if (!this.data.utxos.length) {
+			return err('No UTXOs available.');
+		}
+		await this.resetSendTransaction();
+		const setupTransactionRes = await this.transaction.setupTransaction();
+		if (setupTransactionRes.isErr()) {
+			return err(setupTransactionRes.error.message);
+		}
+		const sendMaxRes = await this.transaction.sendMax({
+			address,
+			satsPerByte,
+			rbf
+		});
+
+		if (sendMaxRes.isErr()) {
+			return err(sendMaxRes.error.message);
+		}
+
+		const createRes = await this.transaction.createTransaction({
+			shuffleOutputs: true
 		});
 		if (createRes.isErr()) return err(createRes.error.message);
 		const { hex } = createRes.value;
@@ -2646,28 +2739,37 @@ export class Wallet {
 		let saveAddressIndexes = false;
 		let saveChangeAddressIndexes = false;
 
-		for (const addressType of types) {
-			const addressIndex = currentWallet.addressIndex[addressType];
-			const changeAddressIndex = currentWallet.changeAddressIndex[addressType];
+		await Promise.all(
+			types.map(async (addressType) => {
+				const addressIndex = currentWallet.addressIndex[addressType];
+				const changeAddressIndex =
+					currentWallet.changeAddressIndex[addressType];
 
-			if (addressIndex?.index < 0) {
-				await this.updateAddressIndex(addressType, false);
-				saveAddressIndexes = true;
-			}
-			if (changeAddressIndex?.index < 0) {
-				await this.updateAddressIndex(addressType, true);
-				saveChangeAddressIndexes = true;
-			}
-		}
+				if (addressIndex?.index < 0) {
+					await this.updateAddressIndex(addressType, false);
+					saveAddressIndexes = true;
+				}
+				if (changeAddressIndex?.index < 0) {
+					await this.updateAddressIndex(addressType, true);
+					saveChangeAddressIndexes = true;
+				}
+			})
+		);
 
 		if (saveAddressIndexes) {
-			await this.saveWalletData('addressIndex', this._data.addressIndex);
+			await Promise.all([
+				this.saveWalletData('addressIndex', this._data.addressIndex),
+				this.saveWalletData('addresses', this._data.addresses)
+			]);
 		}
 		if (saveChangeAddressIndexes) {
-			await this.saveWalletData(
-				'changeAddressIndex',
-				this._data.changeAddressIndex
-			);
+			await Promise.all([
+				this.saveWalletData(
+					'changeAddressIndex',
+					this._data.changeAddressIndex
+				),
+				this.saveWalletData('changeAddresses', this._data.changeAddresses)
+			]);
 		}
 
 		return ok('Set Zero Index Addresses.');
@@ -2717,7 +2819,8 @@ export class Wallet {
 				changeAddressAmount:
 					indexToUpdate === 'changeAddressIndex' ? GENERATE_ADDRESS_AMOUNT : 0,
 				changeAddressIndex: index,
-				addressType
+				addressType,
+				saveAddresses: false
 			});
 		}
 	}
@@ -3111,10 +3214,14 @@ export class Wallet {
 	 * @returns {Promise<Result<BIP32Interface>>}
 	 */
 	getBip32Interface = async (): Promise<Result<BIP32Interface>> => {
-		const network = networks[this._network];
-		const seed = await bip39.mnemonicToSeed(this._mnemonic, this._passphrase);
-		const root = bip32.fromSeed(seed, network);
-		return ok(root);
+		try {
+			const network = networks[this._network];
+			const seed = await bip39.mnemonicToSeed(this._mnemonic, this._passphrase);
+			const root = bip32.fromSeed(seed, network);
+			return ok(root);
+		} catch (e) {
+			return err(e);
+		}
 	};
 
 	/**

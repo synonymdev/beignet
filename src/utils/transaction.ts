@@ -1,6 +1,6 @@
 import * as bitcoin from 'bitcoinjs-lib';
 import { networks, Psbt } from 'bitcoinjs-lib';
-import { Result, ok, err } from './result';
+import { err, ok, Result } from './result';
 import {
 	EAddressType,
 	EAvailableNetworks,
@@ -176,12 +176,14 @@ export const constructByteCountParam = (
 	@param {TGetByteCountInputs} inputs
 	@param {TGetByteCountOutputs} outputs
 	@param {string} [message]
+	@param {number} [minByteCount=TRANSACTION_DEFAULTS.recommendedBaseFee] - The minimum byte count to return. Often helpful when calculating fees for a transaction that has not yet been constructed.
 	@returns {number}
 */
 export const getByteCount = (
 	inputs: TGetByteCountInputs,
 	outputs: TGetByteCountOutputs,
-	message?: string
+	message?: string,
+	minByteCount = TRANSACTION_DEFAULTS.recommendedBaseFee
 ): number => {
 	try {
 		// Base transaction weight
@@ -279,9 +281,10 @@ export const getByteCount = (
 		}
 
 		// Convert from Weight Units to virtual size
-		return Math.ceil(totalWeight / 4);
+		const totalVsize = Math.ceil(totalWeight / 4);
+		return totalVsize > minByteCount ? totalVsize : minByteCount;
 	} catch {
-		return TRANSACTION_DEFAULTS.recommendedBaseFee;
+		return minByteCount;
 	}
 };
 

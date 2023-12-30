@@ -308,6 +308,7 @@ export class Electrum {
 			}
 
 			const combinedResponse: TTxResponse[] = [];
+			const promises: Promise<IGetAddressScriptHashesHistoryResponse>[] = [];
 
 			// split payload in chunks of 10 addresses per-request
 			for (let i = 0; i < scriptHashes.length; i += CHUNK_LIMIT) {
@@ -316,24 +317,27 @@ export class Electrum {
 					key: 'scriptHash',
 					data: chunk
 				};
-
-				const response: IGetAddressScriptHashesHistoryResponse =
-					await electrum.getAddressScriptHashesHistory({
+				promises.push(
+					electrum.getAddressScriptHashesHistory({
 						scriptHashes: payload,
 						network: this.electrumNetwork
-					});
-
-				const mempoolResponse: IGetAddressScriptHashesHistoryResponse =
-					await electrum.getAddressScriptHashesMempool({
+					})
+				);
+				promises.push(
+					electrum.getAddressScriptHashesMempool({
 						scriptHashes: payload,
 						network: this.electrumNetwork
-					});
+					})
+				);
+			}
 
-				if (response.error || mempoolResponse.error) {
+			const responses = await Promise.all(promises);
+			responses.forEach((response) => {
+				if (response.error) {
 					return err('Unable to get address history.');
 				}
-				combinedResponse.push(...response.data, ...mempoolResponse.data);
-			}
+				combinedResponse.push(...response.data);
+			});
 
 			const history: IGetAddressHistoryResponse[] = [];
 			combinedResponse.forEach(
@@ -491,6 +495,7 @@ export class Electrum {
 			}
 
 			const result: ITransaction<IUtxo>[] = [];
+			const promises: Promise<IGetTransactions>[] = [];
 
 			// split payload in chunks of 10 transactions per-request
 			for (let i = 0; i < txHashes.length; i += CHUNK_LIMIT) {
@@ -500,15 +505,19 @@ export class Electrum {
 					key: 'tx_hash',
 					data: chunk
 				};
-				const response = await electrum.getTransactions({
-					txHashes: data,
-					network: this.electrumNetwork
-				});
-				if (response.error) {
-					return err(response);
-				}
-				result.push(...response.data);
+
+				promises.push(
+					electrum.getTransactions({
+						txHashes: data,
+						network: this.electrumNetwork
+					})
+				);
 			}
+			const responses = await Promise.all(promises);
+			responses.forEach((response) => {
+				if (response.error) return err('Unable to get transactions.');
+				result.push(...response.data);
+			});
 			return ok({
 				error: false,
 				id: 0,
@@ -753,17 +762,22 @@ export class Electrum {
 		 */
 		if (subscribeToOutputAddress) {
 			const transaction = this._wallet.transaction.data;
-			for (const o of transaction.outputs) {
-				const address = o?.address;
-				if (address) {
-					const scriptHash = getScriptHash({ address, network: this.network });
-					if (scriptHash) {
-						await this.subscribeToAddresses({
-							scriptHashes: [scriptHash]
+			await Promise.all(
+				transaction.outputs.map(async (o) => {
+					const address = o?.address;
+					if (address) {
+						const scriptHash = getScriptHash({
+							address,
+							network: this.network
 						});
+						if (scriptHash) {
+							await this.subscribeToAddresses({
+								scriptHashes: [scriptHash]
+							});
+						}
 					}
-				}
-			}
+				})
+			);
 		}
 
 		const broadcastResponse = await electrum.broadcastTransaction({
@@ -793,7 +807,11 @@ export class Electrum {
 					servers: this.servers
 				});
 
-				if (response.isErr()) {
+				if (response.isOk()) {
+					// Re-Subscribe to Addresses & Headers
+					this.subscribeToAddresses({});
+					this.subscribeToHeader().then();
+				} else {
 					this.publishConnectionChange(false);
 				}
 			} else {

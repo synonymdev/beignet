@@ -94,7 +94,7 @@ export class Transaction {
 			}
 
 			if (!inputs.length) {
-				return err('No inputs specified.');
+				return err('No inputs specified in setupTransaction.');
 			}
 
 			const currentChangeAddresses = currentWallet.changeAddresses;
@@ -260,6 +260,7 @@ export class Transaction {
 
 	/**
 	 * Attempt to estimate the current fee for a given transaction and its UTXO's
+	 * @param {number} [amount]
 	 * @param {number} [satsPerByte]
 	 * @param {string} [message]
 	 * @param {Partial<ISendTransaction>} [transaction]
@@ -285,6 +286,15 @@ export class Transaction {
 			const inputs = transaction.inputs || [];
 			const outputs = transaction.outputs || [];
 			const changeAddress = transaction.changeAddress;
+
+			if (!inputs.length) {
+				return ok({
+					totalFee: 0,
+					transactionByteCount: 0,
+					satsPerByte: 0,
+					maxSatPerByte: 0
+				});
+			}
 
 			//Group all input & output addresses into their respective array.
 			const inputAddresses = inputs.map((input) => input.address);
@@ -315,9 +325,10 @@ export class Transaction {
 				outputParam,
 				message
 			);
+			const inputAmount = this.getTransactionInputValue({ inputs });
 			const maxSatPerByte = this.getMaxSatsPerByte({
 				transactionByteCount,
-				balance: this._wallet.getBalance()
+				balance: inputAmount
 			});
 			if (maxSatPerByte < satsPerByte) {
 				return ok({
@@ -804,18 +815,26 @@ export class Transaction {
 			address = outputs[index]?.address ?? '';
 		}
 
-		const newFee = this.getTotalFee({ satsPerByte, message });
+		const newFee = this.getTotalFee({ satsPerByte, transaction, message });
 
-		//Return if the new fee exceeds half of the user's balance
+		//Return if the new fee exceeds half of the user's input balance
 		if (newFee >= inputTotal / 2) {
 			return err(
-				'Unable to increase the fee any further. Otherwise, it will exceed half the current balance.'
+				'Unable to increase the fee any further. Otherwise, it will exceed half the current input balance.'
 			);
 		}
 
 		const totalTransactionValue = this.getTransactionOutputValue({
 			outputs
 		});
+
+		//Return if the new fee exceeds half of the user's output amount
+		if (newFee >= totalTransactionValue / 2) {
+			return err(
+				'Unable to increase the fee any further. Otherwise, it will exceed half the current sending/output amount.'
+			);
+		}
+
 		const newTotalAmount = totalTransactionValue + newFee;
 		const _transaction: Partial<ISendTransaction> = {
 			satsPerByte,
@@ -963,7 +982,9 @@ export class Transaction {
 			};
 
 			if (amount <= fee) {
-				return err('Balance is too low to spend.');
+				return err(
+					`An amount of ${amount} is too low to spend with an expected fee of ${fee} at ${satsPerByte} satsPerVByte.`
+				);
 			}
 
 			return ok(maxAmount);
@@ -1027,7 +1048,9 @@ export class Transaction {
 			};
 
 			if (amount <= fee) {
-				return err('Balance is too low to spend.');
+				return err(
+					`An amount of ${amount} is too low to spend with an expected fee of ${fee} at ${satsPerByte} satsPerVByte.`
+				);
 			}
 
 			return ok(maxAmount);

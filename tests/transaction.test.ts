@@ -29,15 +29,21 @@ describe('Transaction Test', async function (): Promise<void> {
 		expect(wallet).not.to.be.null;
 	});
 
+	it('Should successfully return correct balance.', (): void => {
+		const balance = wallet.getBalance();
+		expect(balance).not.to.be.null;
+		expect(balance).to.equal(80000);
+	});
+
 	it('Should successfully return fee information.', (): void => {
 		const feeInfo = wallet.getFeeInfo({ satsPerByte: 5 });
 		expect(feeInfo.isErr()).to.equal(false);
 		if (feeInfo.isErr()) return;
 		expect(feeInfo).not.to.be.null;
 		expect(feeInfo.value.satsPerByte).to.equal(5);
-		expect(feeInfo.value.totalFee).to.equal(705);
-		expect(feeInfo.value.transactionByteCount).to.equal(141);
-		expect(feeInfo.value.maxSatPerByte).to.equal(283);
+		expect(feeInfo.value.totalFee).to.equal(1280);
+		expect(feeInfo.value.transactionByteCount).to.equal(256);
+		expect(feeInfo.value.maxSatPerByte).to.equal(156);
 	});
 
 	it('Should successfully create and decode a transaction.', async (): Promise<void> => {
@@ -53,16 +59,16 @@ describe('Transaction Test', async function (): Promise<void> {
 		expect(sendRes.isErr()).to.equal(false);
 		if (sendRes.isErr()) return;
 		expect(sendRes.value).to.equal(
-			'020000000001014b44d379e48a8100d1c26f7220b8bbf7a4894ff015d5bc4064a28d08d25d808d0000000000000000000288130000000000001600143f1a7a1802e377d01602acf1cad403368ed3bb893722010000000000160014a6bd95db4dd6979189cad389daad006e236f4ba8024730440220078f087ba08b79c02e7cb97593d7e698670dd6e7537e3639dec70b4d354f8fa8022018a20a64618a405427eb2e0e67ef9ae2b89bfe1b51cdb365d44b5314b9728a06012102e86b90924963237c59e5389aab1cc5350c114549d1c5e7186a56ef33aea24ff900000000'
+			'020000000001014b44d379e48a8100d1c26f7220b8bbf7a4894ff015d5bc4064a28d08d25d808d0000000000000000000288130000000000001600143f1a7a1802e377d01602acf1cad403368ed3bb89f81f010000000000160014a6bd95db4dd6979189cad389daad006e236f4ba8024730440220561a041d420e89ca3efbcabf5ed2831c1d562ea363e8a16b2637aeb845f59a8602201d8d403658da4ec010c2de2e1399e591383059abe593fb5aa7bd2480b00b6749012102e86b90924963237c59e5389aab1cc5350c114549d1c5e7186a56ef33aea24ff900000000'
 		);
 
 		const decodeRes = decodeRawTransaction(sendRes.value, wallet.network);
 		expect(decodeRes.isErr()).to.equal(false);
 		if (decodeRes.isErr()) return;
 		const expectedDecodeRes = {
-			txid: '786c97889108849e7970651a0dbd10e08ffe7b4ddfd282be54e465441b985308',
+			txid: 'd0fd72cb4e16d025b65ddac64cc02d702955ce3c2d76dcb0276392fb35b4a644',
 			tx_hash:
-				'a5ad458d02cc905593e4b6d3c88cdbedcfff31a192691f24abdab92b4cef74ea',
+				'80173ab787171855a84f568742f2fcce5456097bab27bfe654f339005584347c',
 			size: 222,
 			vsize: 141,
 			weight: 561,
@@ -74,7 +80,7 @@ describe('Transaction Test', async function (): Promise<void> {
 					vout: 0,
 					scriptSig: { asm: '', hex: '' },
 					txinwitness: [
-						'30440220078f087ba08b79c02e7cb97593d7e698670dd6e7537e3639dec70b4d354f8fa8022018a20a64618a405427eb2e0e67ef9ae2b89bfe1b51cdb365d44b5314b9728a0601',
+						'30440220561a041d420e89ca3efbcabf5ed2831c1d562ea363e8a16b2637aeb845f59a8602201d8d403658da4ec010c2de2e1399e591383059abe593fb5aa7bd2480b00b674901',
 						'02e86b90924963237c59e5389aab1cc5350c114549d1c5e7186a56ef33aea24ff9'
 					],
 					sequence: 0
@@ -91,7 +97,7 @@ describe('Transaction Test', async function (): Promise<void> {
 					}
 				},
 				{
-					value: 74295,
+					value: 73720,
 					n: 1,
 					scriptPubKey: {
 						asm: 'OP_0 a6bd95db4dd6979189cad389daad006e236f4ba8',
@@ -125,19 +131,19 @@ describe('Transaction Test', async function (): Promise<void> {
 		expect(sendManyRes.isErr()).to.equal(false);
 		if (sendManyRes.isErr()) return;
 		expect(sendManyRes.value).to.equal(
-			'020000000001014b44d379e48a8100d1c26f7220b8bbf7a4894ff015d5bc4064a28d08d25d808d000000000000000000038813000000000000160014a6b760eaa96a9ba91bae9465dfc4eabe711e1d6770170000000000001600146bcf920595e09b5d8f7b8d03b3694ad3057572892c0a010000000000160014a6bd95db4dd6979189cad389daad006e236f4ba80247304402207e7b5de41cb9bf33e434c2136390bf40d6b6552b69234a62f6bf48b89f0d44ac022056121c9a9d79d9d84896c9896a6fddb358b48667021ff2832b5c5871d90b701a012102e86b90924963237c59e5389aab1cc5350c114549d1c5e7186a56ef33aea24ff900000000'
+			'020000000001014b44d379e48a8100d1c26f7220b8bbf7a4894ff015d5bc4064a28d08d25d808d000000000000000000038813000000000000160014a6b760eaa96a9ba91bae9465dfc4eabe711e1d6770170000000000001600146bcf920595e09b5d8f7b8d03b3694ad3057572898808010000000000160014a6bd95db4dd6979189cad389daad006e236f4ba802483045022100fefb3a9c8d08a24cc1d157f8d37a71d3f1ce32677af25186f292e37873bab32802207bae71c9b302a248ed5e0a86cfc14a433392f68ae1bd8f11ded3f73cc151dd27012102e86b90924963237c59e5389aab1cc5350c114549d1c5e7186a56ef33aea24ff900000000'
 		);
 
 		const decodeRes = decodeRawTransaction(sendManyRes.value, wallet.network);
 		expect(decodeRes.isErr()).to.equal(false);
 		if (decodeRes.isErr()) return;
 		const expectedDecodeRes = {
-			txid: '3fb40fc55d80c46d08f412c2c9a6b18e6b46264a6ae6fd4be8409480d1a53b45',
+			txid: 'ac0ba26aff1b867b5372aba1ad50ba8087d09c0b6533ca66b2f0cca033b72272',
 			tx_hash:
-				'6b124dc403f6db7ce9c7967b8b3b5b3223d4df98626ece3b5d253450c47c9b88',
-			size: 253,
+				'734db30a11ba7d6170c611932692bc70285a3fa9f85629ad59a3148d9e410c58',
+			size: 254,
 			vsize: 172,
-			weight: 685,
+			weight: 686,
 			version: 2,
 			locktime: 0,
 			vin: [
@@ -146,7 +152,7 @@ describe('Transaction Test', async function (): Promise<void> {
 					vout: 0,
 					scriptSig: { asm: '', hex: '' },
 					txinwitness: [
-						'304402207e7b5de41cb9bf33e434c2136390bf40d6b6552b69234a62f6bf48b89f0d44ac022056121c9a9d79d9d84896c9896a6fddb358b48667021ff2832b5c5871d90b701a01',
+						'3045022100fefb3a9c8d08a24cc1d157f8d37a71d3f1ce32677af25186f292e37873bab32802207bae71c9b302a248ed5e0a86cfc14a433392f68ae1bd8f11ded3f73cc151dd2701',
 						'02e86b90924963237c59e5389aab1cc5350c114549d1c5e7186a56ef33aea24ff9'
 					],
 					sequence: 0
@@ -172,7 +178,7 @@ describe('Transaction Test', async function (): Promise<void> {
 					}
 				},
 				{
-					value: 68140,
+					value: 67720,
 					n: 2,
 					scriptPubKey: {
 						asm: 'OP_0 a6bd95db4dd6979189cad389daad006e236f4ba8',

@@ -27,7 +27,8 @@ import {
 	TUnspentAddressScriptHashData,
 	IPeerData,
 	TGetAddressHistory,
-	TOnMessage
+	TOnMessage,
+	IGetAddressScriptHashBalances
 } from '../types';
 import * as electrum from 'rn-electrum-client/helpers';
 import { err, getAddressFromScriptPubKey, ok, Result } from '../utils';
@@ -161,7 +162,9 @@ export class Electrum {
 		return { error: response.error, confirmed, unconfirmed };
 	}
 
-	async getAddressScriptHashBalances(scriptHashes: string[]): Promise<any> {
+	async getAddressScriptHashBalances(
+		scriptHashes: string[]
+	): Promise<IGetAddressScriptHashBalances> {
 		return await electrum.getAddressScriptHashBalances({
 			scriptHashes,
 			network: this.electrumNetwork

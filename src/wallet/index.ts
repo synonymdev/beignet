@@ -2068,11 +2068,11 @@ export class Wallet {
 
 	/**
 	 * Clears the UTXO array and balance from storage.
-	 * @private
+	 * @public
 	 * @async
 	 * @returns {Promise<string>}
 	 */
-	private async clearUtxos(): Promise<string> {
+	public async clearUtxos(): Promise<string> {
 		this._data.balance = 0;
 		this._data.utxos = [];
 		await Promise.all([
@@ -2518,8 +2518,8 @@ export class Wallet {
 	 * Returns a fee object for the current transaction.
 	 * @param {number} [satsPerByte]
 	 * @param {string} [message]
-	 * @param {Partial<ISendTransaction>} transaction
-	 * @param {boolean} fundingLightning
+	 * @param {Partial<ISendTransaction>} [transaction]
+	 * @param {boolean} [fundingLightning]
 	 * @returns {Result<TGetTotalFeeObj>}
 	 */
 	public getFeeInfo({

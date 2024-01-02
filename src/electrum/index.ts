@@ -19,7 +19,7 @@ import {
 	ITransaction,
 	ITxHash,
 	IUtxo,
-	TElectrumNetworks,
+	EElectrumNetworks,
 	TServer,
 	TSubscribedReceive,
 	TTxResponse,
@@ -59,7 +59,7 @@ export class Electrum {
 
 	public servers?: TServer | TServer[];
 	public readonly network: EAvailableNetworks;
-	public readonly electrumNetwork: TElectrumNetworks;
+	public readonly electrumNetwork: EElectrumNetworks;
 	public connectedToElectrum: boolean;
 	public onReceive?: (data: unknown) => void;
 	constructor({
@@ -186,18 +186,18 @@ export class Electrum {
 	/**
 	 * Returns the network string for use with Electrum methods.
 	 * @param {EAvailableNetworks} [network]
-	 * @return {TElectrumNetworks}
+	 * @return {EElectrumNetworks}
 	 */
-	getElectrumNetwork(network: EAvailableNetworks): TElectrumNetworks {
+	getElectrumNetwork(network: EAvailableNetworks): EElectrumNetworks {
 		switch (network) {
 			case 'bitcoin':
-				return 'bitcoin';
+				return EElectrumNetworks.bitcoin;
 			case 'testnet':
-				return 'bitcoinTestnet';
+				return EElectrumNetworks.bitcoinTestnet;
 			case 'regtest':
-				return 'bitcoinRegtest';
+				return EElectrumNetworks.bitcoinRegtest;
 			default:
-				return 'bitcoinTestnet';
+				return EElectrumNetworks.bitcoinTestnet;
 		}
 	}
 

@@ -1,6 +1,6 @@
 import { EAddressType, EAvailableNetworks, IKeyDerivationPath } from '../types';
 import { address as bitcoinJSAddress, Network, networks } from 'bitcoinjs-lib';
-import bip39 = require('bip39');
+import * as bip39 from 'bip39';
 import * as bitcoin from 'bitcoinjs-lib';
 import { availableNetworks, isValidBech32mEncodedString } from './wallet';
 import { err, ok, Result } from './result';

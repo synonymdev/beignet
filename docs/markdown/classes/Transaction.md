@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[transaction/index.ts:41](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L41)
+[transaction/index.ts:41](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L41)
 
 ## Properties
 
@@ -64,7 +64,7 @@
 
 #### Defined in
 
-[transaction/index.ts:38](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L38)
+[transaction/index.ts:38](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L38)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[transaction/index.ts:39](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L39)
+[transaction/index.ts:39](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L39)
 
 ## Accessors
 
@@ -88,13 +88,13 @@ ___
 
 #### Defined in
 
-[transaction/index.ts:46](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L46)
+[transaction/index.ts:46](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L46)
 
 ## Methods
 
 ### addInput
 
-▸ **addInput**(`«destructured»`): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
+▸ **addInput**(`«destructured»`): `Promise`<[`Result`](../README.md#result)<`string`\>\>
 
 #### Parameters
 
@@ -104,17 +104,17 @@ ___
 
 #### Returns
 
-`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
+`Promise`<[`Result`](../README.md#result)<`string`\>\>
 
 #### Defined in
 
-[transaction/index.ts:621](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L621)
+[transaction/index.ts:632](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L632)
 
 ___
 
 ### addOutput
 
-▸ **addOutput**(`«destructured»`): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
+▸ **addOutput**(`«destructured»`): `Promise`<[`Result`](../README.md#result)<`string`\>\>
 
 Adds an output at the specified index to the current transaction.
 
@@ -126,17 +126,17 @@ Adds an output at the specified index to the current transaction.
 
 #### Returns
 
-`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
+`Promise`<[`Result`](../README.md#result)<`string`\>\>
 
 #### Defined in
 
-[transaction/index.ts:703](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L703)
+[transaction/index.ts:714](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L714)
 
 ___
 
 ### createPsbtFromTransactionData
 
-▸ **createPsbtFromTransactionData**(`«destructured»`): `Promise`\<[`Result`](../README.md#result)\<`Psbt`\>\>
+▸ **createPsbtFromTransactionData**(`«destructured»`): `Promise`<[`Result`](../README.md#result)<`Psbt`\>\>
 
 Returns a PSBT that includes unsigned funding inputs.
 
@@ -151,17 +151,17 @@ Returns a PSBT that includes unsigned funding inputs.
 
 #### Returns
 
-`Promise`\<[`Result`](../README.md#result)\<`Psbt`\>\>
+`Promise`<[`Result`](../README.md#result)<`Psbt`\>\>
 
 #### Defined in
 
-[transaction/index.ts:487](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L487)
+[transaction/index.ts:498](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L498)
 
 ___
 
 ### createTransaction
 
-▸ **createTransaction**(`«destructured»?`): `Promise`\<[`Result`](../README.md#result)\<\{ `hex`: `string` ; `id`: `string`  }\>\>
+▸ **createTransaction**(`«destructured»?`): `Promise`<[`Result`](../README.md#result)<{ `hex`: `string` ; `id`: `string`  }\>\>
 
 Creates complete signed transaction using the transaction data store
 
@@ -173,17 +173,17 @@ Creates complete signed transaction using the transaction data store
 
 #### Returns
 
-`Promise`\<[`Result`](../README.md#result)\<\{ `hex`: `string` ; `id`: `string`  }\>\>
+`Promise`<[`Result`](../README.md#result)<{ `hex`: `string` ; `id`: `string`  }\>\>
 
 #### Defined in
 
-[transaction/index.ts:363](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L363)
+[transaction/index.ts:374](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L374)
 
 ___
 
 ### estimateTransactionCosts
 
-▸ **estimateTransactionCosts**(`«destructured»?`): [`Result`](../README.md#result)\<\{ `amount`: `number` ; `fee`: `number` ; `satsPerByte`: `number`  }\>
+▸ **estimateTransactionCosts**(`«destructured»?`): [`Result`](../README.md#result)<{ `amount`: `number` ; `fee`: `number` ; `satsPerByte`: `number`  }\>
 
 Calculates the max amount able to send for onchain/lightning
 
@@ -197,11 +197,11 @@ Calculates the max amount able to send for onchain/lightning
 
 #### Returns
 
-[`Result`](../README.md#result)\<\{ `amount`: `number` ; `fee`: `number` ; `satsPerByte`: `number`  }\>
+[`Result`](../README.md#result)<{ `amount`: `number` ; `fee`: `number` ; `satsPerByte`: `number`  }\>
 
 #### Defined in
 
-[transaction/index.ts:917](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L917)
+[transaction/index.ts:936](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L936)
 
 ___
 
@@ -225,13 +225,13 @@ Returns the maximum sats per byte that can be used for a given transaction.
 
 #### Defined in
 
-[transaction/index.ts:347](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L347)
+[transaction/index.ts:358](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L358)
 
 ___
 
 ### getMaxSendAmount
 
-▸ **getMaxSendAmount**(`«destructured»`): [`Result`](../README.md#result)\<\{ `amount`: `number` ; `fee?`: `number`  }\>
+▸ **getMaxSendAmount**(`«destructured»`): [`Result`](../README.md#result)<{ `amount`: `number` ; `fee?`: `number`  }\>
 
 Calculates the max amount able to send for the provided/current onchain transaction.
 
@@ -246,11 +246,11 @@ Calculates the max amount able to send for the provided/current onchain transact
 
 #### Returns
 
-[`Result`](../README.md#result)\<\{ `amount`: `number` ; `fee?`: `number`  }\>
+[`Result`](../README.md#result)<{ `amount`: `number` ; `fee?`: `number`  }\>
 
 #### Defined in
 
-[transaction/index.ts:982](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L982)
+[transaction/index.ts:1003](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L1003)
 
 ___
 
@@ -268,7 +268,7 @@ Attempt to estimate the current fee for a given transaction and its UTXO's
 | › `fundingLightning?` | `boolean` |
 | › `message?` | `string` |
 | › `satsPerByte` | `number` |
-| › `transaction?` | `Partial`\<[`ISendTransaction`](../interfaces/ISendTransaction.md)\> |
+| › `transaction?` | `Partial`<[`ISendTransaction`](../interfaces/ISendTransaction.md)\> |
 
 #### Returns
 
@@ -276,13 +276,13 @@ Attempt to estimate the current fee for a given transaction and its UTXO's
 
 #### Defined in
 
-[transaction/index.ts:216](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L216)
+[transaction/index.ts:216](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L216)
 
 ___
 
 ### getTotalFeeObj
 
-▸ **getTotalFeeObj**(`«destructured»?`): [`Result`](../README.md#result)\<[`TGetTotalFeeObj`](../README.md#tgettotalfeeobj)\>
+▸ **getTotalFeeObj**(`«destructured»?`): [`Result`](../README.md#result)<[`TGetTotalFeeObj`](../README.md#tgettotalfeeobj)\>
 
 Attempt to estimate the current fee for a given transaction and its UTXO's
 
@@ -294,15 +294,15 @@ Attempt to estimate the current fee for a given transaction and its UTXO's
 | › `fundingLightning?` | `boolean` |
 | › `message?` | `string` |
 | › `satsPerByte?` | `number` |
-| › `transaction?` | `Partial`\<[`ISendTransaction`](../interfaces/ISendTransaction.md)\> |
+| › `transaction?` | `Partial`<[`ISendTransaction`](../interfaces/ISendTransaction.md)\> |
 
 #### Returns
 
-[`Result`](../README.md#result)\<[`TGetTotalFeeObj`](../README.md#tgettotalfeeobj)\>
+[`Result`](../README.md#result)<[`TGetTotalFeeObj`](../README.md#tgettotalfeeobj)\>
 
 #### Defined in
 
-[transaction/index.ts:269](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L269)
+[transaction/index.ts:270](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L270)
 
 ___
 
@@ -325,7 +325,7 @@ Returns total value of all utxos.
 
 #### Defined in
 
-[transaction/index.ts:432](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L432)
+[transaction/index.ts:443](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L443)
 
 ___
 
@@ -348,7 +348,7 @@ Returns total value of all outputs. Excludes any value that would be sent to the
 
 #### Defined in
 
-[transaction/index.ts:724](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L724)
+[transaction/index.ts:735](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L735)
 
 ___
 
@@ -370,29 +370,29 @@ Removes blacklisted UTXO's from the UTXO array.
 
 #### Defined in
 
-[transaction/index.ts:192](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L192)
+[transaction/index.ts:192](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L192)
 
 ___
 
 ### resetSendTransaction
 
-▸ **resetSendTransaction**(): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
+▸ **resetSendTransaction**(): `Promise`<[`Result`](../README.md#result)<`string`\>\>
 
 This completely resets the send transaction state.
 
 #### Returns
 
-`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
+`Promise`<[`Result`](../README.md#result)<`string`\>\>
 
 #### Defined in
 
-[transaction/index.ts:182](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L182)
+[transaction/index.ts:182](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L182)
 
 ___
 
 ### sendMax
 
-▸ **sendMax**(`«destructured»?`): `Promise`\<[`Result`](../README.md#result)\<`string`\>\>
+▸ **sendMax**(`«destructured»?`): `Promise`<[`Result`](../README.md#result)<`string`\>\>
 
 Toggles the max amount to the provided output index.
 
@@ -409,17 +409,17 @@ Toggles the max amount to the provided output index.
 
 #### Returns
 
-`Promise`\<[`Result`](../README.md#result)\<`string`\>\>
+`Promise`<[`Result`](../README.md#result)<`string`\>\>
 
 #### Defined in
 
-[transaction/index.ts:852](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L852)
+[transaction/index.ts:871](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L871)
 
 ___
 
 ### setupCpfp
 
-▸ **setupCpfp**(`«destructured»?`): `Promise`\<[`Result`](../README.md#result)\<[`ISendTransaction`](../interfaces/ISendTransaction.md)\>\>
+▸ **setupCpfp**(`«destructured»?`): `Promise`<[`Result`](../README.md#result)<[`ISendTransaction`](../interfaces/ISendTransaction.md)\>\>
 
 Sets up a CPFP transaction.
 
@@ -433,17 +433,17 @@ Sets up a CPFP transaction.
 
 #### Returns
 
-`Promise`\<[`Result`](../README.md#result)\<[`ISendTransaction`](../interfaces/ISendTransaction.md)\>\>
+`Promise`<[`Result`](../README.md#result)<[`ISendTransaction`](../interfaces/ISendTransaction.md)\>\>
 
 #### Defined in
 
-[transaction/index.ts:1044](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L1044)
+[transaction/index.ts:1067](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L1067)
 
 ___
 
 ### setupTransaction
 
-▸ **setupTransaction**(`«destructured»?`): `Promise`\<[`TSetupTransactionResponse`](../README.md#tsetuptransactionresponse)\>
+▸ **setupTransaction**(`«destructured»?`): `Promise`<[`TSetupTransactionResponse`](../README.md#tsetuptransactionresponse)\>
 
 Sets up a transaction for a given wallet by gathering inputs, setting the next available change address as an output and sets up the baseline fee structure.
 This function will not override previously set transaction data. To do that you'll need to call resetSendTransaction.
@@ -456,17 +456,17 @@ This function will not override previously set transaction data. To do that you'
 
 #### Returns
 
-`Promise`\<[`TSetupTransactionResponse`](../README.md#tsetuptransactionresponse)\>
+`Promise`<[`TSetupTransactionResponse`](../README.md#tsetuptransactionresponse)\>
 
 #### Defined in
 
-[transaction/index.ts:59](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L59)
+[transaction/index.ts:59](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L59)
 
 ___
 
 ### signPsbt
 
-▸ **signPsbt**(`«destructured»`): `Promise`\<[`Result`](../README.md#result)\<`Psbt`\>\>
+▸ **signPsbt**(`«destructured»`): `Promise`<[`Result`](../README.md#result)<`Psbt`\>\>
 
 Loops through inputs and signs them
 
@@ -480,17 +480,17 @@ Loops through inputs and signs them
 
 #### Returns
 
-`Promise`\<[`Result`](../README.md#result)\<`Psbt`\>\>
+`Promise`<[`Result`](../README.md#result)<`Psbt`\>\>
 
 #### Defined in
 
-[transaction/index.ts:456](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L456)
+[transaction/index.ts:467](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L467)
 
 ___
 
 ### updateFee
 
-▸ **updateFee**(`«destructured»?`): [`Result`](../README.md#result)\<\{ `fee`: `number`  }\>
+▸ **updateFee**(`«destructured»?`): [`Result`](../README.md#result)<{ `fee`: `number`  }\>
 
 Updates the fee for the current transaction by the specified amount.
 
@@ -506,17 +506,17 @@ Updates the fee for the current transaction by the specified amount.
 
 #### Returns
 
-[`Result`](../README.md#result)\<\{ `fee`: `number`  }\>
+[`Result`](../README.md#result)<{ `fee`: `number`  }\>
 
 #### Defined in
 
-[transaction/index.ts:786](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L786)
+[transaction/index.ts:797](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L797)
 
 ___
 
 ### updateSendTransaction
 
-▸ **updateSendTransaction**(`transaction`): [`Result`](../README.md#result)\<`string`\>
+▸ **updateSendTransaction**(`transaction`): [`Result`](../README.md#result)<`string`\>
 
 This updates the transaction state used for sending.
 
@@ -525,12 +525,12 @@ This updates the transaction state used for sending.
 | Name | Type |
 | :------ | :------ |
 | `transaction` | `Object` |
-| `transaction.transaction` | `Partial`\<[`ISendTransaction`](../interfaces/ISendTransaction.md)\> |
+| `transaction.transaction` | `Partial`<[`ISendTransaction`](../interfaces/ISendTransaction.md)\> |
 
 #### Returns
 
-[`Result`](../README.md#result)\<`string`\>
+[`Result`](../README.md#result)<`string`\>
 
 #### Defined in
 
-[transaction/index.ts:749](https://github.com/synonymdev/beignet/blob/7c83290/src/transaction/index.ts#L749)
+[transaction/index.ts:760](https://github.com/synonymdev/beignet/blob/88520f5/src/transaction/index.ts#L760)

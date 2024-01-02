@@ -12,6 +12,7 @@
 - [changeAddressAmount](IGenerateAddresses.md#changeaddressamount)
 - [changeAddressIndex](IGenerateAddresses.md#changeaddressindex)
 - [keyDerivationPath](IGenerateAddresses.md#keyderivationpath)
+- [saveAddresses](IGenerateAddresses.md#saveaddresses)
 
 ## Properties
 
@@ -21,7 +22,7 @@
 
 #### Defined in
 
-[types/wallet.ts:267](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L267)
+[types/wallet.ts:267](https://github.com/synonymdev/beignet/blob/88520f5/src/types/wallet.ts#L267)
 
 ___
 
@@ -31,7 +32,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:269](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L269)
+[types/wallet.ts:269](https://github.com/synonymdev/beignet/blob/88520f5/src/types/wallet.ts#L269)
 
 ___
 
@@ -41,7 +42,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:272](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L272)
+[types/wallet.ts:272](https://github.com/synonymdev/beignet/blob/88520f5/src/types/wallet.ts#L272)
 
 ___
 
@@ -51,7 +52,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:268](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L268)
+[types/wallet.ts:268](https://github.com/synonymdev/beignet/blob/88520f5/src/types/wallet.ts#L268)
 
 ___
 
@@ -61,7 +62,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:270](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L270)
+[types/wallet.ts:270](https://github.com/synonymdev/beignet/blob/88520f5/src/types/wallet.ts#L270)
 
 ___
 
@@ -71,4 +72,14 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:271](https://github.com/synonymdev/beignet/blob/7c83290/src/types/wallet.ts#L271)
+[types/wallet.ts:271](https://github.com/synonymdev/beignet/blob/88520f5/src/types/wallet.ts#L271)
+
+___
+
+### saveAddresses
+
+• `Optional` **saveAddresses**: `boolean`
+
+#### Defined in
+
+[types/wallet.ts:273](https://github.com/synonymdev/beignet/blob/88520f5/src/types/wallet.ts#L273)

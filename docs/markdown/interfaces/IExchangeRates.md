@@ -4,4 +4,4 @@
 
 ## Indexable
 
-▪ [key: `string`]: \{ `currencySymbol`: `string` ; `lastUpdatedAt`: `number` ; `quote`: `string` ; `quoteName`: `string` ; `rate`: `number`  }
+▪ [key: `string`]: { `currencySymbol`: `string` ; `lastUpdatedAt`: `number` ; `quote`: `string` ; `quoteName`: `string` ; `rate`: `number`  }

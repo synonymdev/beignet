@@ -1,8 +1,8 @@
 import { Result } from '../utils';
 import {
+	EElectrumNetworks,
 	IHeader,
 	INewBlock,
-	TElectrumNetworks,
 	TServer,
 	TTxResult
 } from './electrum';
@@ -234,12 +234,12 @@ export interface IGetAddress {
 export interface ICustomGetAddress {
 	path: string;
 	type: EAddressType;
-	selectedNetwork?: TElectrumNetworks;
+	selectedNetwork: EElectrumNetworks;
 }
 
 export interface ICustomGetScriptHash {
 	address: string;
-	selectedNetwork?: TElectrumNetworks;
+	selectedNetwork: EElectrumNetworks;
 }
 
 export interface IGetAddressByPath {

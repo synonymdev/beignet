@@ -7,7 +7,11 @@ import {
 } from './wallet';
 
 export type TElectrumNetworks = 'bitcoin' | 'bitcoinTestnet' | 'bitcoinRegtest';
-
+export enum EElectrumNetworks {
+	bitcoin = 'bitcoin',
+	bitcoinTestnet = 'bitcoinTestnet',
+	bitcoinRegtest = 'bitcoinRegtest'
+}
 export type TConnectToElectrumRes = string;
 
 export interface IElectrumGetAddressBalanceRes extends IGetAddressBalanceRes {
@@ -72,7 +76,7 @@ export interface IGetAddressScriptHashBalances {
 		| string;
 	id: number;
 	method: string;
-	network: TElectrumNetworks;
+	network: EElectrumNetworks;
 }
 
 export interface IGetAddressHistoryResponse extends TTxResult, IAddress {}

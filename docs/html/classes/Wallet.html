@@ -20,7 +20,7 @@
 <ul class="tsd-hierarchy">
 <li><span class="target">Wallet</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L98">wallet/index.ts:98</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L98">wallet/index.ts:98</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -39,6 +39,7 @@
 <a href="Wallet.html#_mnemonic" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_mnemonic</span></a>
 <a href="Wallet.html#_network" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_network</span></a>
 <a href="Wallet.html#_passphrase" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_passphrase</span></a>
+<a href="Wallet.html#_pendingRefreshPromises" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_pending<wbr/>Refresh<wbr/>Promises</span></a>
 <a href="Wallet.html#_root" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_root</span></a>
 <a href="Wallet.html#_seed" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_seed</span></a>
 <a href="Wallet.html#_setData" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_set<wbr/>Data?</span></a>
@@ -47,10 +48,12 @@
 <a href="Wallet.html#exchangeRates" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>exchange<wbr/>Rates</span></a>
 <a href="Wallet.html#feeEstimates" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>fee<wbr/>Estimates</span></a>
 <a href="Wallet.html#id" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>id</span></a>
+<a href="Wallet.html#isRefreshing" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>is<wbr/>Refreshing</span></a>
 <a href="Wallet.html#isSwitchingNetworks" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>is<wbr/>Switching<wbr/>Networks</span></a>
 <a href="Wallet.html#name" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>name</span></a>
 <a href="Wallet.html#onMessage" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>on<wbr/>Message?</span></a>
 <a href="Wallet.html#rbf" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>rbf</span></a>
+<a href="Wallet.html#savingOperations" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>saving<wbr/>Operations</span></a>
 <a href="Wallet.html#selectedFeeId" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>selected<wbr/>Fee<wbr/>Id</span></a>
 <a href="Wallet.html#transaction" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>transaction</span></a>
 </div></section>
@@ -62,6 +65,8 @@
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Methods</h3>
 <div class="tsd-index-list"><a href="Wallet.html#_getAddress" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-2048"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)"></path></g></svg><span>_get<wbr/>Address</span></a>
+<a href="Wallet.html#_handleRefreshError" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_handle<wbr/>Refresh<wbr/>Error</span></a>
+<a href="Wallet.html#_resolveAllPendingRefreshPromises" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_resolve<wbr/>All<wbr/>Pending<wbr/>Refresh<wbr/>Promises</span></a>
 <a href="Wallet.html#addAddresses" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>add<wbr/>Addresses</span></a>
 <a href="Wallet.html#addBoostedTransaction" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>add<wbr/>Boosted<wbr/>Transaction</span></a>
 <a href="Wallet.html#addGhostTransaction" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>add<wbr/>Ghost<wbr/>Transaction</span></a>
@@ -73,7 +78,7 @@
 <a href="Wallet.html#checkUnconfirmedTransactions" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>check<wbr/>Unconfirmed<wbr/>Transactions</span></a>
 <a href="Wallet.html#clearAddresses" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>clear<wbr/>Addresses</span></a>
 <a href="Wallet.html#clearTransactions" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>clear<wbr/>Transactions</span></a>
-<a href="Wallet.html#clearUtxos" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>clear<wbr/>Utxos</span></a>
+<a href="Wallet.html#clearUtxos" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>clear<wbr/>Utxos</span></a>
 <a href="Wallet.html#confirmationsToBlockHeight" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>confirmations<wbr/>To<wbr/>Block<wbr/>Height</span></a>
 <a href="Wallet.html#connectToElectrum" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>connect<wbr/>To<wbr/>Electrum</span></a>
 <a href="Wallet.html#deleteOnChainTransactionById" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>delete<wbr/>On<wbr/>Chain<wbr/>Transaction<wbr/>By<wbr/>Id</span></a>
@@ -119,9 +124,10 @@
 <a href="Wallet.html#rescanAddresses" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>rescan<wbr/>Addresses</span></a>
 <a href="Wallet.html#resetAddressIndexes" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>reset<wbr/>Address<wbr/>Indexes</span></a>
 <a href="Wallet.html#resetSendTransaction" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>reset<wbr/>Send<wbr/>Transaction</span></a>
-<a href="Wallet.html#saveWalletData" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>save<wbr/>Wallet<wbr/>Data</span></a>
+<a href="Wallet.html#saveWalletData" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>save<wbr/>Wallet<wbr/>Data</span></a>
 <a href="Wallet.html#send" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send</span></a>
 <a href="Wallet.html#sendMany" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send<wbr/>Many</span></a>
+<a href="Wallet.html#sendMax" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send<wbr/>Max</span></a>
 <a href="Wallet.html#setWalletData" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>set<wbr/>Wallet<wbr/>Data</span></a>
 <a href="Wallet.html#setZeroIndexAddresses" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>set<wbr/>Zero<wbr/>Index<wbr/>Addresses</span></a>
 <a href="Wallet.html#setupFeeForOnChainTransaction" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>setup<wbr/>Fee<wbr/>For<wbr/>On<wbr/>Chain<wbr/>Transaction</span></a>
@@ -156,7 +162,7 @@
 <h5><span class="tsd-kind-parameter">__namedParameters</span>: <a href="../interfaces/IWallet.html" class="tsd-signature-type tsd-kind-interface">IWallet</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="Wallet.html" class="tsd-signature-type tsd-kind-class">Wallet</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L129">wallet/index.ts:129</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L133">wallet/index.ts:133</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_customGetAddress" class="tsd-anchor"></a>
@@ -176,7 +182,7 @@
 <h5><span class="tsd-kind-parameter">data</span>: <a href="../interfaces/ICustomGetAddress.html" class="tsd-signature-type tsd-kind-interface">ICustomGetAddress</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IGetAddressResponse.html" class="tsd-signature-type tsd-kind-interface">IGetAddressResponse</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L107">wallet/index.ts:107</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L107">wallet/index.ts:107</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_customGetScriptHash" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagOptional">Optional</code> <span>_custom<wbr/>Get<wbr/>Script<wbr/>Hash</span><a href="#_customGetScriptHash" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_custom<wbr/>Get<wbr/>Script<wbr/>Hash</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">data</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span></div>
@@ -194,52 +200,70 @@
 <h5><span class="tsd-kind-parameter">data</span>: <a href="../interfaces/ICustomGetScriptHash.html" class="tsd-signature-type tsd-kind-interface">ICustomGetScriptHash</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L110">wallet/index.ts:110</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L110">wallet/index.ts:110</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_data" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_data</span><a href="#_data" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_data</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/IWalletData.html" class="tsd-signature-type tsd-kind-interface">IWalletData</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L104">wallet/index.ts:104</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L104">wallet/index.ts:104</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_getData" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_get<wbr/>Data</span><a href="#_getData" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_get<wbr/>Data</span><span class="tsd-signature-symbol">:</span> <a href="../types/TGetData.html" class="tsd-signature-type tsd-kind-type-alias">TGetData</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L105">wallet/index.ts:105</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L105">wallet/index.ts:105</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_mnemonic" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>_mnemonic</span><a href="#_mnemonic" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_mnemonic</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L100">wallet/index.ts:100</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L100">wallet/index.ts:100</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_network" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_network</span><a href="#_network" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_network</span><span class="tsd-signature-symbol">:</span> <a href="../enums/EAvailableNetworks.html" class="tsd-signature-type tsd-kind-enum">EAvailableNetworks</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L99">wallet/index.ts:99</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L99">wallet/index.ts:99</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_passphrase" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>_passphrase</span><a href="#_passphrase" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_passphrase</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L101">wallet/index.ts:101</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L101">wallet/index.ts:101</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_pendingRefreshPromises" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_pending<wbr/>Refresh<wbr/>Promises</span><a href="#_pendingRefreshPromises" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_pending<wbr/>Refresh<wbr/>Promises</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">result</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
+<div class="tsd-type-declaration">
+<h4>Type declaration</h4>
+<ul class="tsd-parameters">
+<li class="tsd-parameter-signature">
+<ul class="tsd-signatures">
+<li class="tsd-signature"><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">result</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">result</span>: <a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IWalletData.html" class="tsd-signature-type tsd-kind-interface">IWalletData</a><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></li></ul></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L113">wallet/index.ts:113</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_root" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>_root</span><a href="#_root" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_root</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">BIP32Interface</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L103">wallet/index.ts:103</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L103">wallet/index.ts:103</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_seed" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>_seed</span><a href="#_seed" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_seed</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">Buffer</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L102">wallet/index.ts:102</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L102">wallet/index.ts:102</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_setData" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagOptional">Optional</code> <span>_set<wbr/>Data</span><a href="#_setData" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_set<wbr/>Data</span><span class="tsd-signature-symbol">?:</span> <a href="../types/TSetData.html" class="tsd-signature-type tsd-kind-type-alias">TSetData</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L106">wallet/index.ts:106</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L106">wallet/index.ts:106</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="electrum" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>electrum</span><a href="#electrum" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">electrum</span><span class="tsd-signature-symbol">:</span> <a href="Electrum.html" class="tsd-signature-type tsd-kind-class">Electrum</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L122">wallet/index.ts:122</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L126">wallet/index.ts:126</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="electrumOptions" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>electrum<wbr/>Options</span><a href="#electrumOptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">electrum<wbr/>Options</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">net</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type ">Server</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">servers</span><span class="tsd-signature-symbol">?: </span><a href="../types/TServer.html" class="tsd-signature-type tsd-kind-type-alias">TServer</a><span class="tsd-signature-symbol"> | </span><a href="../types/TServer.html" class="tsd-signature-type tsd-kind-type-alias">TServer</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">tls</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type ">TLSSocket</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></div>
@@ -253,52 +277,69 @@
 <li class="tsd-parameter">
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">tls</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type ">TLSSocket</span></h5></li></ul></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L117">wallet/index.ts:117</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L121">wallet/index.ts:121</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="exchangeRates" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>exchange<wbr/>Rates</span><a href="#exchangeRates" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">exchange<wbr/>Rates</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/IExchangeRates.html" class="tsd-signature-type tsd-kind-interface">IExchangeRates</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L123">wallet/index.ts:123</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L127">wallet/index.ts:127</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="feeEstimates" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>fee<wbr/>Estimates</span><a href="#feeEstimates" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">fee<wbr/>Estimates</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/IOnchainFees.html" class="tsd-signature-type tsd-kind-interface">IOnchainFees</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L126">wallet/index.ts:126</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L130">wallet/index.ts:130</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="id" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>id</span><a href="#id" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">id</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L115">wallet/index.ts:115</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L119">wallet/index.ts:119</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="isRefreshing" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>is<wbr/>Refreshing</span><a href="#isRefreshing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">is<wbr/>Refreshing</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L117">wallet/index.ts:117</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="isSwitchingNetworks" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>is<wbr/>Switching<wbr/>Networks</span><a href="#isSwitchingNetworks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">is<wbr/>Switching<wbr/>Networks</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L114">wallet/index.ts:114</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L118">wallet/index.ts:118</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="name" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L116">wallet/index.ts:116</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L120">wallet/index.ts:120</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="onMessage" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>on<wbr/>Message</span><a href="#onMessage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">on<wbr/>Message</span><span class="tsd-signature-symbol">?:</span> <a href="../types/TOnMessage.html" class="tsd-signature-type tsd-kind-type-alias">TOnMessage</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L124">wallet/index.ts:124</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L128">wallet/index.ts:128</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="rbf" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>rbf</span><a href="#rbf" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">rbf</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L127">wallet/index.ts:127</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L131">wallet/index.ts:131</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="savingOperations" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>saving<wbr/>Operations</span><a href="#savingOperations" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">saving<wbr/>Operations</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = {}</span></div>
+<div class="tsd-comment tsd-typography"><p>Saves the wallet data object to storage if able.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Async</h4>
+<h4>Param</h4>
+<h4>Param</h4>
+<h4>Returns</h4></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1667">wallet/index.ts:1667</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="selectedFeeId" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>selected<wbr/>Fee<wbr/>Id</span><a href="#selectedFeeId" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">selected<wbr/>Fee<wbr/>Id</span><span class="tsd-signature-symbol">:</span> <a href="../enums/EFeeId.html" class="tsd-signature-type tsd-kind-enum">EFeeId</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L128">wallet/index.ts:128</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L132">wallet/index.ts:132</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="transaction" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>transaction</span><a href="#transaction" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">transaction</span><span class="tsd-signature-symbol">:</span> <a href="Transaction.html" class="tsd-signature-type tsd-kind-class">Transaction</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L125">wallet/index.ts:125</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L129">wallet/index.ts:129</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Accessors</h2>
 <section class="tsd-panel tsd-member"><a id="data" class="tsd-anchor"></a>
@@ -308,7 +349,7 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/IWalletData.html" class="tsd-signature-type tsd-kind-interface">IWalletData</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L181">wallet/index.ts:181</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L186">wallet/index.ts:186</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="network" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>network</span><a href="#network" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -316,7 +357,7 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <a href="../enums/EAvailableNetworks.html" class="tsd-signature-type tsd-kind-enum">EAvailableNetworks</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L185">wallet/index.ts:185</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L190">wallet/index.ts:190</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_getAddress" class="tsd-anchor"></a>
@@ -338,7 +379,33 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IGetAddressResponse.html" class="tsd-signature-type tsd-kind-interface">IGetAddressResponse</a><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L444">wallet/index.ts:444</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L480">wallet/index.ts:480</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_handleRefreshError" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_handle<wbr/>Refresh<wbr/>Error</span><a href="#_handleRefreshError" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="_handleRefreshError._handleRefreshError-1"><span class="tsd-kind-call-signature">_handle<wbr/>Refresh<wbr/>Error</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">errorMessage</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IWalletData.html" class="tsd-signature-type tsd-kind-interface">IWalletData</a><span class="tsd-signature-symbol">&gt;</span><a href="#_handleRefreshError._handleRefreshError-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">errorMessage</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IWalletData.html" class="tsd-signature-type tsd-kind-interface">IWalletData</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L305">wallet/index.ts:305</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_resolveAllPendingRefreshPromises" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_resolve<wbr/>All<wbr/>Pending<wbr/>Refresh<wbr/>Promises</span><a href="#_resolveAllPendingRefreshPromises" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="_resolveAllPendingRefreshPromises._resolveAllPendingRefreshPromises-1"><span class="tsd-kind-call-signature">_resolve<wbr/>All<wbr/>Pending<wbr/>Refresh<wbr/>Promises</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">result</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_resolveAllPendingRefreshPromises._resolveAllPendingRefreshPromises-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">result</span>: <a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IWalletData.html" class="tsd-signature-type tsd-kind-interface">IWalletData</a><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L295">wallet/index.ts:295</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="addAddresses" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>add<wbr/>Addresses</span><a href="#addAddresses" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -355,7 +422,7 @@
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1171">wallet/index.ts:1171</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1217">wallet/index.ts:1217</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="addBoostedTransaction" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>add<wbr/>Boosted<wbr/>Transaction</span><a href="#addBoostedTransaction" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -380,7 +447,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IBoostedTransaction.html" class="tsd-signature-type tsd-kind-interface">IBoostedTransaction</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2960">wallet/index.ts:2960</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3115">wallet/index.ts:3115</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="addGhostTransaction" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>add<wbr/>Ghost<wbr/>Transaction</span><a href="#addGhostTransaction" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -400,7 +467,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2945">wallet/index.ts:2945</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3100">wallet/index.ts:3100</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="addTxInput" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>add<wbr/>Tx<wbr/>Input</span><a href="#addTxInput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -420,7 +487,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IUtxo.html" class="tsd-signature-type tsd-kind-interface">IUtxo</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3073">wallet/index.ts:3073</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3232">wallet/index.ts:3232</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="addTxTag" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>add<wbr/>Tx<wbr/>Tag</span><a href="#addTxTag" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -440,7 +507,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3121">wallet/index.ts:3121</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3280">wallet/index.ts:3280</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="addUnconfirmedTransactions" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>add<wbr/>Unconfirmed<wbr/>Transactions</span><a href="#addUnconfirmedTransactions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -461,7 +528,7 @@
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2070">wallet/index.ts:2070</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2142">wallet/index.ts:2142</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="blockHeightToConfirmations" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>block<wbr/>Height<wbr/>To<wbr/>Confirmations</span><a href="#blockHeightToConfirmations" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -482,7 +549,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2112">wallet/index.ts:2112</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2184">wallet/index.ts:2184</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="checkElectrumConnection" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>check<wbr/>Electrum<wbr/>Connection</span><a href="#checkElectrumConnection" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -494,7 +561,7 @@ Will attempt to reconnect if not initially available.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L809">wallet/index.ts:809</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L845">wallet/index.ts:845</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="checkUnconfirmedTransactions" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>check<wbr/>Unconfirmed<wbr/>Transactions</span><a href="#checkUnconfirmedTransactions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -508,7 +575,7 @@ will be removed from the store and updated in the activity list.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1773">wallet/index.ts:1773</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1847">wallet/index.ts:1847</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="clearAddresses" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>clear<wbr/>Addresses</span><a href="#clearAddresses" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -520,7 +587,7 @@ will be removed from the store and updated in the activity list.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2030">wallet/index.ts:2030</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2102">wallet/index.ts:2102</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="clearTransactions" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>clear<wbr/>Transactions</span><a href="#clearTransactions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -531,19 +598,19 @@ will be removed from the store and updated in the activity list.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2018">wallet/index.ts:2018</a></li></ul></aside></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="clearUtxos" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>clear<wbr/>Utxos</span><a href="#clearUtxos" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-private">
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2090">wallet/index.ts:2090</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="clearUtxos" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>clear<wbr/>Utxos</span><a href="#clearUtxos" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
 <li class="tsd-signature tsd-anchor-link" id="clearUtxos.clearUtxos-1"><span class="tsd-kind-call-signature">clear<wbr/>Utxos</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><a href="#clearUtxos.clearUtxos-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
+<li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Clears the UTXO array and balance from storage.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2003">wallet/index.ts:2003</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2075">wallet/index.ts:2075</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="confirmationsToBlockHeight" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>confirmations<wbr/>To<wbr/>Block<wbr/>Height</span><a href="#confirmationsToBlockHeight" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -564,7 +631,7 @@ will be removed from the store and updated in the activity list.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1898">wallet/index.ts:1898</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1970">wallet/index.ts:1970</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="connectToElectrum" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>connect<wbr/>To<wbr/>Electrum</span><a href="#connectToElectrum" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -581,7 +648,7 @@ will be removed from the store and updated in the activity list.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L570">wallet/index.ts:570</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L606">wallet/index.ts:606</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="deleteOnChainTransactionById" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>delete<wbr/>On<wbr/>Chain<wbr/>Transaction<wbr/>By<wbr/>Id</span><a href="#deleteOnChainTransactionById" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -601,7 +668,7 @@ will be removed from the store and updated in the activity list.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2929">wallet/index.ts:2929</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3084">wallet/index.ts:3084</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="formatTransactions" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>format<wbr/>Transactions</span><a href="#formatTransactions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -622,7 +689,7 @@ will be removed from the store and updated in the activity list.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2138">wallet/index.ts:2138</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2210">wallet/index.ts:2210</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="generateAddresses" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>generate<wbr/>Addresses</span><a href="#generateAddresses" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -639,7 +706,7 @@ will be removed from the store and updated in the activity list.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L701">wallet/index.ts:701</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L737">wallet/index.ts:737</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="generateNewReceiveAddress" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>generate<wbr/>New<wbr/>Receive<wbr/>Address</span><a href="#generateNewReceiveAddress" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -661,7 +728,7 @@ will be removed from the store and updated in the activity list.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1455">wallet/index.ts:1455</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1509">wallet/index.ts:1509</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getAddress" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Address</span><a href="#getAddress" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -678,7 +745,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L510">wallet/index.ts:510</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L546">wallet/index.ts:546</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getAddressBalance" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Address<wbr/>Balance</span><a href="#getAddressBalance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -695,7 +762,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IGetAddressBalanceRes.html" class="tsd-signature-type tsd-kind-interface">IGetAddressBalanceRes</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L591">wallet/index.ts:591</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L627">wallet/index.ts:627</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getAddressByPath" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Address<wbr/>By<wbr/>Path</span><a href="#getAddressByPath" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -711,7 +778,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IGetAddressResponse.html" class="tsd-signature-type tsd-kind-interface">IGetAddressResponse</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L544">wallet/index.ts:544</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L580">wallet/index.ts:580</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getAddressFromScriptHash" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Address<wbr/>From<wbr/>Script<wbr/>Hash</span><a href="#getAddressFromScriptHash" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -728,7 +795,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/IAddress.html" class="tsd-signature-type tsd-kind-interface">IAddress</a></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2589">wallet/index.ts:2589</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2716">wallet/index.ts:2716</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getAddressIndexInfo" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Address<wbr/>Index<wbr/>Info</span><a href="#getAddressIndexInfo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -739,7 +806,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-returns-title">Returns <a href="../types/TAddressIndexInfo.html" class="tsd-signature-type tsd-kind-type-alias">TAddressIndexInfo</a></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2677">wallet/index.ts:2677</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2832">wallet/index.ts:2832</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getAddressesBalance" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Addresses<wbr/>Balance</span><a href="#getAddressesBalance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -757,7 +824,7 @@ index and whether it is a change address.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L609">wallet/index.ts:609</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L645">wallet/index.ts:645</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getBalance" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Balance</span><a href="#getBalance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -768,7 +835,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L685">wallet/index.ts:685</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L721">wallet/index.ts:721</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getBip32Interface" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Bip32<wbr/>Interface</span><a href="#getBip32Interface" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -779,7 +846,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">BIP32Interface</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3061">wallet/index.ts:3061</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3216">wallet/index.ts:3216</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="getBitcoinNetwork" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>get<wbr/>Bitcoin<wbr/>Network</span><a href="#getBitcoinNetwork" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -796,7 +863,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Network</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L423">wallet/index.ts:423</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L459">wallet/index.ts:459</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getBoostableTransactions" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Boostable<wbr/>Transactions</span><a href="#getBoostableTransactions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -812,7 +879,7 @@ index and whether it is a change address.</p>
 <h5><span class="tsd-kind-property">rbf</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/IFormattedTransaction.html" class="tsd-signature-type tsd-kind-interface">IFormattedTransaction</a><span class="tsd-signature-symbol">[]</span></h5></li></ul>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3044">wallet/index.ts:3044</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3199">wallet/index.ts:3199</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getBoostedTransactionParents" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Boosted<wbr/>Transaction<wbr/>Parents</span><a href="#getBoostedTransactionParents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -833,7 +900,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3007">wallet/index.ts:3007</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3162">wallet/index.ts:3162</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getBoostedTransactions" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Boosted<wbr/>Transactions</span><a href="#getBoostedTransactions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -844,7 +911,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/IBoostedTransactions.html" class="tsd-signature-type tsd-kind-interface">IBoostedTransactions</a></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3028">wallet/index.ts:3028</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3183">wallet/index.ts:3183</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getChangeAddress" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Change<wbr/>Address</span><a href="#getChangeAddress" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -862,7 +929,7 @@ index and whether it is a change address.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2371">wallet/index.ts:2371</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2443">wallet/index.ts:2443</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getExchangeRate" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Exchange<wbr/>Rate</span><a href="#getExchangeRate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -879,7 +946,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2345">wallet/index.ts:2345</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2417">wallet/index.ts:2417</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getFeeEstimates" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Fee<wbr/>Estimates</span><a href="#getFeeEstimates" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -896,7 +963,7 @@ index and whether it is a change address.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2404">wallet/index.ts:2404</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2476">wallet/index.ts:2476</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getFeeInfo" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Fee<wbr/>Info</span><a href="#getFeeInfo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -908,7 +975,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">fundingLightning</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">message</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">satsPerByte</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">transaction</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type ">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ISendTransaction.html" class="tsd-signature-type tsd-kind-interface">ISendTransaction</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol"> = {}</span></h5>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">fundingLightning</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">message</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">satsPerByte</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">transaction</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type ">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ISendTransaction.html" class="tsd-signature-type tsd-kind-interface">ISendTransaction</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol"> = {}</span></h5>
 <ul class="tsd-parameters">
 <li class="tsd-parameter">
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">funding<wbr/>Lightning</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5></li>
@@ -921,7 +988,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-returns-title">Returns <a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/TGetTotalFeeObj.html" class="tsd-signature-type tsd-kind-type-alias">TGetTotalFeeObj</a><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2453">wallet/index.ts:2453</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2525">wallet/index.ts:2525</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="getGapLimit" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>get<wbr/>Gap<wbr/>Limit</span><a href="#getGapLimit" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -941,7 +1008,7 @@ index and whether it is a change address.</p>
 <h4 class="tsd-returns-title">Returns <a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">addressDelta</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">changeAddressDelta</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1543">wallet/index.ts:1543</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1595">wallet/index.ts:1595</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getHighestStoredAddressIndex" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Highest<wbr/>Stored<wbr/>Address<wbr/>Index</span><a href="#getHighestStoredAddressIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -962,7 +1029,7 @@ Retrives the highest stored address index for the provided address type.</p>
 <h4 class="tsd-returns-title">Returns <a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">addressIndex</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/IAddress.html" class="tsd-signature-type tsd-kind-interface">IAddress</a><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">changeAddressIndex</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/IAddress.html" class="tsd-signature-type tsd-kind-interface">IAddress</a><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1132">wallet/index.ts:1132</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1177">wallet/index.ts:1177</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getInputData" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Input<wbr/>Data</span><a href="#getInputData" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -983,7 +1050,7 @@ Retrives the highest stored address index for the provided address type.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2304">wallet/index.ts:2304</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2376">wallet/index.ts:2376</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getNextAvailableAddress" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Next<wbr/>Available<wbr/>Address</span><a href="#getNextAvailableAddress" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1000,7 +1067,7 @@ Retrives the highest stored address index for the provided address type.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IGetNextAvailableAddressResponse.html" class="tsd-signature-type tsd-kind-interface">IGetNextAvailableAddressResponse</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L825">wallet/index.ts:825</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L861">wallet/index.ts:861</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getPrivateKey" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Private<wbr/>Key</span><a href="#getPrivateKey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1017,7 +1084,7 @@ Retrives the highest stored address index for the provided address type.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L663">wallet/index.ts:663</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L699">wallet/index.ts:699</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getRbfData" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Rbf<wbr/>Data</span><a href="#getRbfData" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1038,7 +1105,7 @@ replace-by-fee transaction for any 0-conf, RBF-enabled tx.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IRbfData.html" class="tsd-signature-type tsd-kind-interface">IRbfData</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2747">wallet/index.ts:2747</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2902">wallet/index.ts:2902</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getReceiveAddress" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Receive<wbr/>Address</span><a href="#getReceiveAddress" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1058,7 +1125,7 @@ replace-by-fee transaction for any 0-conf, RBF-enabled tx.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2699">wallet/index.ts:2699</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2854">wallet/index.ts:2854</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getScriptHash" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Script<wbr/>Hash</span><a href="#getScriptHash" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1079,7 +1146,7 @@ replace-by-fee transaction for any 0-conf, RBF-enabled tx.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L644">wallet/index.ts:644</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L680">wallet/index.ts:680</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getScriptHashBalance" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Script<wbr/>Hash<wbr/>Balance</span><a href="#getScriptHashBalance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1096,7 +1163,7 @@ replace-by-fee transaction for any 0-conf, RBF-enabled tx.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IGetAddressBalanceRes.html" class="tsd-signature-type tsd-kind-interface">IGetAddressBalanceRes</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L673">wallet/index.ts:673</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L709">wallet/index.ts:709</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getUnconfirmedTransactions" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Unconfirmed<wbr/>Transactions</span><a href="#getUnconfirmedTransactions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1107,7 +1174,7 @@ replace-by-fee transaction for any 0-conf, RBF-enabled tx.</p>
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/IFormattedTransactions.html" class="tsd-signature-type tsd-kind-interface">IFormattedTransactions</a></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1886">wallet/index.ts:1886</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1958">wallet/index.ts:1958</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getUtxos" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Utxos</span><a href="#getUtxos" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1124,7 +1191,7 @@ replace-by-fee transaction for any 0-conf, RBF-enabled tx.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IGetUtxosResponse.html" class="tsd-signature-type tsd-kind-interface">IGetUtxosResponse</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1579">wallet/index.ts:1579</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1631">wallet/index.ts:1631</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getWalletData" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Wallet<wbr/>Data</span><a href="#getWalletData" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1136,7 +1203,7 @@ Otherwise, it falls back to the default wallet data object.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IWalletData.html" class="tsd-signature-type tsd-kind-interface">IWalletData</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L339">wallet/index.ts:339</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L373">wallet/index.ts:373</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getWalletDataKey" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Wallet<wbr/>Data<wbr/>Key</span><a href="#getWalletDataKey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1153,7 +1220,7 @@ Otherwise, it falls back to the default wallet data object.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L330">wallet/index.ts:330</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L364">wallet/index.ts:364</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="isValid" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>is<wbr/>Valid</span><a href="#isValid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1170,7 +1237,7 @@ Otherwise, it falls back to the default wallet data object.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L433">wallet/index.ts:433</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L469">wallet/index.ts:469</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="listUtxos" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>list<wbr/>Utxos</span><a href="#listUtxos" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1181,7 +1248,7 @@ Otherwise, it falls back to the default wallet data object.</p>
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/IUtxo.html" class="tsd-signature-type tsd-kind-interface">IUtxo</a><span class="tsd-signature-symbol">[]</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1603">wallet/index.ts:1603</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1655">wallet/index.ts:1655</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="processUnconfirmedTransactions" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>process<wbr/>Unconfirmed<wbr/>Transactions</span><a href="#processUnconfirmedTransactions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -1198,7 +1265,7 @@ Otherwise, it falls back to the default wallet data object.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1816">wallet/index.ts:1816</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1888">wallet/index.ts:1888</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="refreshWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>refresh<wbr/>Wallet</span><a href="#refreshWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1219,7 +1286,7 @@ Otherwise, it falls back to the default wallet data object.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IWalletData.html" class="tsd-signature-type tsd-kind-interface">IWalletData</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L255">wallet/index.ts:255</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L260">wallet/index.ts:260</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="removeDuplicateAddresses" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>remove<wbr/>Duplicate<wbr/>Addresses</span><a href="#removeDuplicateAddresses" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -1241,7 +1308,7 @@ Otherwise, it falls back to the default wallet data object.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1242">wallet/index.ts:1242</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1294">wallet/index.ts:1294</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="removeTxInput" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>remove<wbr/>Tx<wbr/>Input</span><a href="#removeTxInput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1261,7 +1328,7 @@ Otherwise, it falls back to the default wallet data object.</p>
 <h4 class="tsd-returns-title">Returns <a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/IUtxo.html" class="tsd-signature-type tsd-kind-interface">IUtxo</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3095">wallet/index.ts:3095</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3254">wallet/index.ts:3254</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="removeTxTag" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>remove<wbr/>Tx<wbr/>Tag</span><a href="#removeTxTag" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1281,7 +1348,7 @@ Otherwise, it falls back to the default wallet data object.</p>
 <h4 class="tsd-returns-title">Returns <a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3144">wallet/index.ts:3144</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3303">wallet/index.ts:3303</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="rescanAddresses" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>rescan<wbr/>Addresses</span><a href="#rescanAddresses" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1305,7 +1372,7 @@ the app will rescan the wallet&#39;s addresses from index zero.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1975">wallet/index.ts:1975</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2047">wallet/index.ts:2047</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="resetAddressIndexes" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>reset<wbr/>Address<wbr/>Indexes</span><a href="#resetAddressIndexes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -1316,7 +1383,7 @@ the app will rescan the wallet&#39;s addresses from index zero.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1427">wallet/index.ts:1427</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1481">wallet/index.ts:1481</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="resetSendTransaction" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>reset<wbr/>Send<wbr/>Transaction</span><a href="#resetSendTransaction" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1327,14 +1394,12 @@ the app will rescan the wallet&#39;s addresses from index zero.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3036">wallet/index.ts:3036</a></li></ul></aside></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="saveWalletData" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>save<wbr/>Wallet<wbr/>Data</span><a href="#saveWalletData" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="saveWalletData.saveWalletData-1"><span class="tsd-kind-call-signature">save<wbr/>Wallet<wbr/>Data</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">key</span>, <span class="tsd-kind-parameter">data</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#saveWalletData.saveWalletData-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>Saves the wallet data object to storage if able.</p>
-</div>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3191">wallet/index.ts:3191</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="saveWalletData" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>save<wbr/>Wallet<wbr/>Data</span><a href="#saveWalletData" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="saveWalletData.saveWalletData-1"><span class="tsd-kind-call-signature">save<wbr/>Wallet<wbr/>Data</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">key</span>, <span class="tsd-kind-parameter">data</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><a href="#saveWalletData.saveWalletData-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
@@ -1344,16 +1409,12 @@ the app will rescan the wallet&#39;s addresses from index zero.</p>
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-symbol">keyof </span><a href="../interfaces/IWalletData.html" class="tsd-signature-type tsd-kind-interface">IWalletData</a></h5>
-<div class="tsd-comment tsd-typography"></div></li>
+<h5><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-symbol">keyof </span><a href="../interfaces/IWalletData.html" class="tsd-signature-type tsd-kind-interface">IWalletData</a></h5></li>
 <li>
-<h5><span class="tsd-kind-parameter">data</span>: <a href="../interfaces/IWalletData.html" class="tsd-signature-type tsd-kind-interface">IWalletData</a><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">]</span></h5>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-<div class="tsd-comment tsd-typography">
-<h4>Async</h4></div><aside class="tsd-sources">
+<h5><span class="tsd-kind-parameter">data</span>: <a href="../interfaces/IWalletData.html" class="tsd-signature-type tsd-kind-interface">IWalletData</a><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">]</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1615">wallet/index.ts:1615</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1668">wallet/index.ts:1668</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="send" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>send</span><a href="#send" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1385,7 +1446,7 @@ the app will rescan the wallet&#39;s addresses from index zero.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2558">wallet/index.ts:2558</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2685">wallet/index.ts:2685</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="sendMany" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>send<wbr/>Many</span><a href="#sendMany" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1412,7 +1473,32 @@ the app will rescan the wallet&#39;s addresses from index zero.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2481">wallet/index.ts:2481</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2553">wallet/index.ts:2553</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="sendMax" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>send<wbr/>Max</span><a href="#sendMax" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="sendMax.sendMax-1"><span class="tsd-kind-call-signature">send<wbr/>Max</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#sendMax.sendMax-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Sends the maximum amount of sats to a given address at the specified satsPerByte.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">address</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">broadcast</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">rbf</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">satsPerByte</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol"> = {}</span></h5>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">address</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">broadcast</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">rbf</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-property">sats<wbr/>Per<wbr/>Byte</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5></li></ul></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2629">wallet/index.ts:2629</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="setWalletData" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>set<wbr/>Wallet<wbr/>Data</span><a href="#setWalletData" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -1423,7 +1509,7 @@ the app will rescan the wallet&#39;s addresses from index zero.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L282">wallet/index.ts:282</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L316">wallet/index.ts:316</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="setZeroIndexAddresses" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>set<wbr/>Zero<wbr/>Index<wbr/>Addresses</span><a href="#setZeroIndexAddresses" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -1436,7 +1522,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2609">wallet/index.ts:2609</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2736">wallet/index.ts:2736</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="setupFeeForOnChainTransaction" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>setup<wbr/>Fee<wbr/>For<wbr/>On<wbr/>Chain<wbr/>Transaction</span><a href="#setupFeeForOnChainTransaction" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1457,7 +1543,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <h4 class="tsd-returns-title">Returns <a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3169">wallet/index.ts:3169</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3328">wallet/index.ts:3328</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="setupTransaction" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>setup<wbr/>Transaction</span><a href="#setupTransaction" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1475,7 +1561,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/TSetupTransactionResponse.html" class="tsd-signature-type tsd-kind-type-alias">TSetupTransactionResponse</a><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2439">wallet/index.ts:2439</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2511">wallet/index.ts:2511</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="storageIdCheck" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>storage<wbr/>Id<wbr/>Check</span><a href="#storageIdCheck" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -1493,7 +1579,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L305">wallet/index.ts:305</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L339">wallet/index.ts:339</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="switchNetwork" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>switch<wbr/>Network</span><a href="#switchNetwork" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1508,7 +1594,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">servers</span>: <a href="../types/TServer.html" class="tsd-signature-type tsd-kind-type-alias">TServer</a><span class="tsd-signature-symbol"> | </span><a href="../types/TServer.html" class="tsd-signature-type tsd-kind-type-alias">TServer</a><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L204">wallet/index.ts:204</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L209">wallet/index.ts:209</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="updateAddressIndex" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>update<wbr/>Address<wbr/>Index</span><a href="#updateAddressIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -1532,7 +1618,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2651">wallet/index.ts:2651</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2787">wallet/index.ts:2787</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="updateAddressIndexes" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>update<wbr/>Address<wbr/>Indexes</span><a href="#updateAddressIndexes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -1553,7 +1639,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1292">wallet/index.ts:1292</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1344">wallet/index.ts:1344</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="updateAddressType" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>update<wbr/>Address<wbr/>Type</span><a href="#updateAddressType" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1570,7 +1656,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L243">wallet/index.ts:243</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L248">wallet/index.ts:248</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="updateAndSaveWalletData" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>update<wbr/>And<wbr/>Save<wbr/>Wallet<wbr/>Data</span><a href="#updateAndSaveWalletData" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -1587,7 +1673,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">addressType</span>: <a href="../enums/EAddressType.html" class="tsd-signature-type tsd-kind-enum">EAddressType</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1626">wallet/index.ts:1626</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1700">wallet/index.ts:1700</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="updateExchangeRates" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>update<wbr/>Exchange<wbr/>Rates</span><a href="#updateExchangeRates" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1599,7 +1685,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3221">wallet/index.ts:3221</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3380">wallet/index.ts:3380</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="updateFeeEstimates" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>update<wbr/>Fee<wbr/>Estimates</span><a href="#updateFeeEstimates" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1619,7 +1705,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3236">wallet/index.ts:3236</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3395">wallet/index.ts:3395</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="updateGhostTransactions" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>update<wbr/>Ghost<wbr/>Transactions</span><a href="#updateGhostTransactions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -1640,7 +1726,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1932">wallet/index.ts:1932</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2004">wallet/index.ts:2004</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="updateHeader" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>update<wbr/>Header</span><a href="#updateHeader" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1657,7 +1743,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1920">wallet/index.ts:1920</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1992">wallet/index.ts:1992</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="updateTransactionHeights" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>update<wbr/>Transaction<wbr/>Heights</span><a href="#updateTransactionHeights" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -1675,7 +1761,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Async</h4></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2047">wallet/index.ts:2047</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2119">wallet/index.ts:2119</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="updateTransactions" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>update<wbr/>Transactions</span><a href="#updateTransactions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1696,7 +1782,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L1647">wallet/index.ts:1647</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1721">wallet/index.ts:1721</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="updateWalletBalance" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>update<wbr/>Wallet<wbr/>Balance</span><a href="#updateWalletBalance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1716,7 +1802,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <h4 class="tsd-returns-title">Returns <a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L3205">wallet/index.ts:3205</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3364">wallet/index.ts:3364</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="validateAddress" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>validate<wbr/>Address</span><a href="#validateAddress" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1733,7 +1819,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L2361">wallet/index.ts:2361</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2433">wallet/index.ts:2433</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="create" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>create</span><a href="#create" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -1746,7 +1832,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <h5><span class="tsd-kind-parameter">params</span>: <a href="../interfaces/IWallet.html" class="tsd-signature-type tsd-kind-interface">IWallet</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Result.html" class="tsd-signature-type tsd-kind-type-alias">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="Wallet.html" class="tsd-signature-type tsd-kind-class">Wallet</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/7c83290/src/wallet/index.ts#L189">wallet/index.ts:189</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L194">wallet/index.ts:194</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -1774,6 +1860,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <li><a href="#_mnemonic" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_mnemonic</span></a></li>
 <li><a href="#_network" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_network</span></a></li>
 <li><a href="#_passphrase" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_passphrase</span></a></li>
+<li><a href="#_pendingRefreshPromises" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_pending<wbr/>Refresh<wbr/>Promises</span></a></li>
 <li><a href="#_root" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_root</span></a></li>
 <li><a href="#_seed" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_seed</span></a></li>
 <li><a href="#_setData" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_set<wbr/>Data</span></a></li>
@@ -1782,15 +1869,19 @@ Will also generate and store address and changeAddress at index 0.</p>
 <li><a href="#exchangeRates" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>exchange<wbr/>Rates</span></a></li>
 <li><a href="#feeEstimates" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>fee<wbr/>Estimates</span></a></li>
 <li><a href="#id" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>id</span></a></li>
+<li><a href="#isRefreshing" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>is<wbr/>Refreshing</span></a></li>
 <li><a href="#isSwitchingNetworks" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>is<wbr/>Switching<wbr/>Networks</span></a></li>
 <li><a href="#name" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>name</span></a></li>
 <li><a href="#onMessage" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>on<wbr/>Message</span></a></li>
 <li><a href="#rbf" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>rbf</span></a></li>
+<li><a href="#savingOperations" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>saving<wbr/>Operations</span></a></li>
 <li><a href="#selectedFeeId" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>selected<wbr/>Fee<wbr/>Id</span></a></li>
 <li><a href="#transaction" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>transaction</span></a></li>
 <li><a href="#data" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>data</span></a></li>
 <li><a href="#network" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>network</span></a></li>
 <li><a href="#_getAddress" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_get<wbr/>Address</span></a></li>
+<li><a href="#_handleRefreshError" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_handle<wbr/>Refresh<wbr/>Error</span></a></li>
+<li><a href="#_resolveAllPendingRefreshPromises" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_resolve<wbr/>All<wbr/>Pending<wbr/>Refresh<wbr/>Promises</span></a></li>
 <li><a href="#addAddresses" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>add<wbr/>Addresses</span></a></li>
 <li><a href="#addBoostedTransaction" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>add<wbr/>Boosted<wbr/>Transaction</span></a></li>
 <li><a href="#addGhostTransaction" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>add<wbr/>Ghost<wbr/>Transaction</span></a></li>
@@ -1802,7 +1893,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <li><a href="#checkUnconfirmedTransactions" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>check<wbr/>Unconfirmed<wbr/>Transactions</span></a></li>
 <li><a href="#clearAddresses" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>clear<wbr/>Addresses</span></a></li>
 <li><a href="#clearTransactions" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>clear<wbr/>Transactions</span></a></li>
-<li><a href="#clearUtxos" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>clear<wbr/>Utxos</span></a></li>
+<li><a href="#clearUtxos" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>clear<wbr/>Utxos</span></a></li>
 <li><a href="#confirmationsToBlockHeight" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>confirmations<wbr/>To<wbr/>Block<wbr/>Height</span></a></li>
 <li><a href="#connectToElectrum" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>connect<wbr/>To<wbr/>Electrum</span></a></li>
 <li><a href="#deleteOnChainTransactionById" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>delete<wbr/>On<wbr/>Chain<wbr/>Transaction<wbr/>By<wbr/>Id</span></a></li>
@@ -1848,9 +1939,10 @@ Will also generate and store address and changeAddress at index 0.</p>
 <li><a href="#rescanAddresses" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>rescan<wbr/>Addresses</span></a></li>
 <li><a href="#resetAddressIndexes" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>reset<wbr/>Address<wbr/>Indexes</span></a></li>
 <li><a href="#resetSendTransaction" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>reset<wbr/>Send<wbr/>Transaction</span></a></li>
-<li><a href="#saveWalletData" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>save<wbr/>Wallet<wbr/>Data</span></a></li>
+<li><a href="#saveWalletData" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>save<wbr/>Wallet<wbr/>Data</span></a></li>
 <li><a href="#send" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send</span></a></li>
 <li><a href="#sendMany" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send<wbr/>Many</span></a></li>
+<li><a href="#sendMax" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send<wbr/>Max</span></a></li>
 <li><a href="#setWalletData" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>set<wbr/>Wallet<wbr/>Data</span></a></li>
 <li><a href="#setZeroIndexAddresses" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>set<wbr/>Zero<wbr/>Index<wbr/>Addresses</span></a></li>
 <li><a href="#setupFeeForOnChainTransaction" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>setup<wbr/>Fee<wbr/>For<wbr/>On<wbr/>Chain<wbr/>Transaction</span></a></li>
@@ -1876,6 +1968,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <li><a href="../enums/EAddressType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-8"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-enum)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.45 16V7.24H14.49V8.224H10.518V10.936H14.07V11.908H10.518V15.016H14.49V16H9.45Z" fill="var(--color-text)"></path></g></svg><span>EAddress<wbr/>Type</span></a></li>
 <li><a href="../enums/EAvailableNetworks.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>EAvailable<wbr/>Networks</span></a></li>
 <li><a href="../enums/EBoostType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>EBoost<wbr/>Type</span></a></li>
+<li><a href="../enums/EElectrumNetworks.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>EElectrum<wbr/>Networks</span></a></li>
 <li><a href="../enums/EFeeId.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>EFee<wbr/>Id</span></a></li>
 <li><a href="../enums/EPaymentType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>EPayment<wbr/>Type</span></a></li>
 <li><a href="../enums/EProtocol.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>EProtocol</span></a></li>
@@ -1906,6 +1999,7 @@ Will also generate and store address and changeAddress at index 0.</p>
 <li><a href="../interfaces/IGetAddressByPath.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Address<wbr/>By<wbr/>Path</span></a></li>
 <li><a href="../interfaces/IGetAddressHistoryResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Address<wbr/>History<wbr/>Response</span></a></li>
 <li><a href="../interfaces/IGetAddressResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Address<wbr/>Response</span></a></li>
+<li><a href="../interfaces/IGetAddressScriptHashBalances.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Address<wbr/>Script<wbr/>Hash<wbr/>Balances</span></a></li>
 <li><a href="../interfaces/IGetAddressScriptHashesHistoryResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Address<wbr/>Script<wbr/>Hashes<wbr/>History<wbr/>Response</span></a></li>
 <li><a href="../interfaces/IGetDerivationPath.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Derivation<wbr/>Path</span></a></li>
 <li><a href="../interfaces/IGetFeeEstimatesResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Fee<wbr/>Estimates<wbr/>Response</span></a></li>

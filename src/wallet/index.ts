@@ -130,7 +130,7 @@ export class Wallet {
 	};
 	public electrum: Electrum;
 	public exchangeRates: IExchangeRates;
-	public onMessage?: TOnMessage;
+	public onMessage: TOnMessage;
 	public transaction: Transaction;
 	public feeEstimates: IOnchainFees;
 	public rbf: boolean;
@@ -1795,18 +1795,16 @@ export class Wallet {
 						transactions[txid]?.timestamp ??
 						Date.now()
 				};
-				if (this.onMessage && formattedTransactions[txid]?.height > 0)
+				if (formattedTransactions[txid]?.height > 0)
 					confirmedTxs.push({ transaction: formattedTransactions[txid] });
 			}
 
 			// if the tx is new, incoming but not from a transfer - show notification
 			if (!(txid in storedTransactions)) {
-				if (this.onMessage) {
-					if (transactions[txid].type === EPaymentType.received) {
-						receivedTxs.push({ transaction: transactions[txid] });
-					} else if (transactions[txid].type === EPaymentType.sent) {
-						sentTxs.push({ transaction: transactions[txid] });
-					}
+				if (transactions[txid].type === EPaymentType.received) {
+					receivedTxs.push({ transaction: transactions[txid] });
+				} else if (transactions[txid].type === EPaymentType.sent) {
+					sentTxs.push({ transaction: transactions[txid] });
 				}
 				notificationTxid = txid;
 			}
@@ -1823,20 +1821,15 @@ export class Wallet {
 		};
 		await this.saveWalletData('transactions', this._data.transactions);
 
-		if (this.onMessage) {
-			sentTxs.forEach((tx) => {
-				// @ts-ignore
-				this.onMessage('transactionSent', tx);
-			});
-			receivedTxs.forEach((tx) => {
-				// @ts-ignore
-				this.onMessage('transactionReceived', tx);
-			});
-			confirmedTxs.forEach((tx) => {
-				// @ts-ignore
-				this.onMessage('transactionConfirmed', tx);
-			});
-		}
+		sentTxs.forEach((tx) => {
+			this.onMessage('transactionSent', tx);
+		});
+		receivedTxs.forEach((tx) => {
+			this.onMessage('transactionReceived', tx);
+		});
+		confirmedTxs.forEach((tx) => {
+			this.onMessage('transactionConfirmed', tx);
+		});
 
 		return ok(notificationTxid);
 	}
@@ -1858,12 +1851,12 @@ export class Wallet {
 
 			const { unconfirmedTxs, outdatedTxs, ghostTxs } = processRes.value;
 			if (outdatedTxs.length > 0) {
-				if (this.onMessage) this.onMessage('reorg', outdatedTxs);
+				this.onMessage('reorg', outdatedTxs);
 				//We need to update the height of the transactions that were reorg'd out.
 				await this.updateTransactionHeights(outdatedTxs);
 			}
 			if (ghostTxs.length > 0) {
-				if (this.onMessage) this.onMessage('rbf', ghostTxs);
+				this.onMessage('rbf', ghostTxs);
 				//We need to update the ghost transactions in the store & activity-list and rescan the addresses to get the correct balance.
 				await this.updateGhostTransactions({
 					txIds: ghostTxs

@@ -78,7 +78,7 @@ export class Electrum {
 		net?: Server;
 	}) {
 		this._wallet = wallet;
-		this.onMessage = wallet?.onMessage ?? ((): null => null);
+		this.onMessage = wallet.onMessage;
 		this.servers = servers ?? [];
 		this.network = network;
 		this.electrumNetwork = this.getElectrumNetwork(network);

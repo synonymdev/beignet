@@ -140,7 +140,7 @@
 
 #### Defined in
 
-[wallet/index.ts:133](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L133)
+[wallet/index.ts:138](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L138)
 
 ## Properties
 
@@ -164,7 +164,7 @@
 
 #### Defined in
 
-[wallet/index.ts:107](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L107)
+[wallet/index.ts:112](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L112)
 
 ___
 
@@ -188,7 +188,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:110](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L110)
+[wallet/index.ts:115](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L115)
 
 ___
 
@@ -198,7 +198,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:104](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L104)
+[wallet/index.ts:109](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L109)
 
 ___
 
@@ -208,7 +208,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:105](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L105)
+[wallet/index.ts:110](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L110)
 
 ___
 
@@ -218,7 +218,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:100](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L100)
+[wallet/index.ts:105](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L105)
 
 ___
 
@@ -228,7 +228,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:99](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L99)
+[wallet/index.ts:104](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L104)
 
 ___
 
@@ -238,7 +238,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:101](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L101)
+[wallet/index.ts:106](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L106)
 
 ___
 
@@ -248,7 +248,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:113](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L113)
+[wallet/index.ts:118](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L118)
 
 ___
 
@@ -258,7 +258,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:103](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L103)
+[wallet/index.ts:108](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L108)
 
 ___
 
@@ -268,7 +268,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:102](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L102)
+[wallet/index.ts:107](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L107)
 
 ___
 
@@ -278,7 +278,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:106](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L106)
+[wallet/index.ts:111](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L111)
 
 ___
 
@@ -288,7 +288,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:126](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L126)
+[wallet/index.ts:131](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L131)
 
 ___
 
@@ -306,7 +306,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:121](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L121)
+[wallet/index.ts:126](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L126)
 
 ___
 
@@ -316,7 +316,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:127](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L127)
+[wallet/index.ts:132](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L132)
 
 ___
 
@@ -326,7 +326,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:130](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L130)
+[wallet/index.ts:135](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L135)
 
 ___
 
@@ -336,7 +336,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:119](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L119)
+[wallet/index.ts:124](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L124)
 
 ___
 
@@ -346,7 +346,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:117](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L117)
+[wallet/index.ts:122](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L122)
 
 ___
 
@@ -356,7 +356,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:118](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L118)
+[wallet/index.ts:123](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L123)
 
 ___
 
@@ -366,17 +366,17 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:120](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L120)
+[wallet/index.ts:125](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L125)
 
 ___
 
 ### onMessage
 
-• `Optional` **onMessage**: [`TOnMessage`](../README.md#tonmessage)
+• **onMessage**: [`TOnMessage`](../README.md#tonmessage)
 
 #### Defined in
 
-[wallet/index.ts:128](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L128)
+[wallet/index.ts:133](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L133)
 
 ___
 
@@ -386,7 +386,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:131](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L131)
+[wallet/index.ts:136](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L136)
 
 ___
 
@@ -404,7 +404,7 @@ Saves the wallet data object to storage if able.
 
 #### Defined in
 
-[wallet/index.ts:1667](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1667)
+[wallet/index.ts:1673](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1673)
 
 ___
 
@@ -414,7 +414,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:132](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L132)
+[wallet/index.ts:137](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L137)
 
 ___
 
@@ -424,7 +424,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:129](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L129)
+[wallet/index.ts:134](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L134)
 
 ## Accessors
 
@@ -438,7 +438,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:186](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L186)
+[wallet/index.ts:191](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L191)
 
 ___
 
@@ -452,7 +452,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:190](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L190)
+[wallet/index.ts:195](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L195)
 
 ## Methods
 
@@ -475,7 +475,7 @@ Returns the address for the specified path and address type.
 
 #### Defined in
 
-[wallet/index.ts:480](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L480)
+[wallet/index.ts:486](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L486)
 
 ___
 
@@ -495,7 +495,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:305](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L305)
+[wallet/index.ts:310](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L310)
 
 ___
 
@@ -515,7 +515,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:295](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L295)
+[wallet/index.ts:300](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L300)
 
 ___
 
@@ -539,7 +539,7 @@ This method will generate addresses as specified and return an object of filtere
 
 #### Defined in
 
-[wallet/index.ts:1217](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1217)
+[wallet/index.ts:1223](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1223)
 
 ___
 
@@ -565,7 +565,7 @@ Adds a boosted transaction id to the boostedTransactions object.
 
 #### Defined in
 
-[wallet/index.ts:3115](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3115)
+[wallet/index.ts:3114](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3114)
 
 ___
 
@@ -588,7 +588,7 @@ Sets "exists" to false for a given on-chain transaction id.
 
 #### Defined in
 
-[wallet/index.ts:3100](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3100)
+[wallet/index.ts:3099](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3099)
 
 ___
 
@@ -611,7 +611,7 @@ Adds a specified input to the current transaction.
 
 #### Defined in
 
-[wallet/index.ts:3232](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3232)
+[wallet/index.ts:3231](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3231)
 
 ___
 
@@ -634,7 +634,7 @@ Adds a specified tag to the current transaction.
 
 #### Defined in
 
-[wallet/index.ts:3280](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3280)
+[wallet/index.ts:3282](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3282)
 
 ___
 
@@ -659,7 +659,7 @@ Parses and adds unconfirmed transactions to the store.
 
 #### Defined in
 
-[wallet/index.ts:2142](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2142)
+[wallet/index.ts:2141](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2141)
 
 ___
 
@@ -683,7 +683,7 @@ Returns the number of confirmations for a given block height.
 
 #### Defined in
 
-[wallet/index.ts:2184](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2184)
+[wallet/index.ts:2183](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2183)
 
 ___
 
@@ -700,7 +700,7 @@ Will attempt to reconnect if not initially available.
 
 #### Defined in
 
-[wallet/index.ts:845](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L845)
+[wallet/index.ts:851](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L851)
 
 ___
 
@@ -720,7 +720,7 @@ will be removed from the store and updated in the activity list.
 
 #### Defined in
 
-[wallet/index.ts:1847](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1847)
+[wallet/index.ts:1846](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1846)
 
 ___
 
@@ -738,7 +738,7 @@ Clears the addresses and changeAddresses object for a given wallet and network.
 
 #### Defined in
 
-[wallet/index.ts:2102](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2102)
+[wallet/index.ts:2101](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2101)
 
 ___
 
@@ -754,7 +754,7 @@ Clears the transactions object for a given wallet and network from storage.
 
 #### Defined in
 
-[wallet/index.ts:2090](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2090)
+[wallet/index.ts:2089](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2089)
 
 ___
 
@@ -772,7 +772,7 @@ Clears the UTXO array and balance from storage.
 
 #### Defined in
 
-[wallet/index.ts:2075](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2075)
+[wallet/index.ts:2074](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2074)
 
 ___
 
@@ -796,7 +796,7 @@ Returns the block height for a given number of confirmations from storage.
 
 #### Defined in
 
-[wallet/index.ts:1970](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1970)
+[wallet/index.ts:1969](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1969)
 
 ___
 
@@ -818,7 +818,7 @@ Attempts to connect to the specified Electrum server(s).
 
 #### Defined in
 
-[wallet/index.ts:606](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L606)
+[wallet/index.ts:612](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L612)
 
 ___
 
@@ -841,7 +841,7 @@ Deletes a given on-chain transaction by id.
 
 #### Defined in
 
-[wallet/index.ts:3084](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3084)
+[wallet/index.ts:3083](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3083)
 
 ___
 
@@ -866,7 +866,7 @@ Formats the provided transaction.
 
 #### Defined in
 
-[wallet/index.ts:2210](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2210)
+[wallet/index.ts:2209](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2209)
 
 ___
 
@@ -890,7 +890,7 @@ Generates a series of addresses based on the specified params.
 
 #### Defined in
 
-[wallet/index.ts:737](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L737)
+[wallet/index.ts:743](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L743)
 
 ___
 
@@ -916,7 +916,7 @@ Generate a new receive address for the provided addresstype up to the set gap li
 
 #### Defined in
 
-[wallet/index.ts:1509](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1509)
+[wallet/index.ts:1515](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1515)
 
 ___
 
@@ -939,7 +939,7 @@ index and whether it is a change address.
 
 #### Defined in
 
-[wallet/index.ts:546](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L546)
+[wallet/index.ts:552](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L552)
 
 ___
 
@@ -961,7 +961,7 @@ Returns the address balance for the specified address.
 
 #### Defined in
 
-[wallet/index.ts:627](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L627)
+[wallet/index.ts:633](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L633)
 
 ___
 
@@ -983,7 +983,7 @@ Get address for a given keyPair, network and type.
 
 #### Defined in
 
-[wallet/index.ts:580](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L580)
+[wallet/index.ts:586](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L586)
 
 ___
 
@@ -1005,7 +1005,7 @@ Returns the address from a provided script hash in storage.
 
 #### Defined in
 
-[wallet/index.ts:2716](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2716)
+[wallet/index.ts:2715](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2715)
 
 ___
 
@@ -1021,7 +1021,7 @@ Returns current address index information.
 
 #### Defined in
 
-[wallet/index.ts:2832](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2832)
+[wallet/index.ts:2831](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2831)
 
 ___
 
@@ -1045,7 +1045,7 @@ Returns combined balance of provided addresses.
 
 #### Defined in
 
-[wallet/index.ts:645](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L645)
+[wallet/index.ts:651](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L651)
 
 ___
 
@@ -1061,7 +1061,7 @@ Returns the known balance from storage.
 
 #### Defined in
 
-[wallet/index.ts:721](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L721)
+[wallet/index.ts:727](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L727)
 
 ___
 
@@ -1077,7 +1077,7 @@ Creates a BIP32Interface from the selected wallet's mnemonic and passphrase
 
 #### Defined in
 
-[wallet/index.ts:3216](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3216)
+[wallet/index.ts:3215](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3215)
 
 ___
 
@@ -1099,7 +1099,7 @@ Returns the Network object of the currently selected network (bitcoin or testnet
 
 #### Defined in
 
-[wallet/index.ts:459](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L459)
+[wallet/index.ts:465](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L465)
 
 ___
 
@@ -1120,7 +1120,7 @@ Returns an array of transactions that can be boosted with cpfp and rbf.
 
 #### Defined in
 
-[wallet/index.ts:3199](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3199)
+[wallet/index.ts:3198](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3198)
 
 ___
 
@@ -1144,7 +1144,7 @@ Returns an array of parents for a boosted transaction id.
 
 #### Defined in
 
-[wallet/index.ts:3162](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3162)
+[wallet/index.ts:3161](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3161)
 
 ___
 
@@ -1160,7 +1160,7 @@ Returns boosted transactions object.
 
 #### Defined in
 
-[wallet/index.ts:3183](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3183)
+[wallet/index.ts:3182](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3182)
 
 ___
 
@@ -1184,7 +1184,7 @@ Retrieves the next available change address data.
 
 #### Defined in
 
-[wallet/index.ts:2443](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2443)
+[wallet/index.ts:2442](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2442)
 
 ___
 
@@ -1206,7 +1206,7 @@ Returns exchange rate data from storage.
 
 #### Defined in
 
-[wallet/index.ts:2417](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2417)
+[wallet/index.ts:2416](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2416)
 
 ___
 
@@ -1230,7 +1230,7 @@ Returns the current fee estimates for the provided network.
 
 #### Defined in
 
-[wallet/index.ts:2476](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2476)
+[wallet/index.ts:2475](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2475)
 
 ___
 
@@ -1256,7 +1256,7 @@ Returns a fee object for the current transaction.
 
 #### Defined in
 
-[wallet/index.ts:2525](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2525)
+[wallet/index.ts:2524](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2524)
 
 ___
 
@@ -1279,7 +1279,7 @@ Returns the difference between the current address index and the last used addre
 
 #### Defined in
 
-[wallet/index.ts:1595](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1595)
+[wallet/index.ts:1601](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1601)
 
 ___
 
@@ -1303,7 +1303,7 @@ Retrives the highest stored address index for the provided address type.
 
 #### Defined in
 
-[wallet/index.ts:1177](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1177)
+[wallet/index.ts:1183](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1183)
 
 ___
 
@@ -1328,7 +1328,7 @@ Returns formatted input data from the inputs array.
 
 #### Defined in
 
-[wallet/index.ts:2376](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2376)
+[wallet/index.ts:2375](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2375)
 
 ___
 
@@ -1350,7 +1350,7 @@ Returns the next available address for the given addresstype.
 
 #### Defined in
 
-[wallet/index.ts:861](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L861)
+[wallet/index.ts:867](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L867)
 
 ___
 
@@ -1372,7 +1372,7 @@ Returns private key for the provided path.
 
 #### Defined in
 
-[wallet/index.ts:699](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L699)
+[wallet/index.ts:705](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L705)
 
 ___
 
@@ -1396,7 +1396,7 @@ replace-by-fee transaction for any 0-conf, RBF-enabled tx.
 
 #### Defined in
 
-[wallet/index.ts:2902](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2902)
+[wallet/index.ts:2901](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2901)
 
 ___
 
@@ -1419,7 +1419,7 @@ Returns the next available receive address.
 
 #### Defined in
 
-[wallet/index.ts:2854](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2854)
+[wallet/index.ts:2853](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2853)
 
 ___
 
@@ -1443,7 +1443,7 @@ Get scriptHash for a given address
 
 #### Defined in
 
-[wallet/index.ts:680](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L680)
+[wallet/index.ts:686](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L686)
 
 ___
 
@@ -1465,7 +1465,7 @@ Returns the balance for the specified scriptHash.
 
 #### Defined in
 
-[wallet/index.ts:709](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L709)
+[wallet/index.ts:715](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L715)
 
 ___
 
@@ -1481,7 +1481,7 @@ Returns the current wallet's unconfirmed transactions from storage.
 
 #### Defined in
 
-[wallet/index.ts:1958](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1958)
+[wallet/index.ts:1957](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1957)
 
 ___
 
@@ -1503,7 +1503,7 @@ Retrieves and sets UTXO's for the current wallet from Electrum.
 
 #### Defined in
 
-[wallet/index.ts:1631](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1631)
+[wallet/index.ts:1637](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1637)
 
 ___
 
@@ -1520,7 +1520,7 @@ Otherwise, it falls back to the default wallet data object.
 
 #### Defined in
 
-[wallet/index.ts:373](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L373)
+[wallet/index.ts:378](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L378)
 
 ___
 
@@ -1542,7 +1542,7 @@ Returns the key used for storing wallet data in the key/value pair.
 
 #### Defined in
 
-[wallet/index.ts:364](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L364)
+[wallet/index.ts:369](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L369)
 
 ___
 
@@ -1564,7 +1564,7 @@ Ensures the provided mnemonic matches the one stored in the wallet and is valid.
 
 #### Defined in
 
-[wallet/index.ts:469](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L469)
+[wallet/index.ts:475](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L475)
 
 ___
 
@@ -1580,7 +1580,7 @@ Returns the current wallet's UTXO's from storage.
 
 #### Defined in
 
-[wallet/index.ts:1655](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1655)
+[wallet/index.ts:1661](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1661)
 
 ___
 
@@ -1601,7 +1601,7 @@ This method processes all transactions with less than 6 confirmations and return
 
 #### Defined in
 
-[wallet/index.ts:1888](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1888)
+[wallet/index.ts:1887](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1887)
 
 ___
 
@@ -1625,7 +1625,7 @@ Refreshes/Syncs the wallet data.
 
 #### Defined in
 
-[wallet/index.ts:260](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L260)
+[wallet/index.ts:265](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L265)
 
 ___
 
@@ -1651,7 +1651,7 @@ This method will compare a set of specified addresses to the currently stored ad
 
 #### Defined in
 
-[wallet/index.ts:1294](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1294)
+[wallet/index.ts:1300](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1300)
 
 ___
 
@@ -1674,7 +1674,7 @@ Removes the specified input from the current transaction.
 
 #### Defined in
 
-[wallet/index.ts:3254](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3254)
+[wallet/index.ts:3256](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3256)
 
 ___
 
@@ -1697,7 +1697,7 @@ Removes a specified tag from the current transaction.
 
 #### Defined in
 
-[wallet/index.ts:3303](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3303)
+[wallet/index.ts:3305](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3305)
 
 ___
 
@@ -1725,7 +1725,7 @@ the app will rescan the wallet's addresses from index zero.
 
 #### Defined in
 
-[wallet/index.ts:2047](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2047)
+[wallet/index.ts:2046](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2046)
 
 ___
 
@@ -1741,7 +1741,7 @@ Resets address indexes back to the app's default/original state.
 
 #### Defined in
 
-[wallet/index.ts:1481](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1481)
+[wallet/index.ts:1487](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1487)
 
 ___
 
@@ -1757,7 +1757,7 @@ This completely resets the send transaction state.
 
 #### Defined in
 
-[wallet/index.ts:3191](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3191)
+[wallet/index.ts:3190](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3190)
 
 ___
 
@@ -1784,7 +1784,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:1668](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1668)
+[wallet/index.ts:1674](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1674)
 
 ___
 
@@ -1815,7 +1815,7 @@ Sets up and creates a transaction to a single output/recipient.
 
 #### Defined in
 
-[wallet/index.ts:2685](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2685)
+[wallet/index.ts:2684](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2684)
 
 ___
 
@@ -1842,7 +1842,7 @@ Sets up and creates a transaction to multiple outputs.
 
 #### Defined in
 
-[wallet/index.ts:2553](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2553)
+[wallet/index.ts:2552](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2552)
 
 ___
 
@@ -1868,7 +1868,7 @@ Sends the maximum amount of sats to a given address at the specified satsPerByte
 
 #### Defined in
 
-[wallet/index.ts:2629](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2629)
+[wallet/index.ts:2628](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2628)
 
 ___
 
@@ -1884,7 +1884,7 @@ Sets the wallet data object.
 
 #### Defined in
 
-[wallet/index.ts:316](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L316)
+[wallet/index.ts:321](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L321)
 
 ___
 
@@ -1903,7 +1903,7 @@ Will also generate and store address and changeAddress at index 0.
 
 #### Defined in
 
-[wallet/index.ts:2736](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2736)
+[wallet/index.ts:2735](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2735)
 
 ___
 
@@ -1927,7 +1927,7 @@ Updates the fee rate for the current transaction to the preferred value if none 
 
 #### Defined in
 
-[wallet/index.ts:3328](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3328)
+[wallet/index.ts:3330](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3330)
 
 ___
 
@@ -1950,7 +1950,7 @@ Sets up the transaction object with existing inputs and change address informati
 
 #### Defined in
 
-[wallet/index.ts:2511](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2511)
+[wallet/index.ts:2510](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2510)
 
 ___
 
@@ -1974,7 +1974,7 @@ Ensure we are not overwriting wallet data of a different wallet by checking that
 
 #### Defined in
 
-[wallet/index.ts:339](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L339)
+[wallet/index.ts:344](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L344)
 
 ___
 
@@ -1995,7 +1995,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:209](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L209)
+[wallet/index.ts:214](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L214)
 
 ___
 
@@ -2021,7 +2021,7 @@ Updates the address index for a given address type.
 
 #### Defined in
 
-[wallet/index.ts:2787](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2787)
+[wallet/index.ts:2786](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2786)
 
 ___
 
@@ -2046,7 +2046,7 @@ This method updates the next available (zero-balance) address & changeAddress in
 
 #### Defined in
 
-[wallet/index.ts:1344](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1344)
+[wallet/index.ts:1350](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1350)
 
 ___
 
@@ -2068,7 +2068,7 @@ Updates the address type for the current wallet.
 
 #### Defined in
 
-[wallet/index.ts:248](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L248)
+[wallet/index.ts:253](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L253)
 
 ___
 
@@ -2090,7 +2090,7 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:1700](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1700)
+[wallet/index.ts:1706](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1706)
 
 ___
 
@@ -2108,7 +2108,7 @@ Updates the exchange rates for the current network.
 
 #### Defined in
 
-[wallet/index.ts:3380](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3380)
+[wallet/index.ts:3382](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3382)
 
 ___
 
@@ -2132,7 +2132,7 @@ Updates the fee estimates for the current network.
 
 #### Defined in
 
-[wallet/index.ts:3395](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3395)
+[wallet/index.ts:3397](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3397)
 
 ___
 
@@ -2157,7 +2157,7 @@ Removes transactions from the store and activity list.
 
 #### Defined in
 
-[wallet/index.ts:2004](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2004)
+[wallet/index.ts:2003](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2003)
 
 ___
 
@@ -2179,7 +2179,7 @@ Updates & Saves header information to storage.
 
 #### Defined in
 
-[wallet/index.ts:1992](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1992)
+[wallet/index.ts:1991](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1991)
 
 ___
 
@@ -2203,7 +2203,7 @@ Updates the confirmation state of activity item transactions that were reorg'd o
 
 #### Defined in
 
-[wallet/index.ts:2119](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2119)
+[wallet/index.ts:2118](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2118)
 
 ___
 
@@ -2227,7 +2227,7 @@ Retrieves, formats & stores the transaction history for the selected wallet/netw
 
 #### Defined in
 
-[wallet/index.ts:1721](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L1721)
+[wallet/index.ts:1727](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L1727)
 
 ___
 
@@ -2250,7 +2250,7 @@ Used to temporarily update the balance until the Electrum server catches up afte
 
 #### Defined in
 
-[wallet/index.ts:3364](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L3364)
+[wallet/index.ts:3366](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L3366)
 
 ___
 
@@ -2272,7 +2272,7 @@ Attempts to validate a given address.
 
 #### Defined in
 
-[wallet/index.ts:2433](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L2433)
+[wallet/index.ts:2432](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L2432)
 
 ___
 
@@ -2292,4 +2292,4 @@ ___
 
 #### Defined in
 
-[wallet/index.ts:194](https://github.com/synonymdev/beignet/blob/88520f5/src/wallet/index.ts#L194)
+[wallet/index.ts:199](https://github.com/synonymdev/beignet/blob/583604f/src/wallet/index.ts#L199)

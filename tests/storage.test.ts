@@ -9,7 +9,7 @@ import {
 	generateMnemonic
 } from '../src';
 import { TEST_MNEMONIC } from './constants';
-import { deleteDirectory, getData, setData } from '../example/helpers';
+import { deleteDirectory, getData, servers, setData } from '../example/helpers';
 
 const expect = chai.expect;
 
@@ -29,6 +29,9 @@ before(async function () {
 		storage: {
 			getData,
 			setData
+		},
+		electrumOptions: {
+			servers: servers[EAvailableNetworks.testnet]
 		}
 	});
 	if (res.isErr()) {

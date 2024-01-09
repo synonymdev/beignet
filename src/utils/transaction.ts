@@ -176,14 +176,14 @@ export const constructByteCountParam = (
 	@param {TGetByteCountInputs} inputs
 	@param {TGetByteCountOutputs} outputs
 	@param {string} [message]
-	@param {number} [minByteCount=TRANSACTION_DEFAULTS.recommendedBaseFee] - The minimum byte count to return. Often helpful when calculating fees for a transaction that has not yet been constructed.
+	@param {number} [minByteCount=166] - The minimum byte count to return. Often helpful when calculating fees for a transaction that has not yet been constructed.
 	@returns {number}
 */
 export const getByteCount = (
 	inputs: TGetByteCountInputs,
 	outputs: TGetByteCountOutputs,
 	message?: string,
-	minByteCount = TRANSACTION_DEFAULTS.recommendedBaseFee
+	minByteCount = 166
 ): number => {
 	try {
 		// Base transaction weight
@@ -282,7 +282,7 @@ export const getByteCount = (
 
 		// Convert from Weight Units to virtual size
 		const totalVsize = Math.ceil(totalWeight / 4);
-		return totalVsize > minByteCount ? totalVsize : minByteCount;
+		return totalVsize < minByteCount ? minByteCount : totalVsize;
 	} catch {
 		return minByteCount;
 	}

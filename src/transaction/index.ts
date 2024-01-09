@@ -60,7 +60,8 @@ export class Transaction {
 		inputTxHashes,
 		utxos,
 		rbf = false,
-		satsPerByte = 1
+		satsPerByte = 1,
+		outputs
 	}: ISetupTransaction = {}): Promise<TSetupTransactionResponse> {
 		try {
 			const addressType = this._wallet.data.addressType;
@@ -88,7 +89,6 @@ export class Transaction {
 					inputs = transaction.inputs;
 				} else {
 					// Otherwise, lets use our available utxo's.
-					//inputs = currentWallet.utxos;
 					inputs = this.removeBlackListedUtxos(currentWallet.utxos);
 				}
 			}
@@ -115,34 +115,13 @@ export class Transaction {
 				currentWallet.changeAddressIndex[addressType];
 			// Set the current change address.
 			const changeAddress = changeAddressIndexContent.address;
-
-			// The following code is no longer needed in beignet, but keeping until 1:1 migration with Bitkit is complete.
-			// if (!changeAddress || changeAddressIndexContent.index < 0) {
-			// 	// It's possible we haven't set the change address index yet. Generate one on the fly.
-			// 	const generateAddressResponse = await this._wallet.generateAddresses({
-			// 		addressAmount: 0,
-			// 		changeAddressAmount: 1,
-			// 		addressType
-			// 	});
-			// 	if (generateAddressResponse.isErr()) {
-			// 		return err(generateAddressResponse.error.message);
-			// 	}
-			// 	changeAddress =
-			// 		generateAddressResponse.value.changeAddresses[0].address;
-			// }
 			if (!changeAddress) {
 				return err('Unable to successfully generate a change address.');
 			}
 
-			// Set the minimum fee.
-			const fee = this.getTotalFee({
-				satsPerByte,
-				message: ''
-			});
-
 			const lightningInvoice = currentWallet.transaction?.lightningInvoice;
 
-			let outputs = currentWallet.transaction.outputs || [];
+			outputs = outputs || currentWallet.transaction?.outputs || [];
 			if (!lightningInvoice) {
 				//Remove any potential change address that may have been included from a previous tx attempt.
 				outputs = outputs.filter((output) => {
@@ -151,6 +130,17 @@ export class Transaction {
 					}
 				});
 			}
+
+			// Set the minimum fee.
+			const fee = this.getTotalFee({
+				satsPerByte,
+				message: '',
+				transaction: {
+					...transaction,
+					inputs,
+					outputs
+				}
+			});
 
 			const payload = {
 				inputs,
@@ -247,11 +237,12 @@ export class Transaction {
 				outputParam.P2WPKH = (outputParam.P2WPKH || 0) + 1;
 			}
 
-			const transactionByteCount = getByteCount(
-				inputParam,
-				outputParam,
-				message
-			);
+			let transactionByteCount = getByteCount(inputParam, outputParam, message);
+			if (satsPerByte < 2) {
+				const minByteCount = TRANSACTION_DEFAULTS.recommendedBaseFee;
+				if (transactionByteCount < minByteCount)
+					transactionByteCount = minByteCount;
+			}
 			return transactionByteCount * satsPerByte;
 		} catch {
 			return baseTransactionSize * satsPerByte;
@@ -320,15 +311,20 @@ export class Transaction {
 				outputParam.P2WPKH = (outputParam.P2WPKH || 0) + 1;
 			}
 
-			const transactionByteCount = getByteCount(
-				inputParam,
-				outputParam,
-				message
-			);
+			let transactionByteCount = getByteCount(inputParam, outputParam, message);
+			if (satsPerByte < 2) {
+				const minByteCount = TRANSACTION_DEFAULTS.recommendedBaseFee;
+				if (transactionByteCount < minByteCount)
+					transactionByteCount = minByteCount;
+			}
 			const inputAmount = this.getTransactionInputValue({ inputs });
+			const outputAmount = this.getTransactionOutputValue({ outputs });
+			// To prevent the user from spending more in fees than their output, use the output amount if available.
+			const txBalance =
+				outputAmount && outputAmount < inputAmount ? outputAmount : inputAmount;
 			const maxSatPerByte = this.getMaxSatsPerByte({
 				transactionByteCount,
-				balance: inputAmount
+				balance: txBalance
 			});
 			if (maxSatPerByte < satsPerByte) {
 				return ok({
@@ -642,6 +638,10 @@ export class Transaction {
 				return err('No input provided.');
 			}
 
+			if (input.value <= TRANSACTION_DEFAULTS.dustLimit) {
+				return err('Input value is below dust limit.');
+			}
+
 			if (type === 'p2wpkh') {
 				const p2wpkh = bitcoin.payments.p2wpkh({
 					pubkey: keyPair.publicKey,
@@ -716,6 +716,9 @@ export class Transaction {
 		value,
 		index = 0
 	}: IOutput): Promise<Result<string>> => {
+		if (value <= TRANSACTION_DEFAULTS.dustLimit) {
+			return err('Output value is below dust limit.');
+		}
 		if (!this.data.inputs?.length) {
 			const setupRes = await this.setupTransaction();
 			if (setupRes.isErr()) return err(setupRes.error.message);
@@ -768,6 +771,7 @@ export class Transaction {
 				const currentTransaction = this._wallet.transaction.data;
 				const outputs = currentTransaction.outputs.concat();
 				transaction.outputs.forEach((output) => {
+					//if (output.value > TRANSACTION_DEFAULTS.dustLimit)
 					outputs[output.index] = output;
 				});
 				transaction.outputs = outputs;
@@ -896,7 +900,7 @@ export class Transaction {
 			}
 
 			const maxAmountResponse = this.getMaxSendAmount({
-				satsPerByte: satsPerByte ?? 1,
+				satsPerByte: satsPerByte ?? transaction?.satsPerByte ?? 1,
 				selectedFeeId: transaction.selectedFeeId,
 				transaction
 			});
@@ -975,17 +979,17 @@ export class Transaction {
 				}
 			});
 
-			const maxAmount = {
-				amount: amount - fee,
-				fee,
-				satsPerByte
-			};
-
 			if (amount <= fee) {
 				return err(
 					`An amount of ${amount} is too low to spend with an expected fee of ${fee} at ${satsPerByte} satsPerVByte.`
 				);
 			}
+
+			const maxAmount = {
+				amount: amount - fee,
+				fee,
+				satsPerByte
+			};
 
 			return ok(maxAmount);
 		} catch (e) {
@@ -1003,32 +1007,19 @@ export class Transaction {
 	getMaxSendAmount({
 		satsPerByte,
 		selectedFeeId = EFeeId.none,
-		transaction
+		transaction = this.data
 	}: {
 		satsPerByte: number;
 		selectedFeeId?: EFeeId;
 		transaction?: ISendTransaction;
-	}): Result<{ amount: number; fee?: number }> {
+	}): Result<{ amount: number; fee: number }> {
 		try {
-			if (!transaction) {
-				transaction = this.data;
-			}
-
-			const currentWallet = this._wallet.data;
-			const onchainBalance = currentWallet.balance;
-
 			const inputValue = this.getTransactionInputValue({
 				inputs: transaction.inputs
 			});
-			const amount = onchainBalance > inputValue ? onchainBalance : inputValue;
+			const amount = inputValue;
 
-			let utxos: IUtxo[] = [];
-			//Ensure we add the larger utxo set for a more accurate fee.
-			if (transaction.inputs.length > currentWallet?.utxos.length) {
-				utxos = transaction.inputs;
-			} else {
-				utxos = currentWallet?.utxos ?? [];
-			}
+			const inputs = transaction.inputs ?? [];
 
 			const fee = this.getTotalFee({
 				satsPerByte,
@@ -1036,22 +1027,22 @@ export class Transaction {
 				transaction: {
 					...transaction,
 					max: true,
-					inputs: utxos,
+					inputs,
 					selectedFeeId,
 					satsPerByte
 				}
 			});
-
-			const maxAmount = {
-				amount: amount - fee,
-				fee
-			};
 
 			if (amount <= fee) {
 				return err(
 					`An amount of ${amount} is too low to spend with an expected fee of ${fee} at ${satsPerByte} satsPerVByte.`
 				);
 			}
+
+			const maxAmount = {
+				amount: amount - fee,
+				fee
+			};
 
 			return ok(maxAmount);
 		} catch (e) {

@@ -74,7 +74,7 @@
 
 #### Defined in
 
-[electrum/index.ts:65](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L65)
+[electrum/index.ts:65](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L65)
 
 ## Properties
 
@@ -84,7 +84,7 @@
 
 #### Defined in
 
-[electrum/index.ts:53](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L53)
+[electrum/index.ts:53](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L53)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:63](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L63)
+[electrum/index.ts:63](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L63)
 
 ___
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:56](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L56)
+[electrum/index.ts:56](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L56)
 
 ___
 
@@ -114,7 +114,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:62](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L62)
+[electrum/index.ts:62](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L62)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:55](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L55)
+[electrum/index.ts:55](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L55)
 
 ___
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:58](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L58)
+[electrum/index.ts:58](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L58)
 
 ___
 
@@ -144,7 +144,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:61](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L61)
+[electrum/index.ts:61](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L61)
 
 ___
 
@@ -154,7 +154,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:54](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L54)
+[electrum/index.ts:54](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L54)
 
 ___
 
@@ -178,7 +178,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:64](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L64)
+[electrum/index.ts:64](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L64)
 
 ___
 
@@ -188,7 +188,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:60](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L60)
+[electrum/index.ts:60](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L60)
 
 ___
 
@@ -198,7 +198,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:57](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L57)
+[electrum/index.ts:57](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L57)
 
 ## Accessors
 
@@ -212,7 +212,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:100](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L100)
+[electrum/index.ts:100](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L100)
 
 ## Methods
 
@@ -234,7 +234,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:755](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L755)
+[electrum/index.ts:753](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L753)
 
 ___
 
@@ -250,7 +250,7 @@ Attempts to check the current Electrum connection.
 
 #### Defined in
 
-[electrum/index.ts:802](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L802)
+[electrum/index.ts:800](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L800)
 
 ___
 
@@ -272,7 +272,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:104](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L104)
+[electrum/index.ts:104](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L104)
 
 ___
 
@@ -286,7 +286,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:840](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L840)
+[electrum/index.ts:838](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L838)
 
 ___
 
@@ -308,7 +308,7 @@ Returns the balance in sats for a given address.
 
 #### Defined in
 
-[electrum/index.ts:145](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L145)
+[electrum/index.ts:145](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L145)
 
 ___
 
@@ -332,7 +332,7 @@ Returns the available history for the provided address script hashes.
 
 #### Defined in
 
-[electrum/index.ts:251](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L251)
+[electrum/index.ts:251](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L251)
 
 ___
 
@@ -352,7 +352,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:165](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L165)
+[electrum/index.ts:165](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L165)
 
 ___
 
@@ -376,7 +376,7 @@ Leaving blockHex empty will return the last known block hash from storage.
 
 #### Defined in
 
-[electrum/index.ts:586](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L586)
+[electrum/index.ts:584](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L584)
 
 ___
 
@@ -392,7 +392,7 @@ Returns last known block height, and it's corresponding hex from local storage.
 
 #### Defined in
 
-[electrum/index.ts:602](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L602)
+[electrum/index.ts:600](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L600)
 
 ___
 
@@ -415,7 +415,7 @@ Returns the block hex of the provided block height.
 
 #### Defined in
 
-[electrum/index.ts:564](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L564)
+[electrum/index.ts:562](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L562)
 
 ___
 
@@ -431,7 +431,7 @@ Returns currently connected peer.
 
 #### Defined in
 
-[electrum/index.ts:178](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L178)
+[electrum/index.ts:178](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L178)
 
 ___
 
@@ -453,7 +453,7 @@ Returns the network string for use with Electrum methods.
 
 #### Defined in
 
-[electrum/index.ts:191](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L191)
+[electrum/index.ts:191](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L191)
 
 ___
 
@@ -475,7 +475,7 @@ Used to retrieve scriptPubkey history for LDK.
 
 #### Defined in
 
-[electrum/index.ts:366](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L366)
+[electrum/index.ts:365](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L365)
 
 ___
 
@@ -499,7 +499,7 @@ Returns the merkle branch to a confirmed transaction given its hash and height.
 
 #### Defined in
 
-[electrum/index.ts:641](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L641)
+[electrum/index.ts:639](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L639)
 
 ___
 
@@ -522,7 +522,7 @@ Returns available transactions from electrum based on the provided txHashes.
 
 #### Defined in
 
-[electrum/index.ts:484](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L484)
+[electrum/index.ts:483](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L483)
 
 ___
 
@@ -545,7 +545,7 @@ Returns transactions associated with the provided transaction hashes.
 
 #### Defined in
 
-[electrum/index.ts:611](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L611)
+[electrum/index.ts:609](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L609)
 
 ___
 
@@ -568,7 +568,7 @@ Returns UTXO's for a given wallet and network along with the available balance.
 
 #### Defined in
 
-[electrum/index.ts:408](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L408)
+[electrum/index.ts:407](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L407)
 
 ___
 
@@ -582,7 +582,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:135](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L135)
+[electrum/index.ts:135](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L135)
 
 ___
 
@@ -605,7 +605,7 @@ Queries Electrum to return the available UTXO's and balance of the provided addr
 
 #### Defined in
 
-[electrum/index.ts:209](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L209)
+[electrum/index.ts:209](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L209)
 
 ___
 
@@ -625,7 +625,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:829](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L829)
+[electrum/index.ts:827](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L827)
 
 ___
 
@@ -639,7 +639,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:845](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L845)
+[electrum/index.ts:843](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L843)
 
 ___
 
@@ -653,7 +653,7 @@ ___
 
 #### Defined in
 
-[electrum/index.ts:853](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L853)
+[electrum/index.ts:851](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L851)
 
 ___
 
@@ -677,7 +677,7 @@ Subscribes to a number of address script hashes for receiving.
 
 #### Defined in
 
-[electrum/index.ts:698](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L698)
+[electrum/index.ts:696](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L696)
 
 ___
 
@@ -693,7 +693,7 @@ Subscribes to the current networks headers.
 
 #### Defined in
 
-[electrum/index.ts:663](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L663)
+[electrum/index.ts:661](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L661)
 
 ___
 
@@ -715,4 +715,4 @@ Determines whether a transaction exists based on the transaction response from e
 
 #### Defined in
 
-[electrum/index.ts:541](https://github.com/synonymdev/beignet/blob/88520f5/src/electrum/index.ts#L541)
+[electrum/index.ts:539](https://github.com/synonymdev/beignet/blob/583604f/src/electrum/index.ts#L539)

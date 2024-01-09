@@ -22,7 +22,10 @@ before(async function () {
 	const res = await Wallet.create({
 		mnemonic: TEST_MNEMONIC,
 		network: EAvailableNetworks.testnet,
-		addressType: EAddressType.p2wpkh
+		addressType: EAddressType.p2wpkh,
+		electrumOptions: {
+			servers: servers[EAvailableNetworks.testnet]
+		}
 	});
 	if (res.isErr()) {
 		console.log('error: ', res.error.message);

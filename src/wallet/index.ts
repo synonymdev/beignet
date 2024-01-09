@@ -86,7 +86,12 @@ import {
 } from '../shapes';
 import { Electrum } from '../electrum';
 import { Transaction } from '../transaction';
-import { CHUNK_LIMIT, GAP_LIMIT, GENERATE_ADDRESS_AMOUNT } from './constants';
+import {
+	CHUNK_LIMIT,
+	GAP_LIMIT,
+	GENERATE_ADDRESS_AMOUNT,
+	TRANSACTION_DEFAULTS
+} from './constants';
 import cloneDeep from 'lodash.clonedeep';
 import { btcToSats } from '../utils/conversion';
 import * as bip39 from 'bip39';
@@ -3231,6 +3236,9 @@ export class Wallet {
 	 */
 	public addTxInput({ input }: { input: IUtxo }): Result<IUtxo[]> {
 		try {
+			if (input.value <= TRANSACTION_DEFAULTS.dustLimit) {
+				return err('Input value is below dust limit.');
+			}
 			const txData = this.transaction.data;
 			const inputs = txData?.inputs ?? [];
 			const newInputs = [...inputs, input];

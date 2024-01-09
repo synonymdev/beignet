@@ -1,4 +1,4 @@
-import { ISendTransaction, IUtxo, IVin, IVout } from './wallet';
+import { IOutput, ISendTransaction, IUtxo, IVin, IVout } from './wallet';
 import { BIP32Interface } from 'bip32';
 import { Psbt } from 'bitcoinjs-lib';
 import { Result } from '../utils';
@@ -26,6 +26,7 @@ export interface ISetupTransaction {
 	utxos?: IUtxo[]; // Used to pre-specify utxos to use
 	rbf?: boolean; // Enable or disable rbf
 	satsPerByte?: number; // Used to specify the fee rate in sats per vbyte
+	outputs?: IOutput[]; // Used to pre-specify outputs to use
 }
 
 export enum EFeeId {

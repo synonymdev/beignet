@@ -445,7 +445,8 @@ export class Wallet {
 							walletData[key] = data as IOnchainFees;
 							break;
 						default:
-							return err(`Unhandled key in getWalletData: ${key}`);
+							console.log(`Unhandled key in getWalletData: ${key}`);
+							break;
 					}
 				})
 			);

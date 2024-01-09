@@ -336,10 +336,9 @@ export class Electrum {
 
 			const responses = await Promise.all(promises);
 			responses.forEach((response) => {
-				if (response.error) {
-					return err('Unable to get address history.');
+				if (!response.error) {
+					combinedResponse.push(...response.data);
 				}
-				combinedResponse.push(...response.data);
 			});
 
 			const history: IGetAddressHistoryResponse[] = [];
@@ -518,8 +517,7 @@ export class Electrum {
 			}
 			const responses = await Promise.all(promises);
 			responses.forEach((response) => {
-				if (response.error) return err('Unable to get transactions.');
-				result.push(...response.data);
+				if (!response.error) result.push(...response.data);
 			});
 			return ok({
 				error: false,

@@ -2476,11 +2476,11 @@ export class Wallet {
 		try {
 			if (network === EAvailableNetworks.bitcoinRegtest) {
 				return {
-					fast: 60,
-					normal: 50,
-					slow: 40,
-					minimum: 30,
-					timestamp: Date.now()
+					fast: 4, // 10-20 mins
+					normal: 2, // 20-60 mins
+					slow: 1, // 1-2 hrs
+					minimum: 1,
+					timestamp: Date.now() - 60 * 30 * 1000 - 1
 				};
 			}
 

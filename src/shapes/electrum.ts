@@ -10,4 +10,4 @@ export const onMessageKeys: { [K in TMessageKeys]: K } = {
 	connectedToElectrum: 'connectedToElectrum'
 };
 
-export const POLLING_INTERVAL = 1000 * 20;
+export const POLLING_INTERVAL = 1000 * 10;

@@ -103,10 +103,12 @@ export class Electrum {
 
 	async connectToElectrum({
 		network = this.network,
-		servers
+		servers,
+		disableRegtestCheck = false // Used to ignore regtest check for certain tests.
 	}: {
 		network?: EAvailableNetworks;
 		servers?: TServer | TServer[];
+		disableRegtestCheck?: boolean;
 	}): Promise<Result<TConnectToElectrumRes>> {
 		let customPeers = servers
 			? Array.isArray(servers)
@@ -116,7 +118,11 @@ export class Electrum {
 		// @ts-ignore
 		customPeers = customPeers.length ? customPeers : this?.servers ?? [];
 		const electrumNetwork = this.getElectrumNetwork(network);
-		if (electrumNetwork === 'bitcoinRegtest' && !customPeers.length) {
+		if (
+			!disableRegtestCheck &&
+			electrumNetwork === 'bitcoinRegtest' &&
+			!customPeers.length
+		) {
 			return err('Regtest requires that you pre-specify a server.');
 		}
 		const startResponse = await electrum.start({

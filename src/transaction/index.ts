@@ -31,6 +31,7 @@ import { BIP32Interface } from 'bip32';
 import ecc from '@bitcoinerlab/secp256k1';
 import * as bitcoin from 'bitcoinjs-lib';
 import { getAddressInfo } from 'bitcoin-address-validation';
+import { ECPairInterface } from 'ecpair';
 
 bitcoin.initEccLib(ecc);
 
@@ -54,6 +55,7 @@ export class Transaction {
 	 * @param {IUtxo[]} [utxos]
 	 * @param {boolean} [rbf]
 	 * @param {number} [satsPerByte]
+	 * @param {IUtxo[]} [outputs]
 	 * @returns {Promise<Result<Partial<ISendTransaction>>>}
 	 */
 	public async setupTransaction({
@@ -472,7 +474,11 @@ export class Transaction {
 		const { inputs } = transactionDataRes;
 		for (const [index, input] of inputs.entries()) {
 			try {
-				const keyPair = bip32Interface.derivePath(input.path);
+				let keyPair = input?.keyPair;
+				if (!keyPair && input?.path) {
+					keyPair = bip32Interface.derivePath(input.path);
+				}
+				if (!keyPair) return err('Unable to derive keyPair.');
 				psbt.signInput(index, keyPair);
 			} catch (e) {
 				return err(e);
@@ -579,8 +585,13 @@ export class Transaction {
 		//Add Inputs from inputs array
 		try {
 			for (const input of inputs) {
-				const path = input.path;
-				const keyPair: BIP32Interface = root.derivePath(path);
+				let keyPair = input?.keyPair;
+				if (!keyPair && input?.path) {
+					keyPair = root.derivePath(input.path);
+				}
+				if (!keyPair) {
+					return err('Unable to derive keyPair.');
+				}
 				await this.addInput({
 					psbt,
 					keyPair,
@@ -640,6 +651,11 @@ export class Transaction {
 
 			if (input.value <= TRANSACTION_DEFAULTS.dustLimit) {
 				return err('Input value is below dust limit.');
+			}
+
+			// Use the provided input keyPair if available.
+			if (input?.keyPair) {
+				keyPair = input.keyPair;
 			}
 
 			if (type === 'p2wpkh') {
@@ -703,6 +719,53 @@ export class Transaction {
 			return err('Unable to add input.');
 		}
 	};
+
+	/**
+	 * Adds external inputs to the current transaction.
+	 * @param {IUtxo[]} inputs
+	 * @param {BIP32Interface | ECPairInterface} keyPair
+	 * @returns {Result<IUtxo[]>}
+	 */
+	public addExternalInputs({
+		inputs,
+		keyPair
+	}: {
+		inputs: IUtxo[];
+		keyPair: BIP32Interface | ECPairInterface;
+	}): Result<IUtxo[]> {
+		if (!inputs || !inputs.length) return err('No inputs provided.');
+		const transaction = this.data;
+		const newInputs = inputs.map((input) => {
+			return {
+				...input,
+				keyPair
+			};
+		});
+		const _inputs = [...transaction.inputs, ...newInputs];
+		const feeInfo = this.getTotalFeeObj({
+			satsPerByte: this.data.satsPerByte,
+			transaction: {
+				...transaction,
+				inputs: _inputs
+			}
+		});
+		if (feeInfo.isErr()) return err(feeInfo.error.message);
+		const feeUpdateRes = this.updateFee({
+			satsPerByte: 5,
+			transaction: {
+				...transaction,
+				inputs: _inputs
+			}
+		});
+		if (feeUpdateRes.isErr()) return err(feeUpdateRes.error.message);
+		const updateSendRes = this.updateSendTransaction({
+			transaction: {
+				inputs: _inputs
+			}
+		});
+		if (updateSendRes.isErr()) return err(updateSendRes.error.message);
+		return ok(_inputs);
+	}
 
 	/**
 	 * Adds an output at the specified index to the current transaction.

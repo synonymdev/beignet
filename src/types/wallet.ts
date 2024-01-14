@@ -9,6 +9,8 @@ import {
 import { EFeeId } from './transaction';
 import { TLSSocket } from 'tls';
 import { Server } from 'net';
+import { ECPairInterface } from 'ecpair';
+import { BIP32Interface } from 'bip32';
 
 export type TAvailableNetworks = 'bitcoin' | 'testnet' | 'regtest';
 export type TAddressType = 'p2wpkh' | 'p2sh' | 'p2pkh';
@@ -65,6 +67,7 @@ export interface IUtxo {
 	tx_hash: string;
 	tx_pos: number;
 	value: number;
+	keyPair?: BIP32Interface | ECPairInterface;
 }
 
 export interface IVin {
@@ -252,17 +255,6 @@ export interface IGetAddressBalanceRes {
 	unconfirmed: number;
 }
 
-export interface IUtxo {
-	address: string;
-	index: number;
-	path: string;
-	scriptHash: string;
-	height: number;
-	tx_hash: string;
-	tx_pos: number;
-	value: number;
-}
-
 export interface IGenerateAddresses {
 	addressAmount?: number;
 	changeAddressAmount?: number;
@@ -286,6 +278,16 @@ export interface IGenerateAddressesResponse {
 export interface IGetAddressResponse {
 	address: string;
 	path: string;
+	publicKey: string;
+}
+
+export interface IGetAddressesFromPrivateKey {
+	keyPair: BIP32Interface | ECPairInterface;
+	addresses: IGetAddressesFromKeyPair[];
+}
+
+export interface IGetAddressesFromKeyPair {
+	address: string;
 	publicKey: string;
 }
 
@@ -501,4 +503,25 @@ export interface IBoostedTransaction {
 
 export interface IBoostedTransactions {
 	[txId: string]: IBoostedTransaction;
+}
+
+export interface IPrivateKeyInfo {
+	balance: number;
+	utxos: IUtxo[];
+	keyPair: ECPairInterface | BIP32Interface;
+	addresses: IGetAddressesFromKeyPair[];
+}
+
+export interface ISweepPrivateKey {
+	privateKey: string;
+	toAddress: string;
+	satsPerByte?: number;
+	broadcast?: boolean;
+	combineWithWalletUtxos?: boolean;
+}
+
+export interface ISweepPrivateKeyRes {
+	balance: number;
+	id: string;
+	hex: string;
 }

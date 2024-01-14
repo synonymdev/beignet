@@ -158,6 +158,14 @@ const txs = [
 	{ address: 'address3', amount: 3000 },
 ];
 const sendManyRes = await wallet.sendMany({ txs });
+
+// Sweep from a private key
+const sweepPrivateKeyRes = await wallet.sweepPrivateKey({
+	privateKey: 'privateKey',
+	toAddress: 'toAddress',
+	satsPerByte: 5,
+	broadcast: false
+});
 ```
 
 ## Documentation

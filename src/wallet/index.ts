@@ -23,6 +23,7 @@ import {
 	IGetAddress,
 	IGetAddressBalanceRes,
 	IGetAddressByPath,
+	IGetAddressesFromPrivateKey,
 	IGetAddressResponse,
 	IGetFeeEstimatesResponse,
 	IGetNextAvailableAddressResponse,
@@ -32,10 +33,13 @@ import {
 	InputData,
 	IOnchainFees,
 	IOutput,
+	IPrivateKeyInfo,
 	IRbfData,
 	ISendTransaction,
 	ISendTx,
 	ISetupTransaction,
+	ISweepPrivateKey,
+	ISweepPrivateKeyRes,
 	ITransaction,
 	ITxHash,
 	IUtxo,
@@ -52,6 +56,7 @@ import {
 	TSetData,
 	TSetupTransactionResponse,
 	TTransactionMessage,
+	TUnspentAddressScriptHashData,
 	TWalletDataKeys
 } from '../types';
 import {
@@ -77,12 +82,15 @@ import {
 	Result,
 	shuffleArray,
 	validateAddress,
-	validateMnemonic
+	validateMnemonic,
+	getAddressesFromPrivateKey,
+	getAddressFromKeyPair
 } from '../utils';
 import {
 	addressTypes,
 	defaultFeesShape,
-	getAddressTypeContent
+	getAddressTypeContent,
+	getAddressTypes
 } from '../shapes';
 import { Electrum } from '../electrum';
 import { Transaction } from '../transaction';
@@ -504,40 +512,15 @@ export class Wallet {
 			return res.value;
 		}
 		const keyPair = this._root.derivePath(path);
-		let address;
-		switch (addressType) {
-			case EAddressType.p2wpkh:
-				//Get Bech32 (bc1) address
-				address =
-					bitcoin.payments.p2wpkh({
-						pubkey: keyPair.publicKey,
-						network: this.getBitcoinNetwork()
-					}).address ?? '';
-				break;
-			case EAddressType.p2sh:
-				//Get Segwit P2SH Address (3)
-				address =
-					bitcoin.payments.p2sh({
-						redeem: bitcoin.payments.p2wpkh({
-							pubkey: keyPair.publicKey,
-							network: this.getBitcoinNetwork()
-						}),
-						network: this.getBitcoinNetwork()
-					}).address ?? '';
-				break;
-			//Get Legacy Address (1)
-			case EAddressType.p2pkh:
-				address =
-					bitcoin.payments.p2pkh({
-						pubkey: keyPair.publicKey,
-						network: this.getBitcoinNetwork()
-					}).address ?? '';
-				break;
-		}
+		const network = this.getBitcoinNetwork(this._network);
+		const addressInfo = getAddressFromKeyPair({
+			keyPair,
+			addressType,
+			network
+		});
 		return {
-			address,
-			path,
-			publicKey: keyPair.publicKey.toString('hex')
+			...addressInfo,
+			path
 		};
 	}
 
@@ -3409,5 +3392,141 @@ export class Wallet {
 		this.feeEstimates = feeEstimates;
 		await this.saveWalletData('feeEstimates', feeEstimates);
 		return ok(feeEstimates);
+	}
+
+	/**
+	 * Get addresses from a given private key.
+	 * @param {string} privateKey
+	 * @param {EAddressType[]} [_addressTypes]
+	 * @returns {Result<IGetAddressesFromPrivateKey>}
+	 */
+	public getAddressesFromPrivateKey(
+		privateKey: string,
+		_addressTypes = getAddressTypes()
+	): Result<IGetAddressesFromPrivateKey> {
+		try {
+			const network = this.getBitcoinNetwork();
+			return getAddressesFromPrivateKey({
+				privateKey,
+				addrTypes: _addressTypes,
+				network
+			});
+		} catch (e) {
+			return err(e);
+		}
+	}
+
+	/**
+	 * Returns the balance, utxos, and keyPair info for a given private key.
+	 * @async
+	 * @param {string} privateKey
+	 * @returns {Promise<Result<IPrivateKeyInfo>>}
+	 */
+	public async getPrivateKeyInfo(
+		privateKey: string
+	): Promise<Result<IPrivateKeyInfo>> {
+		if (!privateKey) return err('No private key provided.');
+		const addressesRes = this.getAddressesFromPrivateKey(privateKey);
+		if (addressesRes.isErr()) {
+			return err(addressesRes.error.message);
+		}
+		const { addresses, keyPair } = addressesRes.value;
+		const addressData: TUnspentAddressScriptHashData = {};
+		addresses.map(({ address, publicKey }) => {
+			const scriptHash = getScriptHash({ address, network: this._network });
+			addressData[scriptHash] = {
+				scriptHash,
+				address,
+				index: 0,
+				path: '',
+				publicKey
+			};
+		});
+
+		const getUtxoRes = await this.electrum.listUnspentAddressScriptHashes({
+			addresses: addressData
+		});
+		if (getUtxoRes.isErr()) {
+			return err(getUtxoRes.error.message);
+		}
+		const { balance, utxos } = getUtxoRes.value;
+		if (!balance) {
+			return err('No balance available.');
+		}
+		if (balance < TRANSACTION_DEFAULTS.dustLimit) {
+			return err('Balance is below dust limit.');
+		}
+		return ok({ balance, utxos, keyPair, addresses });
+	}
+
+	/**
+	 * Sweeps a private key to a given address.
+	 * @async
+	 * @param {string} privateKey
+	 * @param {string} toAddress
+	 * @param {number} [satsPerByte]
+	 * @param {boolean} [broadcast]
+	 * @param {boolean} [combineWithWalletUtxos]
+	 * @returns {Promise<Result<ISweepPrivateKeyRes>>}
+	 */
+	public async sweepPrivateKey({
+		privateKey,
+		toAddress,
+		satsPerByte = this.feeEstimates.normal,
+		broadcast = true,
+		combineWithWalletUtxos = false
+	}: ISweepPrivateKey): Promise<Result<ISweepPrivateKeyRes>> {
+		const privateKeyInfo = await this.getPrivateKeyInfo(privateKey);
+		if (privateKeyInfo.isErr()) {
+			return err(privateKeyInfo.error.message);
+		}
+		const { balance, keyPair } = privateKeyInfo.value;
+		let utxos = privateKeyInfo.value.utxos;
+		utxos = utxos.map((utxo) => {
+			return { ...utxo, keyPair };
+		});
+		if (combineWithWalletUtxos) {
+			const walletUtxos = this.data.utxos;
+			utxos = [...walletUtxos, ...utxos];
+		}
+		await this.transaction.resetSendTransaction();
+		await this.transaction.setupTransaction({
+			satsPerByte,
+			utxos,
+			outputs: [{ address: toAddress, value: balance, index: 0 }]
+		});
+		const sendMaxRes = await this.transaction.sendMax({
+			address: toAddress,
+			satsPerByte,
+			transaction: {
+				...this.transaction.data,
+				outputs: [{ address: toAddress, value: balance, index: 0 }],
+				inputs: utxos,
+				satsPerByte
+			}
+		});
+		if (sendMaxRes.isErr()) {
+			return err(sendMaxRes.error.message);
+		}
+		const createRes = await this.transaction.createTransaction({});
+		if (createRes.isErr()) {
+			return err(createRes.error.message);
+		}
+		const response = {
+			...createRes.value,
+			balance
+		};
+		if (!broadcast) {
+			return ok(response);
+		}
+		const broadcastResponse = await this.electrum.broadcastTransaction({
+			rawTx: response.hex,
+			subscribeToOutputAddress: false
+		});
+		if (broadcastResponse.isErr()) {
+			return err(broadcastResponse.error.message);
+		}
+		response.id = broadcastResponse.value;
+		return ok(response);
 	}
 }

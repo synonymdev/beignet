@@ -1,12 +1,21 @@
-import { EAddressType, EAvailableNetworks, IKeyDerivationPath } from '../types';
+import {
+	EAddressType,
+	EAvailableNetworks,
+	IGetAddressesFromKeyPair,
+	IGetAddressesFromPrivateKey,
+	IKeyDerivationPath
+} from '../types';
 import { address as bitcoinJSAddress, Network, networks } from 'bitcoinjs-lib';
 import * as bip39 from 'bip39';
 import * as bitcoin from 'bitcoinjs-lib';
 import { availableNetworks, isValidBech32mEncodedString } from './wallet';
 import { err, ok, Result } from './result';
-import { addressTypes } from '../shapes';
+import { addressTypes, getAddressTypes } from '../shapes';
 import { getKeyDerivationPathObject } from './derivation-path';
-
+import { ECPairFactory, ECPairInterface } from 'ecpair';
+import * as ecc from '@bitcoinerlab/secp256k1';
+import { BIP32Interface } from 'bip32';
+const ECPair = ECPairFactory(ecc);
 /**
  * Get address for a given scriptPubKey.
  * @param scriptPubKey
@@ -187,5 +196,92 @@ export const objectsMatch = (obj1, obj2): boolean => {
 		);
 	} else {
 		return false;
+	}
+};
+
+/**
+ * Get address from key pair.
+ * @param {BIP32Interface | ECPairInterface} keyPair
+ * @param {EAddressType} addressType
+ * @param {Network} network
+ * @returns {IGetAddressesFromKeyPair}
+ */
+export const getAddressFromKeyPair = ({
+	keyPair,
+	addressType,
+	network
+}: {
+	keyPair: BIP32Interface | ECPairInterface;
+	addressType: EAddressType;
+	network: Network;
+}): IGetAddressesFromKeyPair => {
+	let address = '';
+	switch (addressType) {
+		case EAddressType.p2wpkh:
+			//Get Bech32 (bc1) address
+			address =
+				bitcoin.payments.p2wpkh({
+					pubkey: keyPair.publicKey,
+					network
+				}).address ?? '';
+			break;
+		case EAddressType.p2sh:
+			//Get Segwit P2SH Address (3)
+			address =
+				bitcoin.payments.p2sh({
+					redeem: bitcoin.payments.p2wpkh({
+						pubkey: keyPair.publicKey,
+						network
+					}),
+					network
+				}).address ?? '';
+			break;
+		//Get Legacy Address (1)
+		case EAddressType.p2pkh:
+			address =
+				bitcoin.payments.p2pkh({
+					pubkey: keyPair.publicKey,
+					network
+				}).address ?? '';
+			break;
+	}
+	return {
+		address,
+		publicKey: keyPair.publicKey.toString('hex')
+	};
+};
+
+/**
+ * Get addresses from a private key.
+ * @param {string} privateKey
+ * @param {EAddressType[]} [addrTypes]
+ * @param {Network} [network]
+ */
+export const getAddressesFromPrivateKey = ({
+	privateKey,
+	addrTypes = getAddressTypes(),
+	network = bitcoin.networks.bitcoin
+}: {
+	privateKey: string;
+	addrTypes?: EAddressType[];
+	network?: Network;
+}): Result<IGetAddressesFromPrivateKey> => {
+	try {
+		if (!privateKey) return err('No private key provided.');
+		const keyPair = ECPair.fromWIF(privateKey, network);
+		const response = addrTypes.map((addressType) => {
+			return getAddressFromKeyPair({
+				keyPair,
+				addressType,
+				network
+			});
+		});
+		if (!response) return err('Unable to get addresses from private key.');
+		return ok({
+			keyPair,
+			addresses: response
+		});
+	} catch (e) {
+		return err(e);
 	}
 };

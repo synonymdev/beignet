@@ -7,12 +7,10 @@ import {
 	IOutput,
 	ISendTransaction,
 	TDecodeRawTx,
-	TGetByteCountInput,
 	TGetByteCountInputs,
-	TGetByteCountOutput,
 	TGetByteCountOutputs
 } from '../types';
-import { objectKeys, reduceValue } from './wallet';
+import { reduceValue } from './wallet';
 import validate, { getAddressInfo } from 'bitcoin-address-validation';
 import * as bip21 from 'bip21';
 import { TRANSACTION_DEFAULTS } from '../wallet/constants';
@@ -186,101 +184,102 @@ export const getByteCount = (
 	minByteCount = 166
 ): number => {
 	try {
-		// Base transaction weight
-		let totalWeight = 40;
+		let totalWeight = 0;
 		let hasWitness = false;
-
-		const types: {
+		let inputCount = 0;
+		let outputCount = 0;
+		// assumes compressed pubkeys in all cases.
+		const types = {
+			// MULTISIG-* do not include pubkeys or signatures yet (this is calculated at runtime)
+			// sigs = 73 and pubkeys = 34 (these include pushdata byte)
 			inputs: {
-				[key in TGetByteCountInput]: number;
-			};
-			multiSigInputs: {
-				'MULTISIG-P2SH': number;
-				'MULTISIG-P2WSH': number;
-				'MULTISIG-P2SH-P2WSH': number;
-			};
-			outputs: {
-				[key in TGetByteCountOutput]: number;
-			};
-		} = {
-			inputs: {
-				P2WPKH: 108 + 41 * 4,
-				p2wpkh: 108 + 41 * 4 + 1,
+				// Non-segwit: (txid:32) + (vout:4) + (sequence:4) + (script_len:3(max))
+				//   + (script_bytes(OP_0,PUSHDATA(max:3),m,n,CHECK_MULTISIG):5)
+				'MULTISIG-P2SH': 51 * 4,
+				// Segwit: (push_count:1) + (script_bytes(OP_0,PUSHDATA(max:3),m,n,CHECK_MULTISIG):5)
+				// Non-segwit: (txid:32) + (vout:4) + (sequence:4) + (script_len:1)
+				'MULTISIG-P2WSH': 8 + 41 * 4,
+				// Segwit: (push_count:1) + (script_bytes(OP_0,PUSHDATA(max:3),m,n,CHECK_MULTISIG):5)
+				// Non-segwit: (txid:32) + (vout:4) + (sequence:4) + (script_len:1) + (p2wsh:35)
+				'MULTISIG-P2SH-P2WSH': 8 + 76 * 4,
+				// Non-segwit: (txid:32) + (vout:4) + (sequence:4) + (script_len:1) + (sig:73) + (pubkey:34)
 				P2PKH: 148 * 4,
-				p2pkh: 148 * 4 + 1,
-				P2SH: 108 + 64 * 4,
-				p2sh: 108 + 64 * 4 + 1,
-				'P2SH-P2WPKH': 108 + 64 * 4,
-				P2TR: 57.5 * 4,
-				p2tr: 57.5 * 4 + 1
-			},
-			multiSigInputs: {
-				'MULTISIG-P2SH': 49 * 4,
-				'MULTISIG-P2WSH': 6 + 41 * 4,
-				'MULTISIG-P2SH-P2WSH': 6 + 76 * 4
+				// Segwit: (push_count:1) + (sig:73) + (pubkey:34)
+				// Non-segwit: (txid:32) + (vout:4) + (sequence:4) + (script_len:1)
+				P2WPKH: 108 + 41 * 4,
+				// Segwit: (push_count:1) + (sig:73) + (pubkey:34)
+				// Non-segwit: (txid:32) + (vout:4) + (sequence:4) + (script_len:1) + (p2wpkh:23)
+				'P2SH-P2WPKH': 108 + 64 * 4
 			},
 			outputs: {
+				// (p2sh:24) + (amount:8)
 				P2SH: 32 * 4,
+				// (p2pkh:26) + (amount:8)
 				P2PKH: 34 * 4,
+				// (p2wpkh:23) + (amount:8)
 				P2WPKH: 31 * 4,
-				P2WSH: 43 * 4,
-				p2wpkh: 31 * 4 + 1,
-				p2sh: 32 * 4 + 1,
-				p2pkh: 34 * 4 + 1,
-				P2TR: 43 * 4,
-				p2tr: 43 * 4 + 1
+				// (p2wsh:35) + (amount:8)
+				P2WSH: 43 * 4
 			}
 		};
 
-		const checkUInt53 = (n: number): void => {
-			if (n < 0 || n > Number.MAX_SAFE_INTEGER || n % 1 !== 0) {
+		const checkUInt53 = (n): void => {
+			if (n < 0 || n > Number.MAX_SAFE_INTEGER || n % 1 !== 0)
 				throw new RangeError('value out of range');
-			}
 		};
 
-		const inputKeys = objectKeys(inputs);
-		inputKeys.forEach(function (key) {
-			const input = inputs[key]!;
-			checkUInt53(input);
-			const addressTypeCount = input || 1;
+		const varIntLength = (number): number => {
+			checkUInt53(number);
+
+			return number < 0xfd
+				? 1
+				: number <= 0xffff
+				? 3
+				: number <= 0xffffffff
+				? 5
+				: 9;
+		};
+
+		Object.keys(inputs).forEach(function (key) {
+			key = key.toUpperCase();
+			checkUInt53(inputs[key]);
 			if (key.slice(0, 8) === 'MULTISIG') {
 				// ex. "MULTISIG-P2SH:2-3" would mean 2 of 3 P2SH MULTISIG
 				const keyParts = key.split(':');
-				if (keyParts.length !== 2) {
-					throw new Error('invalid input: ' + key);
-				}
+				if (keyParts.length !== 2) throw new Error('invalid input: ' + key);
 				const newKey = keyParts[0];
-				const mAndN = keyParts[1].split('-').map((item) => parseInt(item, 10));
+				const mAndN = keyParts[1].split('-').map(function (item) {
+					return parseInt(item);
+				});
 
-				totalWeight += types.multiSigInputs[newKey] * addressTypeCount;
+				totalWeight += types.inputs[newKey] * inputs[key];
 				const multiplyer = newKey === 'MULTISIG-P2SH' ? 4 : 1;
 				totalWeight +=
-					(73 * mAndN[0] + 34 * mAndN[1]) * multiplyer * addressTypeCount;
+					(73 * mAndN[0] + 34 * mAndN[1]) * multiplyer * inputs[key];
 			} else {
-				totalWeight += types.inputs[key] * addressTypeCount;
+				totalWeight += types.inputs[key] * inputs[key];
 			}
-			if (['p2sh', 'P2SH', 'P2SH-P2WPKH', 'p2wpkh', 'P2WPKH'].includes(key)) {
-				hasWitness = true;
-			}
+			inputCount += inputs[key];
+			if (key.indexOf('W') >= 0) hasWitness = true;
 		});
 
-		const outputKeys = objectKeys(outputs);
-		outputKeys.forEach(function (key) {
-			const output = outputs[key]!;
-			checkUInt53(output);
-			totalWeight += types.outputs[key] * output;
+		Object.keys(outputs).forEach(function (key) {
+			key = key.toUpperCase();
+			checkUInt53(outputs[key]);
+			totalWeight += types.outputs[key] * outputs[key];
+			outputCount += outputs[key];
 		});
 
-		if (hasWitness) {
-			totalWeight += 2;
-		}
-
+		if (hasWitness) totalWeight += 2;
 		if (message?.length) {
 			// Multiply by 2 to help ensure Electrum servers will broadcast the tx.
 			totalWeight += message.length * 2;
 		}
 
-		// Convert from Weight Units to virtual size
+		totalWeight += 8 * 4;
+		totalWeight += varIntLength(inputCount) * 4;
+		totalWeight += varIntLength(outputCount) * 4;
+
 		const totalVsize = Math.ceil(totalWeight / 4);
 		return totalVsize < minByteCount ? minByteCount : totalVsize;
 	} catch {

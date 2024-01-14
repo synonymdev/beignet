@@ -2,6 +2,7 @@ import { IOutput, ISendTransaction, IUtxo, IVin, IVout } from './wallet';
 import { BIP32Interface } from 'bip32';
 import { Psbt } from 'bitcoinjs-lib';
 import { Result } from '../utils';
+import { ECPairInterface } from 'ecpair';
 
 export interface ICreateTransaction {
 	transactionData?: ISendTransaction;
@@ -10,7 +11,7 @@ export interface ICreateTransaction {
 
 export interface IAddInput {
 	psbt: Psbt;
-	keyPair: BIP32Interface;
+	keyPair: BIP32Interface | ECPairInterface;
 	input: IUtxo;
 }
 

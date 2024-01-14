@@ -4,9 +4,9 @@ import { IAddress, IAddresses, Wallet } from '../';
 import {
 	EAddressType,
 	EAvailableNetworks,
+	generateMnemonic,
 	IGetUtxosResponse,
-	Result,
-	generateMnemonic
+	Result
 } from '../src';
 import { TEST_MNEMONIC } from './constants';
 import { servers } from '../example/helpers';
@@ -260,7 +260,10 @@ describe('Wallet Library', async function () {
 
 	it('Should successfully switch from regtest to mainnet', async () => {
 		expect(wallet.network).to.equal(EAvailableNetworks.regtest);
-		await wallet.switchNetwork(EAvailableNetworks.mainnet);
+		await wallet.switchNetwork(
+			EAvailableNetworks.mainnet,
+			servers[EAvailableNetworks.mainnet]
+		);
 		it('Should successfully create a wallet for the new network.', () => {
 			expect(wallet).not.to.be.null;
 		});

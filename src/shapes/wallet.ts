@@ -131,3 +131,7 @@ export const defaultFeesShape: IOnchainFees = {
 	minimum: 1,
 	timestamp: Date.now() - 60 * 30 * 1000 - 1
 };
+
+export const getAddressTypes = (): EAddressType[] => {
+	return cloneDeep(Object.values(EAddressType));
+};

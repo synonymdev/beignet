@@ -1,6 +1,11 @@
 import * as chai from 'chai';
-import { decodeRawTransaction, Wallet } from '../';
-import { EAvailableNetworks } from '../src';
+import {
+	decodeRawTransaction,
+	IPrivateKeyInfo,
+	ISweepPrivateKeyRes,
+	Wallet
+} from '../';
+import { EAvailableNetworks, Result } from '../src';
 import { TRANSACTION_TEST_MNEMONIC } from './constants';
 import { servers } from '../example/helpers';
 
@@ -193,5 +198,83 @@ describe('Transaction Test', async function (): Promise<void> {
 			]
 		};
 		expect(decodeRes.value).to.deep.equal(expectedDecodeRes);
+	});
+
+	it('Should successfully sweep from a private key.', async (): Promise<void> => {
+		const sweepPrivateKey: Result<ISweepPrivateKeyRes> =
+			await wallet.sweepPrivateKey({
+				privateKey: 'cUVwTLfHYrF7KGdTVU4AcP4yjtRTH3Y2BbTKHJbp2tsHDfpE8Zq5',
+				toAddress: 'tb1qaq7jszepjuntxx494xhwrxs746v94583ls02ke',
+				satsPerByte: 5,
+				broadcast: false
+			});
+		if (sweepPrivateKey.isErr()) return;
+		expect(sweepPrivateKey.value.id).to.equal(
+			'7fbef762e16676715bc94693a495923273259aa1190a5bf97bf18ab676393af5'
+		);
+		expect(sweepPrivateKey.value.balance).to.equal(99170);
+		expect(sweepPrivateKey.value.hex).to.equal(
+			'02000000000101a501e33469d9c408f8825511ed98dfffc99625e003eb76b804ab4de61eb9f6490000000000ffffffff012480010000000000160014e83d280b219726b31aa5a9aee19a1eae985ad0f10247304402201748d26e4a1b49ac0fc3351fc23a02af7fb3d5c0cf30e026cd44f0014cb3b623022074702ba358169c8ac4792fbe962426046684dc152171168d16b90ed272657421012103eb5e83e7992a936edb19b18e4743047ef0f7aba4f469d8d3da1a2f0c514c7dab00000000'
+		);
+	});
+
+	it('Should successfully sweep from a private key along with our existing utxos.', async (): Promise<void> => {
+		const sweepPrivateKey: Result<ISweepPrivateKeyRes> =
+			await wallet.sweepPrivateKey({
+				privateKey: 'cUVwTLfHYrF7KGdTVU4AcP4yjtRTH3Y2BbTKHJbp2tsHDfpE8Zq5',
+				toAddress: 'tb1qaq7jszepjuntxx494xhwrxs746v94583ls02ke',
+				satsPerByte: 5,
+				broadcast: false,
+				combineWithWalletUtxos: true
+			});
+		if (sweepPrivateKey.isErr()) return;
+		expect(sweepPrivateKey.value.id).to.equal(
+			'ea6677d40bbf44dbc2d19d3765fd440aa2344f928d724dc021884fc5984e91ff'
+		);
+		expect(sweepPrivateKey.value.balance).to.equal(99170);
+		expect(sweepPrivateKey.value.hex).to.equal(
+			'020000000001024b44d379e48a8100d1c26f7220b8bbf7a4894ff015d5bc4064a28d08d25d808d0000000000ffffffffa501e33469d9c408f8825511ed98dfffc99625e003eb76b804ab4de61eb9f6490000000000ffffffff0168b8020000000000160014e83d280b219726b31aa5a9aee19a1eae985ad0f102483045022100e9143b3939cf6bece6f0ec809299b8d30333713ebb98832b0ba96418c270048d02200b0adbb27999dab3a0e24948b65fec4a42ebacfa339062f888f674f554754344012102e86b90924963237c59e5389aab1cc5350c114549d1c5e7186a56ef33aea24ff902483045022100ecdc33cc3688ee777a794eb9720789bee92ab675b897d3e920fa32d6247d6f9702200eb45dbd5eda97aa93a29bdec83032eabb3d0a2fa6b5b8b6f0bdf2321fdad989012103eb5e83e7992a936edb19b18e4743047ef0f7aba4f469d8d3da1a2f0c514c7dab00000000'
+		);
+	});
+
+	it('Should successfully add external inputs to an existing transaction.', async (): Promise<void> => {
+		await wallet.transaction.resetSendTransaction();
+		const setupResponse = await wallet.transaction.setupTransaction({
+			outputs: [
+				{ address: 'tb1qaq7jszepjuntxx494xhwrxs746v94583ls02ke', value: 5000 }
+			]
+		});
+		expect(setupResponse.isErr()).to.equal(false);
+		if (setupResponse.isErr()) return;
+		const privateKeyInfo: Result<IPrivateKeyInfo> =
+			await wallet.getPrivateKeyInfo(
+				'cUVwTLfHYrF7KGdTVU4AcP4yjtRTH3Y2BbTKHJbp2tsHDfpE8Zq5'
+			);
+		expect(privateKeyInfo.isErr()).to.equal(false);
+		if (privateKeyInfo.isErr()) return;
+		const utxos = privateKeyInfo.value.utxos;
+		const keyPair = privateKeyInfo.value.keyPair;
+		expect(Array.isArray(utxos)).to.equal(true);
+		expect(keyPair).not.to.be.null;
+		expect(keyPair.publicKey.toString('hex')).to.equal(
+			'03eb5e83e7992a936edb19b18e4743047ef0f7aba4f469d8d3da1a2f0c514c7dab'
+		);
+		const addExternRes = wallet.transaction.addExternalInputs({
+			inputs: utxos,
+			keyPair
+		});
+		expect(addExternRes.isErr()).to.equal(false);
+		if (addExternRes.isErr()) return;
+		const createTransaction = await wallet.transaction.createTransaction({
+			shuffleOutputs: false
+		});
+		expect(createTransaction.isErr()).to.equal(false);
+		if (createTransaction.isErr()) return;
+		expect(createTransaction.value.id).to.equal(
+			'450d473249b054d7c96c7ce343dbec3588b7f4db0af052414c2e6a1bf7e0974d'
+		);
+		expect(createTransaction.value.hex).to.equal(
+			'020000000001024b44d379e48a8100d1c26f7220b8bbf7a4894ff015d5bc4064a28d08d25d808d0000000000ffffffffa501e33469d9c408f8825511ed98dfffc99625e003eb76b804ab4de61eb9f6490000000000ffffffff028813000000000000160014e83d280b219726b31aa5a9aee19a1eae985ad0f145a4020000000000160014a6bd95db4dd6979189cad389daad006e236f4ba8024730440220732b4a7929bded373471b6d2fbffc1d3cbd3f97f52a0b8b1dafc798b09994a360220074d00ceafefa50e0ad0e3a981760026ab25ea75a5c988b045904b854bcabae0012102e86b90924963237c59e5389aab1cc5350c114549d1c5e7186a56ef33aea24ff902483045022100e69685a012ccb5e10783e28eb3d6d17fe29dc9fd3bb52aa00a7d26c39d63b32b0220742c11ffb83d4ad66b73e0a5408c6d4de287a846df7b14c4870a55bc8f262732012103eb5e83e7992a936edb19b18e4743047ef0f7aba4f469d8d3da1a2f0c514c7dab00000000'
+		);
 	});
 });

@@ -735,6 +735,7 @@ export class Transaction {
 	}): Result<IUtxo[]> {
 		if (!inputs || !inputs.length) return err('No inputs provided.');
 		const transaction = this.data;
+		const satsPerByte = transaction.satsPerByte;
 		const newInputs = inputs.map((input) => {
 			return {
 				...input,
@@ -743,7 +744,7 @@ export class Transaction {
 		});
 		const _inputs = [...transaction.inputs, ...newInputs];
 		const feeInfo = this.getTotalFeeObj({
-			satsPerByte: this.data.satsPerByte,
+			satsPerByte,
 			transaction: {
 				...transaction,
 				inputs: _inputs
@@ -751,7 +752,7 @@ export class Transaction {
 		});
 		if (feeInfo.isErr()) return err(feeInfo.error.message);
 		const feeUpdateRes = this.updateFee({
-			satsPerByte: 5,
+			satsPerByte,
 			transaction: {
 				...transaction,
 				inputs: _inputs

@@ -50,6 +50,7 @@ import {
 	TAvailableNetworks,
 	TGetData,
 	TGetTotalFeeObj,
+	TMessageDataMap,
 	TOnMessage,
 	TProcessUnconfirmedTransactions,
 	TServer,
@@ -126,6 +127,7 @@ export class Wallet {
 	private _pendingRefreshPromises: Array<
 		(result: Result<IWalletData>) => void
 	> = [];
+	private _disableMessagesOnCreate: boolean;
 
 	public isRefreshing: boolean;
 	public isSwitchingNetworks: boolean;
@@ -138,11 +140,12 @@ export class Wallet {
 	};
 	public electrum: Electrum;
 	public exchangeRates: IExchangeRates;
-	public onMessage: TOnMessage;
+	public sendMessage: TOnMessage;
 	public transaction: Transaction;
 	public feeEstimates: IOnchainFees;
 	public rbf: boolean;
 	public selectedFeeId: EFeeId;
+	public disableMessages: boolean;
 	private constructor({
 		mnemonic,
 		passphrase,
@@ -155,7 +158,9 @@ export class Wallet {
 		customGetAddress,
 		customGetScriptHash,
 		rbf = false,
-		selectedFeeId = EFeeId.normal
+		selectedFeeId = EFeeId.normal,
+		disableMessages = false,
+		disableMessagesOnCreate = false
 	}: IWallet) {
 		if (!mnemonic) throw new Error('No mnemonic specified.');
 		if (!validateMnemonic(mnemonic)) throw new Error('Invalid mnemonic.');
@@ -172,6 +177,7 @@ export class Wallet {
 		this._data = { ...getDefaultWalletData(), addressType };
 		this._getData = storage?.getData ?? getDataFallback;
 		this._setData = storage?.setData;
+		this._disableMessagesOnCreate = disableMessagesOnCreate;
 		if (customGetAddress) this._customGetAddress = customGetAddress;
 		if (customGetScriptHash) this._customGetScriptHash = customGetScriptHash;
 		this.id = generateWalletId(this._seed);
@@ -181,7 +187,14 @@ export class Wallet {
 			wallet: this
 		});
 		this.feeEstimates = cloneDeep(defaultFeesShape);
-		this.onMessage = onMessage;
+		this.disableMessages = disableMessages;
+		this.sendMessage = <K extends keyof TMessageDataMap>(
+			key: K,
+			data: TMessageDataMap[K]
+		) => {
+			if (this.disableMessages) return;
+			onMessage(key, data);
+		};
 		this.electrumOptions = electrumOptions;
 		this.electrum = new Electrum({
 			wallet: this,
@@ -207,12 +220,14 @@ export class Wallet {
 	static async create(params: IWallet): Promise<Result<Wallet>> {
 		try {
 			const wallet = new Wallet(params);
+			if (wallet._disableMessagesOnCreate) wallet.disableMessages = true;
 			const res = await wallet.setWalletData();
 			if (res.isErr()) return err(res.error.message);
 			wallet.updateExchangeRates();
 			wallet.updateFeeEstimates();
 			console.log('Syncing Wallet...');
 			await wallet.refreshWallet({});
+			if (wallet._disableMessagesOnCreate) wallet.disableMessages = false;
 			return ok(wallet);
 		} catch (e) {
 			return err(e);
@@ -1806,13 +1821,13 @@ export class Wallet {
 		await this.saveWalletData('transactions', this._data.transactions);
 
 		sentTxs.forEach((tx) => {
-			this.onMessage('transactionSent', tx);
+			this.sendMessage('transactionSent', tx);
 		});
 		receivedTxs.forEach((tx) => {
-			this.onMessage('transactionReceived', tx);
+			this.sendMessage('transactionReceived', tx);
 		});
 		confirmedTxs.forEach((tx) => {
-			this.onMessage('transactionConfirmed', tx);
+			this.sendMessage('transactionConfirmed', tx);
 		});
 
 		return ok(notificationTxid);
@@ -1835,12 +1850,12 @@ export class Wallet {
 
 			const { unconfirmedTxs, outdatedTxs, ghostTxs } = processRes.value;
 			if (outdatedTxs.length > 0) {
-				this.onMessage('reorg', outdatedTxs);
+				this.sendMessage('reorg', outdatedTxs);
 				//We need to update the height of the transactions that were reorg'd out.
 				await this.updateTransactionHeights(outdatedTxs);
 			}
 			if (ghostTxs.length > 0) {
-				this.onMessage('rbf', ghostTxs);
+				this.sendMessage('rbf', ghostTxs);
 				//We need to update the ghost transactions in the store & activity-list and rescan the addresses to get the correct balance.
 				await this.updateGhostTransactions({
 					txIds: ghostTxs

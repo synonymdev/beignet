@@ -319,9 +319,10 @@ export class Electrum {
 			const combinedResponse: TTxResponse[] = [];
 			const promises: Promise<IGetAddressScriptHashesHistoryResponse>[] = [];
 
+			const chunkLimit = CHUNK_LIMIT[this.network];
 			// split payload in chunks of 10 addresses per-request
-			for (let i = 0; i < scriptHashes.length; i += CHUNK_LIMIT) {
-				const chunk = scriptHashes.slice(i, i + CHUNK_LIMIT);
+			for (let i = 0; i < scriptHashes.length; i += chunkLimit) {
+				const chunk = scriptHashes.slice(i, i + chunkLimit);
 				const payload = {
 					key: 'scriptHash',
 					data: chunk
@@ -505,9 +506,10 @@ export class Electrum {
 			const result: ITransaction<IUtxo>[] = [];
 			const promises: Promise<IGetTransactions>[] = [];
 
+			const chunkLimit = CHUNK_LIMIT[this.network];
 			// split payload in chunks of 10 transactions per-request
-			for (let i = 0; i < txHashes.length; i += CHUNK_LIMIT) {
-				const chunk = txHashes.slice(i, i + CHUNK_LIMIT);
+			for (let i = 0; i < txHashes.length; i += chunkLimit) {
+				const chunk = txHashes.slice(i, i + chunkLimit);
 
 				const data = {
 					key: 'tx_hash',
@@ -626,10 +628,10 @@ export class Electrum {
 				txHashes: data,
 				network: this.electrumNetwork
 			});
-			if (!response.error) {
+			if (response && !response.error) {
 				return ok(response);
 			} else {
-				return err(response);
+				return err(response ?? 'Unable to get transactions from inputs.');
 			}
 		} catch (e) {
 			return err(e);

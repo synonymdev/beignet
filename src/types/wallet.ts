@@ -203,6 +203,8 @@ export interface IWallet {
 	customGetScriptHash?: (data: ICustomGetScriptHash) => Promise<string>;
 	rbf?: boolean;
 	selectedFeeId?: EFeeId;
+	disableMessages?: boolean;
+	disableMessagesOnCreate?: boolean;
 }
 
 export interface IAddressData {

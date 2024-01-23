@@ -51,7 +51,7 @@ try {
 
 export class Electrum {
 	private readonly _wallet: Wallet;
-	private onMessage: TOnMessage;
+	private sendMessage: TOnMessage;
 	private latestConnectionState: boolean | null = null;
 	private connectionPollingInterval: NodeJS.Timeout | null;
 	private tls: TLSSocket;
@@ -78,7 +78,7 @@ export class Electrum {
 		net?: Server;
 	}) {
 		this._wallet = wallet;
-		this.onMessage = wallet.onMessage;
+		this.sendMessage = wallet.sendMessage;
 		this.servers = servers ?? [];
 		this.network = network;
 		this.electrumNetwork = this.getElectrumNetwork(network);
@@ -674,7 +674,7 @@ export class Electrum {
 					const header: IHeader = { ...data[0], hash };
 					this._wallet.updateHeader(header);
 					this.onReceive?.(data);
-					this.onMessage(onMessageKeys.newBlock, data[0]);
+					this.sendMessage(onMessageKeys.newBlock, data[0]);
 				}
 			});
 		if (subscribeResponse.error) {
@@ -835,7 +835,7 @@ export class Electrum {
 			this.latestConnectionState !== isConnected &&
 			!this.wallet.isSwitchingNetworks
 		) {
-			this.onMessage('connectedToElectrum', isConnected);
+			this.sendMessage('connectedToElectrum', isConnected);
 			this.connectedToElectrum = isConnected;
 			this.latestConnectionState = isConnected;
 		}

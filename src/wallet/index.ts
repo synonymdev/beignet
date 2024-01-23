@@ -2227,7 +2227,9 @@ export class Wallet {
 			inputs
 		});
 		if (inputDataResponse.isErr()) {
-			return err(inputDataResponse.error.message);
+			return err(
+				inputDataResponse.error?.message ?? 'Unable to get input data.'
+			);
 		}
 		const addressTypeKeys = Object.values(EAddressType);
 		const inputData = inputDataResponse.value;
@@ -2378,15 +2380,20 @@ export class Wallet {
 		try {
 			const inputData: InputData = {};
 
-			for (let i = 0; i < inputs.length; i += CHUNK_LIMIT) {
-				const chunk = inputs.slice(i, i + CHUNK_LIMIT);
+			const chunkLimit = CHUNK_LIMIT[this.network];
+			for (let i = 0; i < inputs.length; i += chunkLimit) {
+				const chunk = inputs.slice(i, i + chunkLimit);
 
 				const getTransactionsResponse =
 					await this.electrum.getTransactionsFromInputs({
 						txHashes: chunk
 					});
 				if (getTransactionsResponse.isErr()) {
-					return err(getTransactionsResponse.error.message);
+					return err(
+						getTransactionsResponse.error?.message ??
+							// @ts-ignore
+							getTransactionsResponse.error?.data
+					);
 				}
 				getTransactionsResponse.value.data.map(({ data, result }) => {
 					const vout = result.vout[data.vout];

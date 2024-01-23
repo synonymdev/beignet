@@ -1,3 +1,5 @@
+import { EAvailableNetworks } from '../types';
+
 export const BITKIT_WALLET_SEED_HASH_PREFIX = Buffer.from(
 	'@Bitkit/wallet-uuid'
 );
@@ -10,8 +12,11 @@ export const GENERATE_ADDRESS_AMOUNT = 5;
 // TODO: Add this as a settings for users to adjust when needed.
 export const GAP_LIMIT = 20;
 
-// TODO: remove chunk logic and move it to rn-electrum library
-export const CHUNK_LIMIT = 15;
+export const CHUNK_LIMIT = {
+	[EAvailableNetworks.bitcoin]: 10,
+	[EAvailableNetworks.bitcoinTestnet]: 15,
+	[EAvailableNetworks.bitcoinRegtest]: 4
+};
 
 //How much of the users funds we allow to be used for Lightning.
 export const SPENDING_LIMIT_RATIO = 0.8;

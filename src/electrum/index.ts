@@ -31,7 +31,7 @@ import {
 	IGetAddressScriptHashBalances
 } from '../types';
 import * as electrum from 'rn-electrum-client/helpers';
-import { err, getAddressFromScriptPubKey, ok, Result } from '../utils';
+import { err, getAddressFromScriptPubKey, ok, Result, sleep } from '../utils';
 import { Wallet } from '../wallet';
 import { CHUNK_LIMIT, GAP_LIMIT } from '../wallet/constants';
 import { getScriptHash, objectKeys } from '../utils';
@@ -333,12 +333,14 @@ export class Electrum {
 						network: this.electrumNetwork
 					})
 				);
+				await sleep(50);
 				promises.push(
 					electrum.getAddressScriptHashesMempool({
 						scriptHashes: payload,
 						network: this.electrumNetwork
 					})
 				);
+				await sleep(50);
 			}
 
 			const responses = await Promise.all(promises);
@@ -522,6 +524,7 @@ export class Electrum {
 						network: this.electrumNetwork
 					})
 				);
+				await sleep(50);
 			}
 			const responses = await Promise.all(promises);
 			responses.forEach((response) => {

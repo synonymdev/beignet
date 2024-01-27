@@ -66,7 +66,7 @@ export class Transaction {
 		outputs
 	}: ISetupTransaction = {}): Promise<TSetupTransactionResponse> {
 		try {
-			const addressType = this._wallet.data.addressType;
+			const addressType = this._wallet.addressType;
 
 			const currentWallet = this._wallet.data;
 
@@ -306,7 +306,7 @@ export class Transaction {
 			//Determine the address type of each address and construct the object for fee calculation
 			const inputParam = constructByteCountParam(inputAddresses);
 			const outputParam = constructByteCountParam(outputAddresses, [
-				{ addrType: this._wallet.data.addressType, count: increaseAddressCount }
+				{ addrType: this._wallet.addressType, count: increaseAddressCount }
 			]);
 			//Increase P2WPKH output address by one for lightning funding calculation.
 			if (fundingLightning) {

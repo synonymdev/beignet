@@ -139,6 +139,7 @@ export class Wallet {
 		net?: Server;
 	};
 	public electrum: Electrum;
+	public addressType: EAddressType;
 	public exchangeRates: IExchangeRates;
 	public sendMessage: TOnMessage;
 	public transaction: Transaction;
@@ -174,7 +175,7 @@ export class Wallet {
 			this._seed,
 			this.getBitcoinNetwork(this._network)
 		);
-		this._data = { ...getDefaultWalletData(), addressType };
+		this._data = getDefaultWalletData();
 		this._getData = storage?.getData ?? getDataFallback;
 		this._setData = storage?.setData;
 		this._disableMessagesOnCreate = disableMessagesOnCreate;
@@ -182,6 +183,7 @@ export class Wallet {
 		if (customGetScriptHash) this._customGetScriptHash = customGetScriptHash;
 		this.id = generateWalletId(this._seed);
 		this.name = name ?? this.id;
+		this.addressType = addressType;
 		this.exchangeRates = {};
 		this.transaction = new Transaction({
 			wallet: this
@@ -274,7 +276,7 @@ export class Wallet {
 	 * @returns {Promise<void>}
 	 */
 	async updateAddressType(addressType: EAddressType): Promise<void> {
-		this._data.addressType = addressType;
+		this.addressType = addressType;
 		await this.saveWalletData('addressType', addressType);
 		await this.refreshWallet({});
 	}
@@ -299,7 +301,7 @@ export class Wallet {
 			await this.setZeroIndexAddresses();
 			const addressType: undefined | EAddressType = updateAllAddressTypes
 				? undefined
-				: this.data.addressType;
+				: this.addressType;
 			const r1 = await this.updateAddressIndexes({ addressType });
 			if (r1.isErr()) {
 				return this._handleRefreshError(r1.error.message);
@@ -550,7 +552,7 @@ export class Wallet {
 	public async getAddress({
 		index,
 		changeAddress = false,
-		addressType = this.data.addressType
+		addressType = this.addressType
 	}: IGetAddress = {}): Promise<string> {
 		try {
 			if (index === undefined) {
@@ -744,7 +746,7 @@ export class Wallet {
 		addressIndex = 0,
 		changeAddressIndex = 0,
 		keyDerivationPath,
-		addressType = this.data.addressType
+		addressType = this.addressType
 	}: IGenerateAddresses): Promise<Result<IGenerateAddressesResponse>> {
 		const network = this._network;
 		try {
@@ -869,7 +871,7 @@ export class Wallet {
 		if (checkRes.isErr()) return err(checkRes.error.message);
 		try {
 			const network = this._network;
-			addressType = addressType ?? this.data.addressType;
+			addressType = addressType ?? this.addressType;
 			const currentWallet = this.data;
 			const { path } = addressTypes[addressType]; // Assuming addressTypes is globally defined.
 			const result = formatKeyDerivationPath({ path, network });
@@ -1228,7 +1230,7 @@ export class Wallet {
 		saveAddresses = true
 	}: IGenerateAddresses): Promise<Result<IGenerateAddressesResponse>> {
 		if (!addressType) {
-			addressType = this.data.addressType;
+			addressType = this.addressType;
 		}
 		const network = this._network;
 		const { path, type } = addressTypes[addressType];
@@ -1511,7 +1513,7 @@ export class Wallet {
 	 * @returns {Promise<Result<IAddress>>}
 	 */
 	public async generateNewReceiveAddress({
-		addressType = this.data.addressType,
+		addressType = this.addressType,
 		keyDerivationPath
 	}: {
 		addressType?: EAddressType;
@@ -1603,7 +1605,7 @@ export class Wallet {
 	}): Result<{ addressDelta: number; changeAddressDelta: number }> {
 		try {
 			if (!addressType) {
-				addressType = this.data.addressType;
+				addressType = this.addressType;
 			}
 			const currentWallet = this.data;
 			const addressIndex = currentWallet.addressIndex[addressType].index;
@@ -2445,7 +2447,7 @@ export class Wallet {
 	 * @returns {Promise<Result<IAddress>>}
 	 */
 	public async getChangeAddress(
-		addressType = this.data.addressType
+		addressType = this.addressType
 	): Promise<Result<IAddress>> {
 		const currentWallet = this.data;
 
@@ -2834,7 +2836,7 @@ export class Wallet {
 	 * @returns {TAddressIndexInfo}
 	 */
 	public getAddressIndexInfo(): TAddressIndexInfo {
-		const addressType = this.data.addressType;
+		const addressType = this.addressType;
 		const currentWallet = this.data;
 		const addressIndex = currentWallet.addressIndex[addressType];
 		const changeAddressIndex = currentWallet.addressIndex[addressType];
@@ -2856,7 +2858,7 @@ export class Wallet {
 	 * @returns {Promise<Result<string>>}
 	 */
 	getReceiveAddress = async ({
-		addressType = this.data.addressType
+		addressType = this.addressType
 	}: {
 		addressType?: EAddressType;
 	}): Promise<Result<string>> => {

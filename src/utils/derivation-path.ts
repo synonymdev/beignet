@@ -162,6 +162,8 @@ export const getAddressTypeFromPath = (
 				return ok(EAddressType.p2sh);
 			case '84':
 				return ok(EAddressType.p2wpkh);
+			case '86':
+				return ok(EAddressType.p2tr);
 			default:
 				return err('Invalid path');
 		}

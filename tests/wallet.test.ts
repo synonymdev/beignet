@@ -65,6 +65,17 @@ describe('Wallet Library', async function () {
 		);
 	});
 
+	it('Should generate a taproot address at index 1', async () => {
+		const address = await wallet.getAddress({
+			addressType: EAddressType.p2tr,
+			changeAddress: false,
+			index: '1'
+		});
+		expect(address).to.equal(
+			'tb1pejvld85wlxqtv0e4ff0r6u49cv5s9wl88xxv5clkvu64y8w28rwstn9490'
+		);
+	});
+
 	it('Should generate a bech32 receiving address at index 0', async () => {
 		const address = await wallet.getAddress({
 			addressType: EAddressType.p2wpkh,

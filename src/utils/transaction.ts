@@ -209,7 +209,8 @@ export const getByteCount = (
 				P2WPKH: 108 + 41 * 4,
 				// Segwit: (push_count:1) + (sig:73) + (pubkey:34)
 				// Non-segwit: (txid:32) + (vout:4) + (sequence:4) + (script_len:1) + (p2wpkh:23)
-				'P2SH-P2WPKH': 108 + 64 * 4
+				'P2SH-P2WPKH': 108 + 64 * 4,
+				P2TR: 138 * 4
 			},
 			outputs: {
 				// (p2sh:24) + (amount:8)
@@ -219,7 +220,8 @@ export const getByteCount = (
 				// (p2wpkh:23) + (amount:8)
 				P2WPKH: 31 * 4,
 				// (p2wsh:35) + (amount:8)
-				P2WSH: 43 * 4
+				P2WSH: 43 * 4,
+				P2TR: (8 + 1 + 32) * 4
 			}
 		};
 
@@ -415,5 +417,23 @@ export const decodeRawTransaction = (
 		});
 	} catch (e) {
 		return err(e);
+	}
+};
+
+/**
+ * Quickly attempts to determine if the provided address is a p2tr/taproot address.
+ * For a more robust check, use isValidBech32mEncodedString.
+ * @param {string} address
+ * @returns {boolean}
+ */
+export const isp2tr = (address: string): boolean => {
+	try {
+		return (
+			address.startsWith('bc1p') ||
+			address.startsWith('tb1p') ||
+			address.startsWith('bcrt1p')
+		);
+	} catch {
+		return false;
 	}
 };

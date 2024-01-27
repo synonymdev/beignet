@@ -113,7 +113,7 @@ const servers: TServer = {
 const network = ENetworks.mainnet;
 
 // Use a specific address type. (Defaults to EAddressType.p2wpkh)
-const addressType = EAddressType.p2sh;
+const addressType = EAddressType.p2tr;
 
 // Subscribe to server messages (TOnMessage)
 const onMessage: TOnMessage = (id, data) => {
@@ -143,7 +143,8 @@ const createWalletRes = await Wallet.create({
 	electrumOptions: { servers },
 	network,
 	onMessage,
-	storage
+	storage, 
+    addressType
 });
 if (createWalletRes.isErr()) return;
 const wallet = createWalletRes.value;

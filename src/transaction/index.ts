@@ -10,7 +10,14 @@ import {
 } from '../types';
 import { getDefaultSendTransaction } from '../shapes';
 import { Wallet } from '../wallet';
-import { Result, ok, err, validateTransaction } from '../utils';
+import {
+	Result,
+	ok,
+	err,
+	validateTransaction,
+	getTapRootAddressFromPublicKey,
+	isp2tr
+} from '../utils';
 import { reduceValue, shuffleArray } from '../utils';
 import { TRANSACTION_DEFAULTS } from '../wallet/constants';
 import {
@@ -479,7 +486,20 @@ export class Transaction {
 					keyPair = bip32Interface.derivePath(input.path);
 				}
 				if (!keyPair) return err('Unable to derive keyPair.');
-				psbt.signInput(index, keyPair);
+				if (isp2tr(input.address)) {
+					const tapRootAddress = getTapRootAddressFromPublicKey({
+						publicKey: keyPair.publicKey,
+						network: networks[this._wallet.network]
+					});
+					if (tapRootAddress.isErr()) return err(tapRootAddress.error.message);
+					const childNodeXOnlyPubkey = tapRootAddress.value.internalPubkey;
+					const tweakedChildNode = keyPair.tweak(
+						bitcoin.crypto.taggedHash('TapTweak', childNodeXOnlyPubkey)
+					);
+					psbt.signInput(index, tweakedChildNode);
+				} else {
+					psbt.signInput(index, keyPair);
+				}
 			} catch (e) {
 				return err(e);
 			}
@@ -712,6 +732,29 @@ export class Transaction {
 					hash: input.tx_hash,
 					index: input.tx_pos,
 					nonWitnessUtxo
+				});
+			}
+
+			if (type === 'p2tr') {
+				if (!keyPair && input?.path) {
+					const bip32Interface = await this._wallet.getBip32Interface();
+					if (bip32Interface.isErr()) return err(bip32Interface.error.message);
+					keyPair = bip32Interface.value.derivePath(input.path);
+				}
+				if (!keyPair) return err('No keyPair provided for p2tr input.');
+				const p2trAddress = getTapRootAddressFromPublicKey({
+					publicKey: keyPair.publicKey,
+					network
+				});
+				if (p2trAddress.isErr()) return err(p2trAddress.error.message);
+				psbt.addInput({
+					hash: input.tx_hash,
+					index: input.tx_pos,
+					witnessUtxo: {
+						script: p2trAddress.value.output,
+						value: input.value
+					},
+					tapInternalKey: p2trAddress.value.internalPubkey
 				});
 			}
 			return ok('Success');

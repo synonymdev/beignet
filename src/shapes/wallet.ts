@@ -39,6 +39,14 @@ export const addressTypes: Readonly<TAddressTypes> = {
 		shortName: 'Legacy',
 		description: 'Pay-to-public-key-hash',
 		example: '(1x...)'
+	},
+	[EAddressType.p2tr]: {
+		type: EAddressType.p2tr,
+		path: "m/86'/0'/0'/0/0",
+		name: 'Taproot',
+		shortName: 'Taproot',
+		description: 'Taproot Address',
+		example: '(bc1px...)'
 	}
 };
 

@@ -16,7 +16,7 @@ import {
 	err,
 	validateTransaction,
 	getTapRootAddressFromPublicKey,
-	isp2tr
+	isP2trPrefix
 } from '../utils';
 import { reduceValue, shuffleArray } from '../utils';
 import { TRANSACTION_DEFAULTS } from '../wallet/constants';
@@ -486,7 +486,7 @@ export class Transaction {
 					keyPair = bip32Interface.derivePath(input.path);
 				}
 				if (!keyPair) return err('Unable to derive keyPair.');
-				if (isp2tr(input.address)) {
+				if (isP2trPrefix(input.address)) {
 					const tapRootAddress = getTapRootAddressFromPublicKey({
 						publicKey: keyPair.publicKey,
 						network: networks[this._wallet.network]

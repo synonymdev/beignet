@@ -421,12 +421,12 @@ export const decodeRawTransaction = (
 };
 
 /**
- * Quickly attempts to determine if the provided address is a p2tr/taproot address.
+ * Quickly attempts to determine if the provided address is a valid p2tr/taproot address prefix.
  * For a more robust check, use isValidBech32mEncodedString.
  * @param {string} address
  * @returns {boolean}
  */
-export const isp2tr = (address: string): boolean => {
+export const isP2trPrefix = (address: string): boolean => {
 	try {
 		return (
 			address.startsWith('bc1p') ||

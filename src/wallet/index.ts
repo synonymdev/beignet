@@ -193,7 +193,7 @@ export class Wallet {
 		this.sendMessage = <K extends keyof TMessageDataMap>(
 			key: K,
 			data: TMessageDataMap[K]
-		) => {
+		): void => {
 			if (this.disableMessages) return;
 			onMessage(key, data);
 		};
@@ -511,34 +511,32 @@ export class Wallet {
 	private async _getAddress(
 		path: string,
 		addressType: EAddressType
-	): Promise<IGetAddressResponse> {
-		if (this._customGetAddress) {
-			const data = {
-				path,
-				type: addressType,
-				selectedNetwork: this.electrum.getElectrumNetwork(this._network)
-			};
-			const res = await this._customGetAddress(data);
-			if (res.isErr()) {
-				return {
-					address: '',
+	): Promise<Result<IGetAddressResponse>> {
+		try {
+			if (this._customGetAddress) {
+				const data = {
 					path,
-					publicKey: ''
+					type: addressType,
+					selectedNetwork: this.electrum.getElectrumNetwork(this._network)
 				};
+				const res = await this._customGetAddress(data);
+				if (res.isErr()) return err(res.error.message);
 			}
-			return res.value;
+			const keyPair = this._root.derivePath(path);
+			const network = this.getBitcoinNetwork(this._network);
+			const addressInfo = getAddressFromKeyPair({
+				keyPair,
+				addressType,
+				network
+			});
+			if (addressInfo.isErr()) return err(addressInfo.error.message);
+			return ok({
+				...addressInfo.value,
+				path
+			});
+		} catch (e) {
+			return err(e);
 		}
-		const keyPair = this._root.derivePath(path);
-		const network = this.getBitcoinNetwork(this._network);
-		const addressInfo = getAddressFromKeyPair({
-			keyPair,
-			addressType,
-			network
-		});
-		return {
-			...addressInfo,
-			path
-		};
 	}
 
 	/**
@@ -570,8 +568,8 @@ export class Wallet {
 			}
 			const path = pathRes.value;
 			const res = await this._getAddress(path, addressType);
-			if (!res?.address) return '';
-			return res.address;
+			if (res.isErr()) return '';
+			return res.value.address;
 		} catch {
 			return '';
 		}
@@ -597,8 +595,8 @@ export class Wallet {
 		}
 		try {
 			const getAddressRes = await this._getAddress(path, addressType);
-			if (!getAddressRes?.address) return err('Unable to get address.');
-			return ok(getAddressRes);
+			if (getAddressRes.isErr()) return err('Unable to get address.');
+			return ok(getAddressRes.value);
 		} catch (e) {
 			return err(e);
 		}
@@ -1225,13 +1223,10 @@ export class Wallet {
 		changeAddressAmount = 5,
 		addressIndex = 0,
 		changeAddressIndex = 0,
-		addressType,
+		addressType = this.addressType,
 		keyDerivationPath,
 		saveAddresses = true
 	}: IGenerateAddresses): Promise<Result<IGenerateAddressesResponse>> {
-		if (!addressType) {
-			addressType = this.addressType;
-		}
 		const network = this._network;
 		const { path, type } = addressTypes[addressType];
 		if (!keyDerivationPath) {
@@ -1599,14 +1594,11 @@ export class Wallet {
 	 * @returns {Result<{ addressDelta: number; changeAddressDelta: number }>}
 	 */
 	public getGapLimit({
-		addressType
+		addressType = this.addressType
 	}: {
 		addressType?: EAddressType;
 	}): Result<{ addressDelta: number; changeAddressDelta: number }> {
 		try {
-			if (!addressType) {
-				addressType = this.addressType;
-			}
 			const currentWallet = this.data;
 			const addressIndex = currentWallet.addressIndex[addressType].index;
 			const lastUsedAddressIndex =
@@ -3474,9 +3466,6 @@ export class Wallet {
 			return err(getUtxoRes.error.message);
 		}
 		const { balance, utxos } = getUtxoRes.value;
-		if (!balance) {
-			return err('No balance available.');
-		}
 		if (balance < TRANSACTION_DEFAULTS.dustLimit) {
 			return err('Balance is below dust limit.');
 		}

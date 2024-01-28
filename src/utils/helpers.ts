@@ -15,6 +15,7 @@ import { getKeyDerivationPathObject } from './derivation-path';
 import { ECPairFactory, ECPairInterface } from 'ecpair';
 import * as ecc from '@bitcoinerlab/secp256k1';
 import { BIP32Interface } from 'bip32';
+import { toXOnly } from 'bitcoinjs-lib/src/psbt/bip371';
 const ECPair = ECPairFactory(ecc);
 /**
  * Get address for a given scriptPubKey.
@@ -214,7 +215,7 @@ export const getAddressFromKeyPair = ({
 	keyPair: BIP32Interface | ECPairInterface;
 	addressType: EAddressType;
 	network: Network;
-}): IGetAddressesFromKeyPair => {
+}): Result<IGetAddressesFromKeyPair> => {
 	let address = '';
 	switch (addressType) {
 		case EAddressType.p2wpkh:
@@ -244,11 +245,48 @@ export const getAddressFromKeyPair = ({
 					network
 				}).address ?? '';
 			break;
+		case EAddressType.p2tr:
+			const res = getTapRootAddressFromPublicKey({
+				publicKey: keyPair.publicKey,
+				network
+			});
+			if (res.isOk()) {
+				address = res.value.address;
+			}
+			break;
 	}
-	return {
+	if (!address) return err('Unable to get address from key pair.');
+	return ok({
 		address,
 		publicKey: keyPair.publicKey.toString('hex')
-	};
+	});
+};
+
+/**
+ * Returns taproot address information from the provided public key.
+ * @param {Buffer} publicKey
+ * @param {Network} network
+ * @returns {Result<{ address: string; output: Buffer; internalPubkey: Buffer; }>}
+ */
+export const getTapRootAddressFromPublicKey = ({
+	publicKey,
+	network
+}: {
+	publicKey: Buffer;
+	network: Network;
+}): Result<{ address: string; output: Buffer; internalPubkey: Buffer }> => {
+	try {
+		const internalPubkey = toXOnly(publicKey);
+		const { address, output } = bitcoin.payments.p2tr({
+			internalPubkey,
+			network
+		});
+		if (!address) return err('Unable to get address from key pair.');
+		if (!output) return err('Unable to get output from key pair.');
+		return ok({ address, output, internalPubkey });
+	} catch (e) {
+		return err(e);
+	}
 };
 
 /**
@@ -270,11 +308,13 @@ export const getAddressesFromPrivateKey = ({
 		if (!privateKey) return err('No private key provided.');
 		const keyPair = ECPair.fromWIF(privateKey, network);
 		const response = addrTypes.map((addressType) => {
-			return getAddressFromKeyPair({
+			const addressInfo = getAddressFromKeyPair({
 				keyPair,
 				addressType,
 				network
 			});
+			if (addressInfo.isErr()) throw new Error(addressInfo.error.message);
+			return addressInfo.value;
 		});
 		if (!response) return err('Unable to get addresses from private key.');
 		return ok({

@@ -35,9 +35,9 @@ export enum EAvailableNetworks {
 export enum EAddressType {
 	p2wpkh = 'p2wpkh',
 	p2sh = 'p2sh',
-	p2pkh = 'p2pkh'
+	p2pkh = 'p2pkh',
+	p2tr = 'p2tr'
 	// p2wsh = 'p2wsh',
-	// p2tr = 'p2tr',
 }
 
 export enum EPaymentType {

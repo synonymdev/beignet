@@ -1,5 +1,4 @@
 import {
-	EAddressType,
 	EAvailableNetworks,
 	IAddress,
 	IAddresses,
@@ -34,8 +33,8 @@ import * as electrum from 'rn-electrum-client/helpers';
 import { err, getAddressFromScriptPubKey, ok, Result, sleep } from '../utils';
 import { Wallet } from '../wallet';
 import { CHUNK_LIMIT, GAP_LIMIT } from '../wallet/constants';
-import { getScriptHash, objectKeys } from '../utils';
-import { addressTypes, POLLING_INTERVAL } from '../shapes';
+import { getScriptHash } from '../utils';
+import { POLLING_INTERVAL } from '../shapes';
 import { Block } from 'bitcoinjs-lib';
 import { onMessageKeys } from '../shapes';
 import { Server } from 'net';
@@ -277,7 +276,7 @@ export class Electrum {
 			const changeAddressIndexes = currentWallet.changeAddressIndex;
 
 			if (scriptHashes.length < 1) {
-				const addressTypeKeys = objectKeys(addressTypes);
+				const addressTypeKeys = this._wallet.addressTypesToMonitor;
 				addressTypeKeys.forEach((addressType) => {
 					const addresses = currentAddresses[addressType];
 					const changeAddresses = currentChangeAddresses[addressType];
@@ -426,7 +425,7 @@ export class Electrum {
 				});
 			const currentWallet = this._wallet.data;
 
-			const addressTypeKeys = Object.values(EAddressType);
+			const addressTypeKeys = this._wallet.addressTypesToMonitor;
 			let addresses = {} as IAddresses;
 			let changeAddresses = {} as IAddresses;
 			const existingUtxos: { [key: string]: IUtxo } = {};
@@ -712,7 +711,7 @@ export class Electrum {
 		onReceive?: (data: TSubscribedReceive) => void;
 	} = {}): Promise<Result<string>> {
 		const currentWallet = this._wallet.data;
-		const addressTypeKeys = objectKeys(addressTypes);
+		const addressTypeKeys = this._wallet.addressTypesToMonitor;
 		// Gather the receiving address scripthash for each address type if no scripthashes were provided.
 		if (!scriptHashes.length) {
 			for (const addressType of addressTypeKeys) {

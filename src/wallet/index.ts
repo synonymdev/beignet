@@ -129,6 +129,7 @@ export class Wallet {
 	> = [];
 	private _disableMessagesOnCreate: boolean;
 
+	public addressTypesToMonitor: EAddressType[];
 	public isRefreshing: boolean;
 	public isSwitchingNetworks: boolean;
 	public readonly id: string;
@@ -161,7 +162,8 @@ export class Wallet {
 		rbf = false,
 		selectedFeeId = EFeeId.normal,
 		disableMessages = false,
-		disableMessagesOnCreate = false
+		disableMessagesOnCreate = false,
+		addressTypesToMonitor = Object.values(EAddressType)
 	}: IWallet) {
 		if (!mnemonic) throw new Error('No mnemonic specified.');
 		if (!validateMnemonic(mnemonic)) throw new Error('Invalid mnemonic.');
@@ -209,6 +211,12 @@ export class Wallet {
 		this.selectedFeeId = selectedFeeId;
 		this.isRefreshing = false;
 		this.isSwitchingNetworks = false;
+		this.addressTypesToMonitor = addressTypesToMonitor;
+		if (!this.addressTypesToMonitor.includes(this.addressType)) {
+			this.addressTypesToMonitor.push(this.addressType);
+		}
+		// Remove duplicates
+		this.addressTypesToMonitor = [...new Set(this.addressTypesToMonitor)];
 	}
 
 	public get data(): IWalletData {
@@ -277,6 +285,9 @@ export class Wallet {
 	 */
 	async updateAddressType(addressType: EAddressType): Promise<void> {
 		this.addressType = addressType;
+		if (!this.addressTypesToMonitor.includes(this.addressType)) {
+			this.addressTypesToMonitor.push(this.addressType);
+		}
 		await this.saveWalletData('addressType', addressType);
 		await this.refreshWallet({});
 	}
@@ -287,10 +298,9 @@ export class Wallet {
 	 * @param {boolean} updateAllAddressTypes
 	 * @returns {Promise<Result<IWalletData>>}
 	 */
-	public async refreshWallet({
-		scanAllAddresses = false,
-		updateAllAddressTypes = true
-	} = {}): Promise<Result<IWalletData>> {
+	public async refreshWallet({ scanAllAddresses = false } = {}): Promise<
+		Result<IWalletData>
+	> {
 		if (this.isRefreshing) {
 			return new Promise((resolve) => {
 				this._pendingRefreshPromises.push(resolve);
@@ -299,10 +309,7 @@ export class Wallet {
 		this.isRefreshing = true;
 		try {
 			await this.setZeroIndexAddresses();
-			const addressType: undefined | EAddressType = updateAllAddressTypes
-				? undefined
-				: this.addressType;
-			const r1 = await this.updateAddressIndexes({ addressType });
+			const r1 = await this.updateAddressIndexes();
 			if (r1.isErr()) {
 				return this._handleRefreshError(r1.error.message);
 			}
@@ -1339,26 +1346,16 @@ export class Wallet {
 	 * This method updates the next available (zero-balance) address & changeAddress index.
 	 * @private
 	 * @async
-	 * @param {EAddressType} [addressType]
-	 * @returns {string}
+	 * @returns {Promise<Result<string>>}
 	 */
-	private async updateAddressIndexes({
-		addressType //If this param is left undefined it will update the indexes for all stored address types.
-	}: {
-		addressType?: EAddressType;
-	} = {}): Promise<Result<string>> {
+	private async updateAddressIndexes(): Promise<Result<string>> {
 		const checkRes = await this.checkElectrumConnection();
 		if (checkRes.isErr()) return err(checkRes.error.message);
 		const currentWallet = this.data;
 
-		let addressTypeKeys = Object.values(EAddressType);
-		if (addressType) {
-			addressTypeKeys = [addressType];
-		}
-
 		let updated = false;
 
-		const promises = addressTypeKeys.map(async (addressTypeKey) => {
+		const promises = this.addressTypesToMonitor.map(async (addressTypeKey) => {
 			const response = await this.getNextAvailableAddress(addressTypeKey);
 			if (response.isErr()) {
 				throw response.error;
@@ -1631,7 +1628,9 @@ export class Wallet {
 	}): Promise<Result<IGetUtxosResponse>> {
 		const checkRes = await this.checkElectrumConnection();
 		if (checkRes.isErr()) return err(checkRes.error.message);
-		const getUtxosRes = await this.electrum.getUtxos({ scanAllAddresses });
+		const getUtxosRes = await this.electrum.getUtxos({
+			scanAllAddresses
+		});
 		if (getUtxosRes.isErr()) {
 			return err(getUtxosRes.error.message);
 		}
@@ -2732,13 +2731,12 @@ export class Wallet {
 	 * @returns {Promise<Result<string>>}
 	 */
 	private async setZeroIndexAddresses(): Promise<Result<string>> {
-		const types = Object.values(EAddressType);
 		const currentWallet = this.data;
 		let saveAddressIndexes = false;
 		let saveChangeAddressIndexes = false;
 
 		await Promise.all(
-			types.map(async (addressType) => {
+			this.addressTypesToMonitor.map(async (addressType) => {
 				const addressIndex = currentWallet.addressIndex[addressType];
 				const changeAddressIndex =
 					currentWallet.changeAddressIndex[addressType];

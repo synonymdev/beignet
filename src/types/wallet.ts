@@ -205,6 +205,7 @@ export interface IWallet {
 	selectedFeeId?: EFeeId;
 	disableMessages?: boolean;
 	disableMessagesOnCreate?: boolean;
+	addressTypesToMonitor?: EAddressType[];
 }
 
 export interface IAddressData {

@@ -115,11 +115,17 @@ const network = ENetworks.mainnet;
 // Use a specific address type. (Defaults to EAddressType.p2wpkh)
 const addressType = EAddressType.p2tr;
 
+// Monitor certain address types. (Defaults to Object.values(EAddressType))
+const addressTypesToMonitor = [EAddressType.p2tr, EAddressType.p2wpkh];
+
 // Subscribe to server messages (TOnMessage)
 const onMessage: TOnMessage = (id, data) => {
 	console.log(id);
 	console.dir(data, { depth: null });
 }
+
+// Disable startup messages. Messages resume once startup is complete. (Defaults to false)
+const disableMessagesOnCreate = true;
 
 // Persist sessions by getting and setting data from storage
 const storage: TStorage = {
@@ -144,7 +150,9 @@ const createWalletRes = await Wallet.create({
 	network,
 	onMessage,
 	storage, 
-    addressType
+    addressType,
+	addressTypesToMonitor,
+	disableMessagesOnCreate
 });
 if (createWalletRes.isErr()) return;
 const wallet = createWalletRes.value;

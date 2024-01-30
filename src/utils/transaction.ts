@@ -204,6 +204,7 @@ export const getByteCount = (
 				'MULTISIG-P2SH-P2WSH': 8 + 76 * 4,
 				// Non-segwit: (txid:32) + (vout:4) + (sequence:4) + (script_len:1) + (sig:73) + (pubkey:34)
 				P2PKH: 148 * 4,
+				P2SH: 108 + 64 * 4,
 				// Segwit: (push_count:1) + (sig:73) + (pubkey:34)
 				// Non-segwit: (txid:32) + (vout:4) + (sequence:4) + (script_len:1)
 				P2WPKH: 108 + 41 * 4,

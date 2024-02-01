@@ -1,6 +1,6 @@
 {
   "name": "beignet",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "A self-custodial, JS Bitcoin wallet management library.",
   "main": "dist/index.js",
   "scripts": {

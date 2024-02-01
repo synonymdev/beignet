@@ -3,6 +3,7 @@ import { err, ok, Result } from './result';
 
 import {
 	EAvailableNetworks,
+	EElectrumNetworks,
 	ElectrumConnectionPubSub,
 	ElectrumConnectionSubscription,
 	IFormattedPeerData,
@@ -186,3 +187,23 @@ export const electrumConnection = ((
 
 	return { publish, subscribe };
 })();
+
+/**
+ * Returns the network string for use with Electrum methods.
+ * @param {EAvailableNetworks} [network]
+ * @return {EElectrumNetworks}
+ */
+export const getElectrumNetwork = (
+	network: EAvailableNetworks
+): EElectrumNetworks => {
+	switch (network) {
+		case 'bitcoin':
+			return EElectrumNetworks.bitcoin;
+		case 'testnet':
+			return EElectrumNetworks.bitcoinTestnet;
+		case 'regtest':
+			return EElectrumNetworks.bitcoinRegtest;
+		default:
+			return EElectrumNetworks.bitcoinTestnet;
+	}
+};

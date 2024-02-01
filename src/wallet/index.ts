@@ -2,7 +2,6 @@ import * as bitcoin from 'bitcoinjs-lib';
 import { Network, networks } from 'bitcoinjs-lib';
 import BIP32Factory, { BIP32Interface } from 'bip32';
 import * as ecc from '@bitcoinerlab/secp256k1';
-//import { getExchangeRates } from "../utils/exchange-rate";
 import {
 	EAddressType,
 	EAvailableNetworks,
@@ -15,7 +14,6 @@ import {
 	IBoostedTransactions,
 	ICustomGetAddress,
 	ICustomGetScriptHash,
-	IExchangeRates,
 	IFormattedTransaction,
 	IFormattedTransactions,
 	IGenerateAddresses,
@@ -68,7 +66,6 @@ import {
 	getDataFallback,
 	getDefaultWalletData,
 	getDefaultWalletDataKeys,
-	getExchangeRates,
 	getHighestUsedIndexFromTxHashes,
 	getKeyDerivationPath,
 	getKeyDerivationPathObject,
@@ -85,7 +82,8 @@ import {
 	validateAddress,
 	validateMnemonic,
 	getAddressesFromPrivateKey,
-	getAddressFromKeyPair
+	getAddressFromKeyPair,
+	getElectrumNetwork
 } from '../utils';
 import {
 	addressTypes,
@@ -141,7 +139,6 @@ export class Wallet {
 	};
 	public electrum: Electrum;
 	public addressType: EAddressType;
-	public exchangeRates: IExchangeRates;
 	public sendMessage: TOnMessage;
 	public transaction: Transaction;
 	public feeEstimates: IOnchainFees;
@@ -186,7 +183,6 @@ export class Wallet {
 		this.id = generateWalletId(this._seed);
 		this.name = name ?? this.id;
 		this.addressType = addressType;
-		this.exchangeRates = {};
 		this.transaction = new Transaction({
 			wallet: this
 		});
@@ -233,7 +229,6 @@ export class Wallet {
 			if (wallet._disableMessagesOnCreate) wallet.disableMessages = true;
 			const res = await wallet.setWalletData();
 			if (res.isErr()) return err(res.error.message);
-			wallet.updateExchangeRates();
 			wallet.updateFeeEstimates();
 			console.log('Syncing Wallet...');
 			await wallet.refreshWallet({});
@@ -470,9 +465,6 @@ export class Wallet {
 						case 'selectedFeeId':
 							walletData[key] = data as EFeeId;
 							break;
-						case 'exchangeRates':
-							walletData[key] = data as IExchangeRates;
-							break;
 						case 'feeEstimates':
 							walletData[key] = data as IOnchainFees;
 							break;
@@ -524,7 +516,7 @@ export class Wallet {
 				const data = {
 					path,
 					type: addressType,
-					selectedNetwork: this.electrum.getElectrumNetwork(this._network)
+					selectedNetwork: getElectrumNetwork(this._network)
 				};
 				const res = await this._customGetAddress(data);
 				if (res.isErr()) return err(res.error.message);
@@ -696,7 +688,7 @@ export class Wallet {
 		network: EAvailableNetworks;
 	}): Promise<string> {
 		if (this._customGetScriptHash) {
-			const selectedNetwork = this.electrum.getElectrumNetwork(network);
+			const selectedNetwork = getElectrumNetwork(network);
 			return await this._customGetScriptHash({ address, selectedNetwork });
 		}
 		return getScriptHash({ address, network });
@@ -2407,22 +2399,6 @@ export class Wallet {
 	}
 
 	/**
-	 * Returns exchange rate data from storage.
-	 * @param {string} currency
-	 * @returns {number}
-	 */
-	public getExchangeRate(currency = 'EUR'): number {
-		try {
-			if (currency in this.exchangeRates) {
-				return this.exchangeRates[currency]?.rate ?? 0;
-			}
-			return 0;
-		} catch {
-			return 0;
-		}
-	}
-
-	/**
 	 * Attempts to validate a given address.
 	 * @param {string} address
 	 * @returns {boolean}
@@ -3368,20 +3344,6 @@ export class Wallet {
 		} catch (e) {
 			return err(e);
 		}
-	}
-
-	/**
-	 * Updates the exchange rates for the current network.
-	 * @public
-	 * @async
-	 * @returns {Promise<Result<IExchangeRates>>}
-	 */
-	public async updateExchangeRates(): Promise<Result<IExchangeRates>> {
-		const exchangeRates = await getExchangeRates();
-		if (exchangeRates.isErr()) return err(exchangeRates.error.message);
-		this.exchangeRates = exchangeRates.value;
-		await this.saveWalletData('exchangeRates', this.exchangeRates);
-		return ok(this.exchangeRates);
 	}
 
 	/**

@@ -30,7 +30,14 @@ import {
 	IGetAddressScriptHashBalances
 } from '../types';
 import * as electrum from 'rn-electrum-client/helpers';
-import { err, getAddressFromScriptPubKey, ok, Result, sleep } from '../utils';
+import {
+	err,
+	getAddressFromScriptPubKey,
+	getElectrumNetwork,
+	ok,
+	Result,
+	sleep
+} from '../utils';
 import { Wallet } from '../wallet';
 import { CHUNK_LIMIT, GAP_LIMIT } from '../wallet/constants';
 import { getScriptHash } from '../utils';
@@ -57,8 +64,8 @@ export class Electrum {
 	private net: Server;
 
 	public servers?: TServer | TServer[];
-	public readonly network: EAvailableNetworks;
-	public readonly electrumNetwork: EElectrumNetworks;
+	public network: EAvailableNetworks;
+	public electrumNetwork: EElectrumNetworks;
 	public connectedToElectrum: boolean;
 	public onReceive?: (data: unknown) => void;
 	constructor({
@@ -80,7 +87,7 @@ export class Electrum {
 		this.sendMessage = wallet.sendMessage;
 		this.servers = servers ?? [];
 		this.network = network;
-		this.electrumNetwork = this.getElectrumNetwork(network);
+		this.electrumNetwork = getElectrumNetwork(this.network);
 		this.connectedToElectrum = false;
 		this.onReceive = onReceive;
 		this.tls = _tls ?? tls;
@@ -116,7 +123,7 @@ export class Electrum {
 			: [];
 		// @ts-ignore
 		customPeers = customPeers.length ? customPeers : this?.servers ?? [];
-		const electrumNetwork = this.getElectrumNetwork(network);
+		const electrumNetwork = getElectrumNetwork(network);
 		if (
 			!disableRegtestCheck &&
 			electrumNetwork === 'bitcoinRegtest' &&
@@ -132,6 +139,11 @@ export class Electrum {
 		});
 		if (startResponse.error && !this.wallet.isSwitchingNetworks)
 			return err(startResponse.error);
+		this.network = network;
+		this.electrumNetwork = electrumNetwork;
+		if (customPeers.length) {
+			this.servers = customPeers;
+		}
 		this.publishConnectionChange(true);
 		this.subscribeToHeader().then();
 		return ok('Connected to Electrum server.');
@@ -186,24 +198,6 @@ export class Electrum {
 			return ok(response);
 		}
 		return err('No peer available.');
-	}
-
-	/**
-	 * Returns the network string for use with Electrum methods.
-	 * @param {EAvailableNetworks} [network]
-	 * @return {EElectrumNetworks}
-	 */
-	getElectrumNetwork(network: EAvailableNetworks): EElectrumNetworks {
-		switch (network) {
-			case 'bitcoin':
-				return EElectrumNetworks.bitcoin;
-			case 'testnet':
-				return EElectrumNetworks.bitcoinTestnet;
-			case 'regtest':
-				return EElectrumNetworks.bitcoinRegtest;
-			default:
-				return EElectrumNetworks.bitcoinTestnet;
-		}
 	}
 
 	/**

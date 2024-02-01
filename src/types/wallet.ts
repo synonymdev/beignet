@@ -167,7 +167,6 @@ export interface IWalletData {
 	transaction: ISendTransaction;
 	balance: number;
 	selectedFeeId: EFeeId;
-	exchangeRates: IExchangeRates;
 	feeEstimates: IOnchainFees;
 }
 
@@ -370,16 +369,6 @@ export enum EUnit {
 	satoshi = 'satoshi',
 	BTC = 'BTC',
 	fiat = 'fiat'
-}
-
-export interface IExchangeRates {
-	[key: string]: {
-		currencySymbol: string;
-		quote: string;
-		quoteName: string;
-		rate: number;
-		lastUpdatedAt: number;
-	};
 }
 
 export type InputData = {

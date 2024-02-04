@@ -1,14 +1,14 @@
 {
   "name": "beignet",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "A self-custodial, JS Bitcoin wallet management library.",
   "main": "dist/index.js",
   "scripts": {
     "test": "yarn build && env mocha --exit -r ts-node/register 'tests/**/*.ts'",
     "test:wallet": "yarn build && env mocha --exit -r ts-node/register 'tests/wallet.test.ts'",
     "test:electrum": "yarn build && env mocha --exit -r ts-node/register 'tests/electrum.test.ts'",
-    "test:derivation": " yarn build && env mocha --exit -r ts-node/register 'tests/derivation.test.ts'",
-    "test:transaction": " yarn build && env mocha --exit -r ts-node/register 'tests/transaction.test.ts'",
+    "test:derivation": "yarn build && env mocha --exit -r ts-node/register 'tests/derivation.test.ts'",
+    "test:transaction": "yarn build && env mocha --exit -r ts-node/register 'tests/transaction.test.ts'",
     "test:storage": "yarn build && env mocha --exit -r ts-node/register 'tests/storage.test.ts'",
     "example": "ts-node example",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",

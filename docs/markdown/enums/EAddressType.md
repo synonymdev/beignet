@@ -8,6 +8,7 @@
 
 - [p2pkh](EAddressType.md#p2pkh)
 - [p2sh](EAddressType.md#p2sh)
+- [p2tr](EAddressType.md#p2tr)
 - [p2wpkh](EAddressType.md#p2wpkh)
 
 ## Enumeration Members
@@ -18,7 +19,7 @@
 
 #### Defined in
 
-[types/wallet.ts:36](https://github.com/synonymdev/beignet/blob/583604f/src/types/wallet.ts#L36)
+[types/wallet.ts:38](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L38)
 
 ___
 
@@ -28,7 +29,17 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:35](https://github.com/synonymdev/beignet/blob/583604f/src/types/wallet.ts#L35)
+[types/wallet.ts:37](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L37)
+
+___
+
+### p2tr
+
+• **p2tr** = ``"p2tr"``
+
+#### Defined in
+
+[types/wallet.ts:39](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L39)
 
 ___
 
@@ -38,4 +49,4 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:34](https://github.com/synonymdev/beignet/blob/583604f/src/types/wallet.ts#L34)
+[types/wallet.ts:36](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L36)

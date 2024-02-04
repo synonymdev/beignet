@@ -17,7 +17,7 @@
 
 #### Defined in
 
-[types/electrum.ts:35](https://github.com/synonymdev/beignet/blob/583604f/src/types/electrum.ts#L35)
+[types/electrum.ts:35](https://github.com/synonymdev/beignet/blob/05d5011/src/types/electrum.ts#L35)
 
 ___
 
@@ -27,4 +27,4 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:34](https://github.com/synonymdev/beignet/blob/583604f/src/types/electrum.ts#L34)
+[types/electrum.ts:34](https://github.com/synonymdev/beignet/blob/05d5011/src/types/electrum.ts#L34)

@@ -39,7 +39,7 @@ import {
 	sleep
 } from '../utils';
 import { Wallet } from '../wallet';
-import { CHUNK_LIMIT, GAP_LIMIT } from '../wallet/constants';
+import { GAP_LIMIT } from '../wallet/constants';
 import { getScriptHash } from '../utils';
 import { POLLING_INTERVAL } from '../shapes';
 import { Block } from 'bitcoinjs-lib';
@@ -68,13 +68,17 @@ export class Electrum {
 	public electrumNetwork: EElectrumNetworks;
 	public connectedToElectrum: boolean;
 	public onReceive?: (data: unknown) => void;
+	public batchLimit: number;
+	public batchDelay: number;
 	constructor({
 		wallet,
 		servers,
 		network,
 		onReceive,
 		tls: _tls,
-		net: _net
+		net: _net,
+		batchLimit = 15,
+		batchDelay = 50
 	}: {
 		wallet: Wallet;
 		servers?: TServer | TServer[];
@@ -82,6 +86,8 @@ export class Electrum {
 		onReceive?: (data: unknown) => void;
 		tls?: TLSSocket;
 		net?: Server;
+		batchLimit?: number;
+		batchDelay?: number;
 	}) {
 		this._wallet = wallet;
 		this.sendMessage = wallet.sendMessage;
@@ -92,6 +98,8 @@ export class Electrum {
 		this.onReceive = onReceive;
 		this.tls = _tls ?? tls;
 		this.net = _net ?? net;
+		this.batchLimit = batchLimit;
+		this.batchDelay = batchDelay;
 		if (!this.tls || !this.net) {
 			throw new Error(
 				'TLS and NET modules are not available and were not passed as instances'
@@ -312,10 +320,9 @@ export class Electrum {
 			const combinedResponse: TTxResponse[] = [];
 			const promises: Promise<IGetAddressScriptHashesHistoryResponse>[] = [];
 
-			const chunkLimit = CHUNK_LIMIT[this.network];
 			// split payload in chunks of 10 addresses per-request
-			for (let i = 0; i < scriptHashes.length; i += chunkLimit) {
-				const chunk = scriptHashes.slice(i, i + chunkLimit);
+			for (let i = 0; i < scriptHashes.length; i += this.batchLimit) {
+				const chunk = scriptHashes.slice(i, i + this.batchLimit);
 				const payload = {
 					key: 'scriptHash',
 					data: chunk
@@ -326,14 +333,14 @@ export class Electrum {
 						network: this.electrumNetwork
 					})
 				);
-				await sleep(50);
+				await sleep(this.batchDelay);
 				promises.push(
 					electrum.getAddressScriptHashesMempool({
 						scriptHashes: payload,
 						network: this.electrumNetwork
 					})
 				);
-				await sleep(50);
+				await sleep(this.batchDelay);
 			}
 
 			const responses = await Promise.all(promises);
@@ -501,10 +508,9 @@ export class Electrum {
 			const result: ITransaction<IUtxo>[] = [];
 			const promises: Promise<IGetTransactions>[] = [];
 
-			const chunkLimit = CHUNK_LIMIT[this.network];
 			// split payload in chunks of 10 transactions per-request
-			for (let i = 0; i < txHashes.length; i += chunkLimit) {
-				const chunk = txHashes.slice(i, i + chunkLimit);
+			for (let i = 0; i < txHashes.length; i += this.batchLimit) {
+				const chunk = txHashes.slice(i, i + this.batchLimit);
 
 				const data = {
 					key: 'tx_hash',
@@ -517,7 +523,7 @@ export class Electrum {
 						network: this.electrumNetwork
 					})
 				);
-				await sleep(50);
+				await sleep(this.batchDelay);
 			}
 			const responses = await Promise.all(promises);
 			responses.forEach((response) => {

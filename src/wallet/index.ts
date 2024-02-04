@@ -94,7 +94,6 @@ import {
 import { Electrum } from '../electrum';
 import { Transaction } from '../transaction';
 import {
-	CHUNK_LIMIT,
 	GAP_LIMIT,
 	GENERATE_ADDRESS_AMOUNT,
 	TRANSACTION_DEFAULTS
@@ -136,6 +135,8 @@ export class Wallet {
 		servers?: TServer | TServer[];
 		tls?: TLSSocket;
 		net?: Server;
+		batchLimit?: number; // Maximum number of requests to be sent in a single batch
+		batchDelay?: number; // Delay (in milliseconds) between each batch of requests
 	};
 	public electrum: Electrum;
 	public addressType: EAddressType;
@@ -152,7 +153,7 @@ export class Wallet {
 		network = EAvailableNetworks.mainnet,
 		addressType = EAddressType.p2wpkh,
 		storage,
-		electrumOptions,
+		electrumOptions = {},
 		onMessage = (): null => null,
 		customGetAddress,
 		customGetScriptHash,
@@ -199,9 +200,7 @@ export class Wallet {
 		this.electrum = new Electrum({
 			wallet: this,
 			network: this.network,
-			servers: electrumOptions?.servers,
-			tls: electrumOptions?.tls,
-			net: electrumOptions?.net
+			...electrumOptions
 		});
 		this.rbf = rbf;
 		this.selectedFeeId = selectedFeeId;
@@ -2365,9 +2364,9 @@ export class Wallet {
 		try {
 			const inputData: InputData = {};
 
-			const chunkLimit = CHUNK_LIMIT[this.network];
-			for (let i = 0; i < inputs.length; i += chunkLimit) {
-				const chunk = inputs.slice(i, i + chunkLimit);
+			const batchLimit = this.electrum.batchLimit;
+			for (let i = 0; i < inputs.length; i += batchLimit) {
+				const chunk = inputs.slice(i, i + batchLimit);
 
 				const getTransactionsResponse =
 					await this.electrum.getTransactionsFromInputs({

@@ -193,6 +193,8 @@ export interface IWallet {
 		servers?: TServer | TServer[];
 		tls?: TLSSocket;
 		net?: Server;
+		batchLimit?: number; // Maximum number of requests to be sent in a single batch
+		batchDelay?: number; // Delay (in milliseconds) between each batch of requests
 	};
 	remainOffline?: boolean;
 	onMessage?: TOnMessage;

@@ -19,6 +19,7 @@
 
 ### Methods
 
+- [addExternalInputs](Transaction.md#addexternalinputs)
 - [addInput](Transaction.md#addinput)
 - [addOutput](Transaction.md#addoutput)
 - [createPsbtFromTransactionData](Transaction.md#createpsbtfromtransactiondata)
@@ -54,7 +55,7 @@
 
 #### Defined in
 
-[transaction/index.ts:41](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L41)
+[transaction/index.ts:49](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L49)
 
 ## Properties
 
@@ -64,7 +65,7 @@
 
 #### Defined in
 
-[transaction/index.ts:38](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L38)
+[transaction/index.ts:46](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L46)
 
 ___
 
@@ -74,7 +75,7 @@ ___
 
 #### Defined in
 
-[transaction/index.ts:39](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L39)
+[transaction/index.ts:47](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L47)
 
 ## Accessors
 
@@ -88,9 +89,33 @@ ___
 
 #### Defined in
 
-[transaction/index.ts:46](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L46)
+[transaction/index.ts:54](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L54)
 
 ## Methods
+
+### addExternalInputs
+
+▸ **addExternalInputs**(`«destructured»`): [`Result`](../README.md#result)<[`IUtxo`](../interfaces/IUtxo.md)[]\>
+
+Adds external inputs to the current transaction.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `«destructured»` | `Object` |
+| › `inputs` | [`IUtxo`](../interfaces/IUtxo.md)[] |
+| › `keyPair` | `BIP32Interface` \| `ECPairInterface` |
+
+#### Returns
+
+[`Result`](../README.md#result)<[`IUtxo`](../interfaces/IUtxo.md)[]\>
+
+#### Defined in
+
+[transaction/index.ts:772](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L772)
+
+___
 
 ### addInput
 
@@ -108,7 +133,7 @@ ___
 
 #### Defined in
 
-[transaction/index.ts:628](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L628)
+[transaction/index.ts:659](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L659)
 
 ___
 
@@ -130,7 +155,7 @@ Adds an output at the specified index to the current transaction.
 
 #### Defined in
 
-[transaction/index.ts:714](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L714)
+[transaction/index.ts:821](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L821)
 
 ___
 
@@ -155,7 +180,7 @@ Returns a PSBT that includes unsigned funding inputs.
 
 #### Defined in
 
-[transaction/index.ts:494](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L494)
+[transaction/index.ts:520](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L520)
 
 ___
 
@@ -177,7 +202,7 @@ Creates complete signed transaction using the transaction data store
 
 #### Defined in
 
-[transaction/index.ts:370](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L370)
+[transaction/index.ts:379](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L379)
 
 ___
 
@@ -201,7 +226,7 @@ Calculates the max amount able to send for onchain/lightning
 
 #### Defined in
 
-[transaction/index.ts:940](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L940)
+[transaction/index.ts:1047](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L1047)
 
 ___
 
@@ -225,7 +250,7 @@ Returns the maximum sats per byte that can be used for a given transaction.
 
 #### Defined in
 
-[transaction/index.ts:354](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L354)
+[transaction/index.ts:363](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L363)
 
 ___
 
@@ -250,7 +275,7 @@ Calculates the max amount able to send for the provided/current onchain transact
 
 #### Defined in
 
-[transaction/index.ts:1007](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L1007)
+[transaction/index.ts:1114](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L1114)
 
 ___
 
@@ -276,7 +301,7 @@ Attempt to estimate the current fee for a given transaction and its UTXO's
 
 #### Defined in
 
-[transaction/index.ts:206](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L206)
+[transaction/index.ts:215](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L215)
 
 ___
 
@@ -302,7 +327,7 @@ Attempt to estimate the current fee for a given transaction and its UTXO's
 
 #### Defined in
 
-[transaction/index.ts:261](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L261)
+[transaction/index.ts:270](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L270)
 
 ___
 
@@ -325,7 +350,7 @@ Returns total value of all utxos.
 
 #### Defined in
 
-[transaction/index.ts:439](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L439)
+[transaction/index.ts:448](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L448)
 
 ___
 
@@ -348,7 +373,7 @@ Returns total value of all outputs. Excludes any value that would be sent to the
 
 #### Defined in
 
-[transaction/index.ts:738](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L738)
+[transaction/index.ts:845](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L845)
 
 ___
 
@@ -370,7 +395,7 @@ Removes blacklisted UTXO's from the UTXO array.
 
 #### Defined in
 
-[transaction/index.ts:182](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L182)
+[transaction/index.ts:191](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L191)
 
 ___
 
@@ -386,7 +411,7 @@ This completely resets the send transaction state.
 
 #### Defined in
 
-[transaction/index.ts:172](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L172)
+[transaction/index.ts:181](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L181)
 
 ___
 
@@ -413,7 +438,7 @@ Toggles the max amount to the provided output index.
 
 #### Defined in
 
-[transaction/index.ts:875](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L875)
+[transaction/index.ts:982](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L982)
 
 ___
 
@@ -437,7 +462,7 @@ Sets up a CPFP transaction.
 
 #### Defined in
 
-[transaction/index.ts:1058](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L1058)
+[transaction/index.ts:1165](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L1165)
 
 ___
 
@@ -460,7 +485,7 @@ This function will not override previously set transaction data. To do that you'
 
 #### Defined in
 
-[transaction/index.ts:59](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L59)
+[transaction/index.ts:68](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L68)
 
 ___
 
@@ -484,7 +509,7 @@ Loops through inputs and signs them
 
 #### Defined in
 
-[transaction/index.ts:463](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L463)
+[transaction/index.ts:472](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L472)
 
 ___
 
@@ -510,7 +535,7 @@ Updates the fee for the current transaction by the specified amount.
 
 #### Defined in
 
-[transaction/index.ts:801](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L801)
+[transaction/index.ts:908](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L908)
 
 ___
 
@@ -533,4 +558,4 @@ This updates the transaction state used for sending.
 
 #### Defined in
 
-[transaction/index.ts:763](https://github.com/synonymdev/beignet/blob/583604f/src/transaction/index.ts#L763)
+[transaction/index.ts:870](https://github.com/synonymdev/beignet/blob/05d5011/src/transaction/index.ts#L870)

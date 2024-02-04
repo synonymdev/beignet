@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[types/electrum.ts:108](https://github.com/synonymdev/beignet/blob/583604f/src/types/electrum.ts#L108)
+[types/electrum.ts:108](https://github.com/synonymdev/beignet/blob/05d5011/src/types/electrum.ts#L108)
 
 ___
 
@@ -30,7 +30,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:104](https://github.com/synonymdev/beignet/blob/583604f/src/types/electrum.ts#L104)
+[types/electrum.ts:104](https://github.com/synonymdev/beignet/blob/05d5011/src/types/electrum.ts#L104)
 
 ___
 
@@ -40,7 +40,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:105](https://github.com/synonymdev/beignet/blob/583604f/src/types/electrum.ts#L105)
+[types/electrum.ts:105](https://github.com/synonymdev/beignet/blob/05d5011/src/types/electrum.ts#L105)
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:106](https://github.com/synonymdev/beignet/blob/583604f/src/types/electrum.ts#L106)
+[types/electrum.ts:106](https://github.com/synonymdev/beignet/blob/05d5011/src/types/electrum.ts#L106)
 
 ___
 
@@ -60,4 +60,4 @@ ___
 
 #### Defined in
 
-[types/electrum.ts:107](https://github.com/synonymdev/beignet/blob/583604f/src/types/electrum.ts#L107)
+[types/electrum.ts:107](https://github.com/synonymdev/beignet/blob/05d5011/src/types/electrum.ts#L107)

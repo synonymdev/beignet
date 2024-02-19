@@ -1,9 +1,17 @@
 import * as chai from 'chai';
 import { validateMnemonic } from 'bip39';
-import { IAddress, IAddresses, Wallet } from '../';
+import {
+	filterAddressesObjForGapLimit,
+	IAddress,
+	IAddresses,
+	Wallet
+} from '../';
 import {
 	EAddressType,
 	EAvailableNetworks,
+	filterAddressesForGapLimit,
+	filterAddressesObjForSingleIndex,
+	filterAddressesObjForStartingIndex,
 	generateMnemonic,
 	IGetUtxosResponse,
 	Result
@@ -217,6 +225,68 @@ describe('Wallet Library', async function () {
 		expect(getUtxosRes.value.utxos.length).to.equal(2);
 		expect(getUtxosRes.value.balance).to.equal(4855);
 		expect(getUtxosRes.value).to.deep.equal(expectedResult);
+	});
+
+	it('Should return addresses in range of the provided gap limit', async () => {
+		const gapLimitOptions = {
+			lookAhead: 2,
+			lookBehind: 2
+		};
+		const addressesObj = wallet.data.addresses[EAddressType.p2wpkh];
+		const addresses: IAddress[] = Object.values(addressesObj);
+		const index: number = wallet.data.addressIndex[EAddressType.p2wpkh].index;
+		expect(addresses.length).to.equal(25);
+		expect(index).to.equal(5);
+		expect(Math.min(...addresses.map((a) => a.index))).to.equal(0);
+		expect(Math.max(...addresses.map((a) => a.index))).to.equal(24);
+
+		const filteredAddresses = filterAddressesForGapLimit({
+			addresses,
+			index,
+			gapLimitOptions
+		});
+		let indexes = filteredAddresses.map((a) => a.index);
+		let minIndex = Math.min(...indexes);
+		let maxIndex = Math.max(...indexes);
+		expect(filteredAddresses.length).to.equal(5);
+		expect(minIndex).to.equal(3);
+		expect(maxIndex).to.equal(7);
+
+		const filteredAddressesObj = filterAddressesObjForGapLimit({
+			addresses: addressesObj,
+			index,
+			gapLimitOptions
+		});
+		indexes = Object.values(filteredAddressesObj).map((a: IAddress) => a.index);
+		minIndex = Math.min(...indexes);
+		maxIndex = Math.max(...indexes);
+		expect(indexes.length).to.equal(5);
+		expect(minIndex).to.equal(3);
+		expect(maxIndex).to.equal(7);
+
+		const filteredStartingAddresses = filterAddressesObjForStartingIndex({
+			addresses: addressesObj,
+			index
+		});
+		indexes = Object.values(filteredStartingAddresses).map(
+			(a: IAddress) => a.index
+		);
+		minIndex = Math.min(...indexes);
+		maxIndex = Math.max(...indexes);
+		expect(indexes.length).to.equal(20);
+		expect(minIndex).to.equal(5);
+		expect(maxIndex).to.equal(24);
+
+		const filteredSingleAddress = filterAddressesObjForSingleIndex({
+			addresses: addressesObj,
+			addressIndex: index
+		});
+		const singleAddress = Object.values(filteredSingleAddress);
+		minIndex = Math.min(...singleAddress.map((a: IAddress) => a.index));
+		maxIndex = Math.max(...singleAddress.map((a: IAddress) => a.index));
+		expect(singleAddress.length).to.equal(1);
+		expect(minIndex).to.equal(5);
+		expect(maxIndex).to.equal(5);
 	});
 
 	it('Should successfully return the private testnet key for a given path', async () => {

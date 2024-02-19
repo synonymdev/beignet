@@ -1,11 +1,13 @@
 import {
+	EAddressType,
 	EAvailableNetworks,
+	EElectrumNetworks,
+	EScanningStrategy,
 	IAddress,
 	IAddresses,
-	TAddressTypeContent,
-	TConnectToElectrumRes,
 	IElectrumGetAddressBalanceRes,
 	IGetAddressHistoryResponse,
+	IGetAddressScriptHashBalances,
 	IGetAddressScriptHashesHistoryResponse,
 	IGetHeaderResponse,
 	IGetTransactions,
@@ -13,37 +15,39 @@ import {
 	IGetUtxosResponse,
 	IHeader,
 	INewBlock,
+	IPeerData,
 	ISubscribeToAddress,
 	ISubscribeToHeader,
 	ITransaction,
 	ITxHash,
 	IUtxo,
-	EElectrumNetworks,
+	TAddressTypeContent,
+	TConnectToElectrumRes,
+	TGetAddressHistory,
+	TOnMessage,
 	TServer,
 	TSubscribedReceive,
 	TTxResponse,
 	TTxResult,
-	TUnspentAddressScriptHashData,
-	IPeerData,
-	TGetAddressHistory,
-	TOnMessage,
-	IGetAddressScriptHashBalances
+	TUnspentAddressScriptHashData
 } from '../types';
 import * as electrum from 'rn-electrum-client/helpers';
 import {
 	err,
+	filterAddressesForGapLimit,
+	filterAddressesObjForGapLimit,
+	filterAddressesObjForSingleIndex,
+	filterAddressesObjForStartingIndex,
 	getAddressFromScriptPubKey,
 	getElectrumNetwork,
+	getScriptHash,
 	ok,
 	Result,
 	sleep
 } from '../utils';
 import { Wallet } from '../wallet';
-import { GAP_LIMIT } from '../wallet/constants';
-import { getScriptHash } from '../utils';
-import { POLLING_INTERVAL } from '../shapes';
+import { onMessageKeys, POLLING_INTERVAL } from '../shapes';
 import { Block } from 'bitcoinjs-lib';
-import { onMessageKeys } from '../shapes';
 import { Server } from 'net';
 import { TLSSocket } from 'tls';
 
@@ -77,7 +81,7 @@ export class Electrum {
 		onReceive,
 		tls: _tls,
 		net: _net,
-		batchLimit = 15,
+		batchLimit = 20,
 		batchDelay = 50
 	}: {
 		wallet: Wallet;
@@ -294,15 +298,21 @@ export class Electrum {
 						addressIndex >= 0 &&
 						changeAddressIndex >= 0
 					) {
-						addressValues = addressValues.filter(
-							(a) => Math.abs(addressIndex - a.index) <= GAP_LIMIT
-						);
-						changeAddressValues = changeAddressValues.filter(
-							(a) => Math.abs(changeAddressIndex - a.index) <= GAP_LIMIT
-						);
+						addressValues = filterAddressesForGapLimit({
+							addresses: addressValues,
+							index: addressIndex,
+							gapLimitOptions: this._wallet.gapLimitOptions
+						});
+						changeAddressValues = filterAddressesForGapLimit({
+							addresses: changeAddressValues,
+							index: changeAddressIndex,
+							gapLimitOptions: this._wallet.gapLimitOptions
+						});
 					}
+					const utxoScriptHashes: IAddress[] = currentWallet.utxos;
 
 					scriptHashes = [
+						...utxoScriptHashes,
 						...scriptHashes,
 						...addressValues,
 						...changeAddressValues
@@ -410,13 +420,22 @@ export class Electrum {
 
 	/**
 	 * Returns UTXO's for a given wallet and network along with the available balance.
-	 * @param {boolean} [scanAllAddresses]
+	 * @param {EScanningStrategy} [scanningStrategy]
+	 * @param {number} addressIndex
+	 * @param {number} changeAddressIndex
+	 * @param {EAddressType[]} [addressTypesToCheck]
 	 * @returns {Promise<Result<IGetUtxosResponse>>}
 	 */
 	async getUtxos({
-		scanAllAddresses = false
+		scanningStrategy = EScanningStrategy.gapLimit,
+		addressIndex,
+		changeAddressIndex,
+		addressTypesToCheck = this._wallet.addressTypesToMonitor
 	}: {
-		scanAllAddresses?: boolean;
+		scanningStrategy?: EScanningStrategy;
+		addressIndex?: number;
+		changeAddressIndex?: number;
+		addressTypesToCheck?: EAddressType[];
 	}): Promise<Result<IGetUtxosResponse>> {
 		try {
 			if (!this.connectedToElectrum)
@@ -426,12 +445,11 @@ export class Electrum {
 				});
 			const currentWallet = this._wallet.data;
 
-			const addressTypeKeys = this._wallet.addressTypesToMonitor;
 			let addresses = {} as IAddresses;
 			let changeAddresses = {} as IAddresses;
 			const existingUtxos: { [key: string]: IUtxo } = {};
 
-			for (const addressType of addressTypeKeys) {
+			for (const addressType of addressTypesToCheck) {
 				const addressCount = Object.keys(currentWallet.addresses[addressType])
 					?.length;
 
@@ -440,30 +458,66 @@ export class Electrum {
 					break;
 				}
 
-				// Grab the current index for both addresses and change addresses.
-				const addressIndex = currentWallet.addressIndex[addressType].index;
-				const changeAddressIndex =
-					currentWallet.changeAddressIndex[addressType].index;
-
 				// Grab all addresses and change addresses.
 				const allAddresses = currentWallet.addresses[addressType];
 				const allChangeAddresses = currentWallet.changeAddresses[addressType];
 
-				// Instead of scanning all addresses, adhere to the gap limit.
-				if (!scanAllAddresses && addressIndex >= 0 && changeAddressIndex >= 0) {
-					Object.values(allAddresses).map((a) => {
-						if (Math.abs(a.index - addressIndex) <= GAP_LIMIT) {
-							addresses[a.scriptHash] = a;
-						}
-					});
-					Object.values(allChangeAddresses).map((a) => {
-						if (Math.abs(a.index - changeAddressIndex) <= GAP_LIMIT) {
-							changeAddresses[a.scriptHash] = a;
-						}
-					});
-				} else {
+				if (scanningStrategy === EScanningStrategy.all) {
 					addresses = { ...addresses, ...allAddresses };
 					changeAddresses = { ...changeAddresses, ...allChangeAddresses };
+				} else {
+					// Grab the current index for address/change addresses if none were provided.
+					if (!addressIndex)
+						addressIndex = currentWallet.addressIndex[addressType].index;
+					if (!changeAddressIndex)
+						changeAddressIndex =
+							currentWallet.changeAddressIndex[addressType].index;
+
+					// Use the lowest index to ensure we're not starting above our current index.
+					// TODO: Consider removing this entirely or at least updating it to allow up to the max stored address/change address index.
+					const lowestAddressIndex = Math.min(
+						addressIndex,
+						currentWallet.addressIndex[addressType].index
+					);
+					const lowestChangeAddressIndex = Math.min(
+						changeAddressIndex,
+						currentWallet.changeAddressIndex[addressType].index
+					);
+
+					switch (scanningStrategy) {
+						case EScanningStrategy.gapLimit:
+							addresses = filterAddressesObjForGapLimit({
+								addresses: allAddresses,
+								index: lowestAddressIndex,
+								gapLimitOptions: this._wallet.gapLimitOptions
+							});
+							changeAddresses = filterAddressesObjForGapLimit({
+								addresses: allChangeAddresses,
+								index: lowestChangeAddressIndex,
+								gapLimitOptions: this._wallet.gapLimitOptions
+							});
+							break;
+						case EScanningStrategy.startingIndex:
+							addresses = filterAddressesObjForStartingIndex({
+								addresses: allAddresses,
+								index: lowestAddressIndex
+							});
+							changeAddresses = filterAddressesObjForStartingIndex({
+								addresses: allChangeAddresses,
+								index: lowestChangeAddressIndex
+							});
+							break;
+						case EScanningStrategy.singleIndex:
+							addresses = filterAddressesObjForSingleIndex({
+								addresses: allAddresses,
+								addressIndex
+							});
+							changeAddresses = filterAddressesObjForSingleIndex({
+								addresses: allChangeAddresses,
+								addressIndex: changeAddressIndex
+							});
+							break;
+					}
 				}
 			}
 
@@ -710,6 +764,7 @@ export class Electrum {
 		scriptHashes?: string[];
 		onReceive?: (data: TSubscribedReceive) => void;
 	} = {}): Promise<Result<string>> {
+		const allUtxos: IUtxo[] = [];
 		const currentWallet = this._wallet.data;
 		const addressTypeKeys = this._wallet.addressTypesToMonitor;
 		// Gather the receiving address scripthash for each address type if no scripthashes were provided.
@@ -724,20 +779,27 @@ export class Electrum {
 					addressIndex = addressIndex > 0 ? addressIndex : 0;
 
 					// Only subscribe up to the gap limit.
-					const addressesInRange = Object.values(addresses).filter(
-						(address) => Math.abs(address.index - addressIndex) <= GAP_LIMIT
+					const addressesInRangeToSubscribe = filterAddressesForGapLimit({
+						addresses: Object.values(addresses),
+						index: addressIndex,
+						gapLimitOptions: this._wallet.gapLimitOptions
+					});
+					const _scriptHashes = addressesInRangeToSubscribe.map(
+						(address) => address.scriptHash
 					);
-					const addressesToSubscribe = addressesInRange.slice(-GAP_LIMIT);
-					const addressScriptHashes = addressesToSubscribe.map(
-						({ scriptHash }) => scriptHash
-					);
-					scriptHashes.push(...addressScriptHashes);
+					scriptHashes.push(..._scriptHashes);
 				}
 			}
+			// Keep an eye on existing UTXO's regardless of the gap limit.
+			currentWallet.utxos.forEach((utxo) => {
+				if (!scriptHashes.includes(utxo.scriptHash)) {
+					allUtxos.push(utxo);
+				}
+			});
 		}
 
 		// Subscribe to all provided script hashes.
-		const promises = scriptHashes.map(async (scriptHash) => {
+		const allScriptHashesPromise = scriptHashes.map(async (scriptHash) => {
 			const response: ISubscribeToAddress = await electrum.subscribeAddress({
 				scriptHash,
 				network: this.electrumNetwork,
@@ -751,8 +813,27 @@ export class Electrum {
 			}
 		});
 
+		const allUtxosPromise = allUtxos.map(async (utxo) => {
+			const response: ISubscribeToAddress = await electrum.subscribeAddress({
+				scriptHash: utxo.scriptHash,
+				network: this.electrumNetwork,
+				onReceive: async (data: TSubscribedReceive): Promise<void> => {
+					onReceive?.(data);
+					await this.getUtxos({
+						scanningStrategy: EScanningStrategy.singleIndex,
+						addressIndex: utxo.index,
+						changeAddressIndex: utxo.index
+					});
+					this._wallet.refreshWallet({});
+				}
+			});
+			if (response.error) {
+				throw Error('Unable to subscribe to receiving addresses.');
+			}
+		});
+
 		try {
-			await Promise.all(promises);
+			await Promise.all([allScriptHashesPromise, allUtxosPromise]);
 		} catch (e) {
 			return err(e);
 		}

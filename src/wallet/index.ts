@@ -8,6 +8,7 @@ import {
 	EBoostType,
 	EFeeId,
 	EPaymentType,
+	EScanningStrategy,
 	IAddress,
 	IAddresses,
 	IBoostedTransaction,
@@ -46,6 +47,7 @@ import {
 	TAddressIndexInfo,
 	TAddressTypeContent,
 	TAvailableNetworks,
+	TGapLimitOptions,
 	TGetData,
 	TGetTotalFeeObj,
 	TMessageDataMap,
@@ -61,11 +63,17 @@ import {
 import {
 	decodeOpReturnMessage,
 	err,
+	filterAddressesObjForGapLimit,
 	formatKeyDerivationPath,
+	generateWalletId,
+	getAddressesFromPrivateKey,
+	getAddressFromKeyPair,
+	getAddressIndexDiff,
 	getAddressTypeFromPath,
 	getDataFallback,
 	getDefaultWalletData,
 	getDefaultWalletDataKeys,
+	getElectrumNetwork,
 	getHighestUsedIndexFromTxHashes,
 	getKeyDerivationPath,
 	getKeyDerivationPathObject,
@@ -73,17 +81,14 @@ import {
 	getScriptHash,
 	getSeed,
 	getWalletDataStorageKey,
-	generateWalletId,
+	isPositive,
 	objectKeys,
 	objectsMatch,
 	ok,
 	Result,
 	shuffleArray,
 	validateAddress,
-	validateMnemonic,
-	getAddressesFromPrivateKey,
-	getAddressFromKeyPair,
-	getElectrumNetwork
+	validateMnemonic
 } from '../utils';
 import {
 	addressTypes,
@@ -93,11 +98,7 @@ import {
 } from '../shapes';
 import { Electrum } from '../electrum';
 import { Transaction } from '../transaction';
-import {
-	GAP_LIMIT,
-	GENERATE_ADDRESS_AMOUNT,
-	TRANSACTION_DEFAULTS
-} from './constants';
+import { GAP_LIMIT, TRANSACTION_DEFAULTS } from './constants';
 import cloneDeep from 'lodash.clonedeep';
 import { btcToSats } from '../utils/conversion';
 import * as bip39 from 'bip39';
@@ -146,6 +147,7 @@ export class Wallet {
 	public rbf: boolean;
 	public selectedFeeId: EFeeId;
 	public disableMessages: boolean;
+	public gapLimitOptions: TGapLimitOptions;
 	private constructor({
 		mnemonic,
 		passphrase,
@@ -161,7 +163,11 @@ export class Wallet {
 		selectedFeeId = EFeeId.normal,
 		disableMessages = false,
 		disableMessagesOnCreate = false,
-		addressTypesToMonitor = Object.values(EAddressType)
+		addressTypesToMonitor = Object.values(EAddressType),
+		gapLimitOptions = {
+			lookBehind: GAP_LIMIT,
+			lookAhead: GAP_LIMIT
+		}
 	}: IWallet) {
 		if (!mnemonic) throw new Error('No mnemonic specified.');
 		if (!validateMnemonic(mnemonic)) throw new Error('Invalid mnemonic.');
@@ -212,6 +218,14 @@ export class Wallet {
 		}
 		// Remove duplicates
 		this.addressTypesToMonitor = [...new Set(this.addressTypesToMonitor)];
+		this.gapLimitOptions = {
+			lookBehind: isPositive(gapLimitOptions.lookBehind)
+				? gapLimitOptions.lookBehind
+				: 1,
+			lookAhead: isPositive(gapLimitOptions.lookAhead)
+				? gapLimitOptions.lookAhead
+				: 1
+		};
 	}
 
 	public get data(): IWalletData {
@@ -288,8 +302,7 @@ export class Wallet {
 
 	/**
 	 * Refreshes/Syncs the wallet data.
-	 * @param {boolean} scanAllAddresses
-	 * @param {boolean} updateAllAddressTypes
+	 * @param {boolean} [scanAllAddresses]
 	 * @returns {Promise<Result<IWalletData>>}
 	 */
 	public async refreshWallet({ scanAllAddresses = false } = {}): Promise<
@@ -307,7 +320,9 @@ export class Wallet {
 			if (r1.isErr()) {
 				return this._handleRefreshError(r1.error.message);
 			}
-			const r2 = await this.getUtxos({ scanAllAddresses });
+			const r2 = await this.getUtxos({
+				scanningStrategy: scanAllAddresses ? EScanningStrategy.all : undefined
+			});
 			if (r2.isErr()) {
 				return this._handleRefreshError(r2.error.message);
 			}
@@ -886,93 +901,92 @@ export class Wallet {
 			let lastUsedChangeAddressIndex =
 				currentWallet.lastUsedChangeAddressIndex[addressType];
 
-			if (addressIndex?.index < 0 || !addressIndex?.address) {
-				const generatedAddresses = await this.generateAddresses({
-					addressAmount: GENERATE_ADDRESS_AMOUNT,
+			const startingAddressIndex = addressIndex?.index ?? 0;
+			const startingChangeAddressIndex = changeAddressIndex?.index ?? 0;
+
+			const addressIndexDiff = getAddressIndexDiff(
+				startingAddressIndex,
+				lastUsedAddressIndex.index
+			);
+			const addressesToGenerate =
+				this.gapLimitOptions.lookAhead - addressIndexDiff;
+			let shouldSaveAddresses = false;
+			let shouldSaveChangeAddresses = false;
+			if (addressesToGenerate > 0) {
+				const generatedAddresses = await this.addAddresses({
+					addressAmount: addressesToGenerate,
 					addressIndex: 0,
 					changeAddressAmount: 0,
 					keyDerivationPath,
-					addressType
+					addressType,
+					saveAddresses: false
 				});
 				if (generatedAddresses.isErr()) {
 					return err(generatedAddresses.error);
 				}
-				const addresses = generatedAddresses.value.addresses;
-				const sorted = Object.values(addresses).sort(
-					(a, b) => a.index - b.index
-				);
-				addressIndex = sorted[0];
+				shouldSaveAddresses = true;
+				if (addressIndex.index < 0) {
+					const addresses = generatedAddresses.value.addresses;
+					const sorted = Object.values(addresses).sort(
+						(a, b) => a.index - b.index
+					);
+					if (sorted.length >= 1 && sorted[0].index >= 0)
+						addressIndex = sorted[0];
+				}
 			}
 
-			if (changeAddressIndex?.index < 0 || !changeAddressIndex?.address) {
-				const generatedAddresses = await this.generateAddresses({
+			const changeAddressIndexDiff = getAddressIndexDiff(
+				startingChangeAddressIndex,
+				lastUsedChangeAddressIndex.index
+			);
+			const changeAddressesToGenerate =
+				this.gapLimitOptions.lookAhead - changeAddressIndexDiff;
+
+			if (changeAddressesToGenerate > 0) {
+				const generatedAddresses = await this.addAddresses({
 					addressAmount: 0,
-					changeAddressAmount: GENERATE_ADDRESS_AMOUNT,
-					changeAddressIndex: 0,
-					keyDerivationPath,
-					addressType
-				});
-				if (generatedAddresses.isErr()) {
-					return err(generatedAddresses.error);
-				}
-				const addresses = generatedAddresses.value.changeAddresses;
-				const sorted = Object.values(addresses).sort(
-					(a, b) => a.index - b.index
-				);
-				changeAddressIndex = sorted[0];
-			}
-
-			let addresses: IAddresses = currentWallet.addresses[addressType];
-			let changeAddresses: IAddresses =
-				currentWallet.changeAddresses[addressType];
-
-			//How many addresses/changeAddresses are currently stored
-			const addressCount = Object.values(addresses).length;
-			const changeAddressCount = Object.values(changeAddresses).length;
-
-			/*
-			 *	Create more addresses if less than the default GENERATE_ADDRESS_AMOUNT or the highest address index matches the current address count
-			 */
-
-			if (
-				addressCount < GENERATE_ADDRESS_AMOUNT ||
-				addressIndex.index === addressCount
-			) {
-				const newAddresses = await this.addAddresses({
-					addressAmount: GENERATE_ADDRESS_AMOUNT,
-					changeAddressAmount: 0,
-					addressIndex: addressIndex.index,
+					changeAddressAmount: changeAddressesToGenerate,
 					changeAddressIndex: 0,
 					keyDerivationPath,
 					addressType,
 					saveAddresses: false
 				});
-				if (newAddresses.isOk()) {
-					addresses = newAddresses.value.addresses;
+				if (generatedAddresses.isErr()) {
+					return err(generatedAddresses.error);
+				}
+				shouldSaveChangeAddresses = true;
+				if (changeAddressIndex.index < 0) {
+					const changeAddresses = generatedAddresses.value.changeAddresses;
+					const sorted = Object.values(changeAddresses).sort(
+						(a, b) => a.index - b.index
+					);
+					if (sorted.length >= 1 && sorted[0].index >= 0)
+						changeAddressIndex = sorted[0];
 				}
 			}
 
-			/*
-			 *	Create more change addresses if none exist or the highest change address index matches the current
-			 *	change address count
-			 */
-			if (
-				changeAddressCount < GENERATE_ADDRESS_AMOUNT ||
-				changeAddressIndex.index === changeAddressCount
-			) {
-				const newChangeAddresses = await this.addAddresses({
-					addressAmount: 0,
-					changeAddressAmount: GENERATE_ADDRESS_AMOUNT,
-					addressIndex: 0,
-					changeAddressIndex: changeAddressIndex.index,
-					keyDerivationPath,
-					addressType,
-					saveAddresses: false
-				});
-				if (newChangeAddresses.isOk()) {
-					changeAddresses = newChangeAddresses.value.changeAddresses;
-				}
+			// Save any addresses that have been created thus far if necessary.
+			const promises: Promise<string>[] = [];
+			if (shouldSaveAddresses) {
+				promises.push(this.saveWalletData('addresses', this._data.addresses));
 			}
+			if (shouldSaveChangeAddresses) {
+				promises.push(
+					this.saveWalletData('changeAddresses', this._data.changeAddresses)
+				);
+			}
+			await Promise.all(promises);
+
+			let addresses = filterAddressesObjForGapLimit({
+				addresses: this._data.addresses[addressType],
+				index: addressIndex.index,
+				gapLimitOptions: this.gapLimitOptions
+			});
+			let changeAddresses = filterAddressesObjForGapLimit({
+				addresses: this._data.changeAddresses[addressType],
+				index: changeAddressIndex.index,
+				gapLimitOptions: this.gapLimitOptions
+			});
 
 			//Store all addresses that are to be searched and used in this method.
 			let allAddresses = Object.values(addresses).filter(
@@ -1023,8 +1037,8 @@ export class Wallet {
 					txHashes,
 					addresses,
 					changeAddresses,
-					addressIndex,
-					changeAddressIndex
+					addressIndex: lastUsedAddressIndex,
+					changeAddressIndex: lastUsedChangeAddressIndex
 				});
 
 				if (highestUsedIndex.isErr()) {
@@ -1032,12 +1046,15 @@ export class Wallet {
 					return lastKnownIndexes;
 				}
 
-				addressIndex = highestUsedIndex.value.addressIndex;
-				changeAddressIndex = highestUsedIndex.value.changeAddressIndex;
 				if (highestUsedIndex.value.foundAddressIndex) {
+					lastUsedAddressIndex = highestUsedIndex.value.addressIndex;
+					addressIndex = highestUsedIndex.value.addressIndex;
 					addressHasBeenUsed = true;
 				}
 				if (highestUsedIndex.value.foundChangeAddressIndex) {
+					lastUsedChangeAddressIndex =
+						highestUsedIndex.value.changeAddressIndex;
+					changeAddressIndex = highestUsedIndex.value.changeAddressIndex;
 					changeAddressHasBeenUsed = true;
 				}
 
@@ -1059,13 +1076,20 @@ export class Wallet {
 					changeAddressIndex: highestStoredChangeAddressIndex
 				} = highestStoredIndex.value;
 
-				if (highestUsedAddressIndex.index < highestStoredAddressIndex.index) {
+				if (
+					getAddressIndexDiff(
+						highestUsedAddressIndex.index,
+						highestStoredAddressIndex.index
+					) >= this.gapLimitOptions.lookAhead
+				) {
 					foundLastUsedAddress = true;
 				}
 
 				if (
-					highestUsedChangeAddressIndex.index <
-					highestStoredChangeAddressIndex.index
+					getAddressIndexDiff(
+						highestUsedChangeAddressIndex.index,
+						highestStoredChangeAddressIndex.index
+					) >= this.gapLimitOptions.lookAhead
 				) {
 					foundLastUsedChangeAddress = true;
 				}
@@ -1107,6 +1131,10 @@ export class Wallet {
 					if (!nextAvailableAddress || !nextAvailableChangeAddress) {
 						return lastKnownIndexes;
 					}
+					await Promise.all([
+						this.saveWalletData('addresses', this._data.addresses),
+						this.saveWalletData('changeAddresses', this._data.changeAddresses)
+					]);
 					return ok({
 						addressIndex: nextAvailableAddress,
 						lastUsedAddressIndex,
@@ -1117,10 +1145,16 @@ export class Wallet {
 
 				//Create receiving addresses for the next round
 				if (!foundLastUsedAddress) {
+					const addressAmount =
+						this.gapLimitOptions.lookAhead -
+						getAddressIndexDiff(
+							highestUsedAddressIndex.index,
+							highestStoredAddressIndex.index
+						);
 					const newAddresses = await this.addAddresses({
-						addressAmount: GENERATE_ADDRESS_AMOUNT,
+						addressAmount,
 						changeAddressAmount: 0,
-						addressIndex: highestStoredIndex.value.addressIndex.index,
+						addressIndex: highestStoredIndex.value.addressIndex.index + 1,
 						changeAddressIndex: 0,
 						keyDerivationPath,
 						addressType,
@@ -1132,12 +1166,18 @@ export class Wallet {
 				}
 				//Create change addresses for the next round
 				if (!foundLastUsedChangeAddress) {
+					const changeAddressAmount =
+						this.gapLimitOptions.lookAhead -
+						getAddressIndexDiff(
+							highestUsedChangeAddressIndex.index,
+							highestStoredChangeAddressIndex.index
+						);
 					const newChangeAddresses = await this.addAddresses({
 						addressAmount: 0,
-						changeAddressAmount: GENERATE_ADDRESS_AMOUNT,
+						changeAddressAmount,
 						addressIndex: 0,
 						changeAddressIndex:
-							highestStoredIndex.value.changeAddressIndex.index,
+							highestStoredIndex.value.changeAddressIndex.index + 1,
 						keyDerivationPath,
 						addressType,
 						saveAddresses: false
@@ -1157,6 +1197,12 @@ export class Wallet {
 				// Store the newly created addresses used for this method.
 				allAddresses = [...allAddresses, ...addressesToScan];
 				allChangeAddresses = [...allChangeAddresses, ...changeAddressesToScan];
+				// Check UTXO's as we generate addresses.
+				await this.getUtxos({
+					addressIndex: addressIndex.index,
+					changeAddressIndex: changeAddressIndex.index,
+					addressTypesToCheck: [addressType]
+				});
 			}
 
 			await Promise.all([
@@ -1388,8 +1434,8 @@ export class Wallet {
 				const lastUsedIndex =
 					lastUsedAddressIndex.index > 0 ? lastUsedAddressIndex.index : 0;
 				const currentGap = Math.abs(addressIndex.index - lastUsedIndex);
-				if (currentGap > GAP_LIMIT) {
-					const excessAmount = currentGap - GAP_LIMIT;
+				if (currentGap > this.gapLimitOptions.lookBehind) {
+					const excessAmount = currentGap - this.gapLimitOptions.lookBehind;
 					const newIndex = addressIndex.index - excessAmount;
 					const _addressIndex = await this.generateAddresses({
 						addressType: addressTypeKey,
@@ -1410,8 +1456,8 @@ export class Wallet {
 				const currentChangeAddressGap = Math.abs(
 					changeAddressIndex.index - lastUsedChangeIndex
 				);
-				if (currentChangeAddressGap > GAP_LIMIT) {
-					const excessAmount = currentGap - GAP_LIMIT;
+				if (currentChangeAddressGap > this.gapLimitOptions.lookBehind) {
+					const excessAmount = currentGap - this.gapLimitOptions.lookBehind;
 					const newIndex = addressIndex.index - excessAmount;
 					const _changeAddressIndex = await this.generateAddresses({
 						addressType: addressTypeKey,
@@ -1515,7 +1561,7 @@ export class Wallet {
 			const { addressDelta } = getGapLimitResponse.value;
 
 			// If the address delta exceeds the default gap limit, only return the current address index.
-			if (addressDelta >= GAP_LIMIT) {
+			if (addressDelta >= this.gapLimitOptions.lookBehind) {
 				const addressIndex = currentWallet.addressIndex;
 				const receiveAddress = addressIndex[addressType];
 				return ok(receiveAddress);
@@ -1611,16 +1657,30 @@ export class Wallet {
 
 	/**
 	 * Retrieves and sets UTXO's for the current wallet from Electrum.
-	 * @param {boolean} scanAllAddresses
+	 * @param {EScanningStrategy} [scanningStrategy]
+	 * @param {number} addressIndex
+	 * @param {number} changeAddressIndex
+	 * @param {EAddressType[]} [addressTypesToCheck]
 	 * @returns {Promise<Result<IGetUtxosResponse>>}
 	 */
 	public async getUtxos({
-		scanAllAddresses = false
+		scanningStrategy = EScanningStrategy.gapLimit,
+		addressIndex,
+		changeAddressIndex,
+		addressTypesToCheck
+	}: {
+		scanningStrategy?: EScanningStrategy;
+		addressIndex?: number;
+		changeAddressIndex?: number;
+		addressTypesToCheck?: EAddressType[];
 	}): Promise<Result<IGetUtxosResponse>> {
 		const checkRes = await this.checkElectrumConnection();
 		if (checkRes.isErr()) return err(checkRes.error.message);
 		const getUtxosRes = await this.electrum.getUtxos({
-			scanAllAddresses
+			scanningStrategy,
+			addressIndex,
+			changeAddressIndex,
+			addressTypesToCheck
 		});
 		if (getUtxosRes.isErr()) {
 			return err(getUtxosRes.error.message);
@@ -1804,15 +1864,57 @@ export class Wallet {
 		};
 		await this.saveWalletData('transactions', this._data.transactions);
 
-		sentTxs.forEach((tx) => {
-			this.sendMessage('transactionSent', tx);
-		});
-		receivedTxs.forEach((tx) => {
-			this.sendMessage('transactionReceived', tx);
-		});
 		confirmedTxs.forEach((tx) => {
 			this.sendMessage('transactionConfirmed', tx);
 		});
+
+		sentTxs.forEach((tx) => {
+			this.sendMessage('transactionSent', tx);
+		});
+
+		const addresses = this.data.addresses;
+		const utxoScriptHashes = new Set(
+			this.data.utxos.map((utxo) => utxo.scriptHash)
+		);
+		const outsideGapLimitAddresses: {
+			[key: string]: number[];
+		} = {};
+		for (const tx of receivedTxs) {
+			this.sendMessage('transactionReceived', tx);
+			// No need to scan an address with a saved UTXO.
+			if (utxoScriptHashes.has(tx.transaction.scriptHash)) continue;
+			for (const addressType in addresses) {
+				const addressData: IAddresses = addresses[addressType];
+				if (tx.transaction.scriptHash in addressData) {
+					const address = addressData[tx.transaction.scriptHash];
+					const index = address.index;
+					const currentIndex = this.data.addressIndex[addressType].index;
+					const diff = getAddressIndexDiff(index, currentIndex);
+					if (diff > this.gapLimitOptions.lookBehind) {
+						outsideGapLimitAddresses[addressType] = [
+							...(outsideGapLimitAddresses[addressType] ?? []),
+							index
+						];
+					}
+					break;
+				}
+			}
+		}
+		if (receivedTxs.length > 0) {
+			// Scan for received transactions to addresses out of the specified gap limit that we may still be subscribed to from the current session.
+			for (const type of Object.keys(outsideGapLimitAddresses)) {
+				const indexes = outsideGapLimitAddresses[type];
+				if (indexes.length <= 0) continue;
+				const lowestIndex = Math.min(...indexes);
+				const addressType = type as EAddressType;
+				await this.getUtxos({
+					scanningStrategy: EScanningStrategy.startingIndex,
+					addressIndex: lowestIndex - this.gapLimitOptions.lookBehind,
+					changeAddressIndex: lowestIndex - this.gapLimitOptions.lookBehind,
+					addressTypesToCheck: [addressType]
+				});
+			}
+		}
 
 		return ok(notificationTxid);
 	}
@@ -2129,7 +2231,7 @@ export class Wallet {
 			const unconfirmedTransactions: IFormattedTransactions = {};
 			Object.keys(transactions).forEach((key) => {
 				const confirmations = this.blockHeightToConfirmations({
-					blockHeight: transactions[key].height
+					blockHeight: transactions[key]?.height ?? 0
 				});
 				if (confirmations < 6) {
 					unconfirmedTransactions[key] = transactions[key];
@@ -2169,7 +2271,7 @@ export class Wallet {
 		blockHeight?: number;
 		currentHeight?: number;
 	}): number {
-		if (!blockHeight) {
+		if (!blockHeight || blockHeight <= 0) {
 			return 0;
 		}
 		if (!currentHeight) {
@@ -2785,10 +2887,12 @@ export class Wallet {
 		if (!Object.keys(addresses).length) {
 			await this.addAddresses({
 				addressAmount:
-					indexToUpdate === 'addressIndex' ? GENERATE_ADDRESS_AMOUNT : 0,
+					indexToUpdate === 'addressIndex' ? this.gapLimitOptions.lookAhead : 0,
 				addressIndex: index,
 				changeAddressAmount:
-					indexToUpdate === 'changeAddressIndex' ? GENERATE_ADDRESS_AMOUNT : 0,
+					indexToUpdate === 'changeAddressIndex'
+						? this.gapLimitOptions.lookAhead
+						: 0,
 				changeAddressIndex: index,
 				addressType,
 				saveAddresses: false
@@ -2963,6 +3067,7 @@ export class Wallet {
 				}
 				path = allAddresses[scriptHash].path;
 				value = btcToSats(txVout.value);
+				const publicKey = allAddresses[scriptHash].publicKey;
 				inputs.push({
 					tx_hash: input.txid,
 					index: input.vout,
@@ -2971,7 +3076,8 @@ export class Wallet {
 					address,
 					scriptHash,
 					path,
-					value
+					value,
+					publicKey
 				});
 				if (value) {
 					inputTotal = inputTotal + value;
@@ -3500,5 +3606,44 @@ export class Wallet {
 		}
 		response.id = broadcastResponse.value;
 		return ok(response);
+	}
+
+	public getAddressInfoFromScriptHash(scriptHash: string): Result<{
+		address: IAddress;
+		addressType: EAddressType;
+	}> {
+		const addresses = this.data.addresses;
+		let address: { address: IAddress; addressType: EAddressType } | undefined;
+		for (const addressType in addresses) {
+			if (scriptHash in addresses[addressType]) {
+				address = {
+					address: addresses[addressType][scriptHash],
+					addressType: addressType as EAddressType
+				};
+				break; // Exit the loop once the address is found
+			}
+		}
+		return address ? ok(address) : err('Address not found');
+	}
+
+	/**
+	 * Allows the user to update the gap limit options.
+	 * @param gapLimitOptions
+	 * @returns {Promise<Result<TGapLimitOptions>>}
+	 */
+	public updateGapLimit(
+		gapLimitOptions: TGapLimitOptions
+	): Result<TGapLimitOptions> {
+		if (!gapLimitOptions) {
+			return err('No gap limit options provided.');
+		}
+		if (
+			!isPositive(gapLimitOptions.lookAhead) ||
+			!isPositive(gapLimitOptions.lookBehind)
+		) {
+			return err('Both gap limit options must be positive.');
+		}
+		this.gapLimitOptions = gapLimitOptions;
+		return ok(this.gapLimitOptions);
 	}
 }

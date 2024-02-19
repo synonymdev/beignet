@@ -331,3 +331,17 @@ export const sleep = (ms): Promise<void> => {
 		setTimeout(resolve, ms);
 	});
 };
+
+/**
+ * Returns the difference between two address indexes.
+ * @param addrIndex1
+ * @param addrIndex2
+ * @returns number
+ */
+export const getAddressIndexDiff = (addrIndex1 = 0, addrIndex2 = 0): number => {
+	if (addrIndex1 < 0) addrIndex1 = -1;
+	if (addrIndex2 < 0) addrIndex2 = -1;
+	return Math.abs(addrIndex1 - addrIndex2);
+};
+
+export const isPositive = (num: number): boolean => num > 0;

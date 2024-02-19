@@ -11,6 +11,7 @@ import {
 	ITxHashes,
 	IWalletData,
 	ObjectKeys,
+	TGapLimitOptions,
 	TGetData,
 	TKeyDerivationPurpose
 } from '../types';
@@ -26,6 +27,7 @@ import {
 	WALLET_ID_PREFIX,
 	BITKIT_WALLET_SEED_HASH_PREFIX
 } from '../wallet/constants';
+import { getAddressIndexDiff } from './helpers';
 
 /**
  * Returns the default wallet data object.
@@ -349,3 +351,74 @@ export const getTxFee = ({
 	satsPerByte: number;
 	transactionByteCount: number;
 }): number => transactionByteCount * satsPerByte;
+
+export const filterAddressesForGapLimit = ({
+	addresses,
+	index,
+	gapLimitOptions
+}: {
+	addresses: IAddress[];
+	index: number;
+	gapLimitOptions: TGapLimitOptions;
+}): IAddress[] => {
+	const { lookBehind, lookAhead } = gapLimitOptions;
+	return addresses.filter((a) => {
+		if (a.index >= index) {
+			return getAddressIndexDiff(index, a.index) <= lookAhead;
+		}
+		return getAddressIndexDiff(index, a.index) <= lookBehind;
+	});
+};
+
+export const filterAddressesObjForGapLimit = ({
+	addresses,
+	index,
+	gapLimitOptions
+}: {
+	addresses: IAddresses;
+	index: number;
+	gapLimitOptions: TGapLimitOptions;
+}): IAddresses => {
+	const { lookBehind, lookAhead } = gapLimitOptions;
+	const response: IAddresses = {};
+	Object.values(addresses).map((a) => {
+		if (a.index >= index) {
+			if (getAddressIndexDiff(a.index, index) <= lookAhead) {
+				response[a.scriptHash] = a;
+			}
+		} else {
+			if (getAddressIndexDiff(a.index, index) <= lookBehind) {
+				response[a.scriptHash] = a;
+			}
+		}
+	});
+	return response;
+};
+
+export const filterAddressesObjForStartingIndex = ({
+	addresses,
+	index
+}: {
+	addresses: IAddresses;
+	index: number;
+}): IAddresses => {
+	const response: IAddresses = {};
+	Object.values(addresses).map((a) => {
+		if (a.index >= index) response[a.scriptHash] = a;
+	});
+	return response;
+};
+
+export const filterAddressesObjForSingleIndex = ({
+	addresses,
+	addressIndex
+}: {
+	addresses: IAddresses;
+	addressIndex: number;
+}): IAddresses => {
+	const response: IAddresses = {};
+	Object.values(addresses).map((a) => {
+		if (a.index === addressIndex) response[a.scriptHash] = a;
+	});
+	return response;
+};

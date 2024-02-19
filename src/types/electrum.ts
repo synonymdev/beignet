@@ -30,6 +30,13 @@ export enum EProtocol {
 	ssl = 'ssl'
 }
 
+export enum EScanningStrategy {
+	all = 'all', // Scan all addresses/scripthashes
+	gapLimit = 'gapLimit', // Adhere to the gap limit within range of the provided index when scanning addresses/scripthashes. If higher than the current index, it will be ignored
+	startingIndex = 'startingIndex', // Scan all addresses/scripthashes starting from the provided index. If higher than the current index, it will be ignored
+	singleIndex = 'singleIndex' // Scan the single provided address/scripthash
+}
+
 export interface IGetUtxosResponse {
 	utxos: IUtxo[];
 	balance: number;

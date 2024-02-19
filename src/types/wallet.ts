@@ -6,7 +6,7 @@ import {
 	TServer,
 	TTxResult
 } from './electrum';
-import { EFeeId } from './transaction';
+import { EFeeId, TGapLimitOptions } from './transaction';
 import { TLSSocket } from 'tls';
 import { Server } from 'net';
 import { ECPairInterface } from 'ecpair';
@@ -67,6 +67,7 @@ export interface IUtxo {
 	tx_hash: string;
 	tx_pos: number;
 	value: number;
+	publicKey: string;
 	keyPair?: BIP32Interface | ECPairInterface;
 }
 
@@ -207,6 +208,9 @@ export interface IWallet {
 	disableMessages?: boolean;
 	disableMessagesOnCreate?: boolean;
 	addressTypesToMonitor?: EAddressType[];
+	gapLimitOptions?: TGapLimitOptions;
+	addressLookBehind?: number;
+	addressLookAhead?: number;
 }
 
 export interface IAddressData {

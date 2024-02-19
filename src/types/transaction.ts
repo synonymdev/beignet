@@ -58,3 +58,8 @@ export type TGetTotalFeeObj = {
 	satsPerByte: number;
 	maxSatPerByte: number; // Max sats per byte that can be used for a given transaction without exceeding 50% of the balance.
 };
+
+export type TGapLimitOptions = {
+	lookAhead: number;
+	lookBehind: number;
+};

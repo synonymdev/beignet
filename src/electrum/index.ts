@@ -232,7 +232,7 @@ export class Electrum {
 					network: this.electrumNetwork
 				});
 			if (unspentAddressResult.error) {
-				return err(unspentAddressResult.error);
+				return err(unspentAddressResult.data);
 			}
 			let balance = 0;
 			const utxos: IUtxo[] = [];
@@ -687,6 +687,7 @@ export class Electrum {
 			if (response && !response.error) {
 				return ok(response);
 			} else {
+				if (response?.error?.message) return err(response.error.message);
 				return err(response ?? 'Unable to get transactions from inputs.');
 			}
 		} catch (e) {

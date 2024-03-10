@@ -467,55 +467,76 @@ export class Electrum {
 					changeAddresses = { ...changeAddresses, ...allChangeAddresses };
 				} else {
 					// Grab the current index for address/change addresses if none were provided.
-					if (!addressIndex)
-						addressIndex = currentWallet.addressIndex[addressType].index;
-					if (!changeAddressIndex)
-						changeAddressIndex =
-							currentWallet.changeAddressIndex[addressType].index;
+					const _addressIndex =
+						addressIndex === undefined
+							? currentWallet.addressIndex[addressType].index
+							: addressIndex;
+					const _changeAddressIndex =
+						changeAddressIndex === undefined
+							? currentWallet.changeAddressIndex[addressType].index
+							: changeAddressIndex;
 
 					// Use the lowest index to ensure we're not starting above our current index.
 					// TODO: Consider removing this entirely or at least updating it to allow up to the max stored address/change address index.
 					const lowestAddressIndex = Math.min(
-						addressIndex,
+						_addressIndex,
 						currentWallet.addressIndex[addressType].index
 					);
 					const lowestChangeAddressIndex = Math.min(
-						changeAddressIndex,
+						_changeAddressIndex,
 						currentWallet.changeAddressIndex[addressType].index
 					);
 
 					switch (scanningStrategy) {
 						case EScanningStrategy.gapLimit:
-							addresses = filterAddressesObjForGapLimit({
-								addresses: allAddresses,
-								index: lowestAddressIndex,
-								gapLimitOptions: this._wallet.gapLimitOptions
-							});
-							changeAddresses = filterAddressesObjForGapLimit({
-								addresses: allChangeAddresses,
-								index: lowestChangeAddressIndex,
-								gapLimitOptions: this._wallet.gapLimitOptions
-							});
+							addresses = {
+								...addresses,
+								...filterAddressesObjForGapLimit({
+									addresses: allAddresses,
+									index: lowestAddressIndex,
+									gapLimitOptions: this._wallet.gapLimitOptions
+								})
+							};
+							changeAddresses = {
+								...changeAddresses,
+								...filterAddressesObjForGapLimit({
+									addresses: allChangeAddresses,
+									index: lowestChangeAddressIndex,
+									gapLimitOptions: this._wallet.gapLimitOptions
+								})
+							};
 							break;
 						case EScanningStrategy.startingIndex:
-							addresses = filterAddressesObjForStartingIndex({
-								addresses: allAddresses,
-								index: lowestAddressIndex
-							});
-							changeAddresses = filterAddressesObjForStartingIndex({
-								addresses: allChangeAddresses,
-								index: lowestChangeAddressIndex
-							});
+							addresses = {
+								...addresses,
+								...filterAddressesObjForStartingIndex({
+									addresses: allAddresses,
+									index: lowestAddressIndex
+								})
+							};
+							changeAddresses = {
+								...changeAddresses,
+								...filterAddressesObjForStartingIndex({
+									addresses: allChangeAddresses,
+									index: lowestChangeAddressIndex
+								})
+							};
 							break;
 						case EScanningStrategy.singleIndex:
-							addresses = filterAddressesObjForSingleIndex({
-								addresses: allAddresses,
-								addressIndex
-							});
-							changeAddresses = filterAddressesObjForSingleIndex({
-								addresses: allChangeAddresses,
-								addressIndex: changeAddressIndex
-							});
+							addresses = {
+								...addresses,
+								...filterAddressesObjForSingleIndex({
+									addresses: allAddresses,
+									addressIndex: _addressIndex
+								})
+							};
+							changeAddresses = {
+								...changeAddresses,
+								...filterAddressesObjForSingleIndex({
+									addresses: allChangeAddresses,
+									addressIndex: _changeAddressIndex
+								})
+							};
 							break;
 					}
 				}

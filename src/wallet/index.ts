@@ -255,7 +255,7 @@ export class Wallet {
 	public async switchNetwork(
 		network: EAvailableNetworks,
 		servers?: TServer | TServer[]
-	): Promise<Result<string>> {
+	): Promise<Result<Wallet>> {
 		this.isSwitchingNetworks = true;
 		// Disconnect from Electrum.
 		await this.electrum.disconnect();
@@ -283,7 +283,7 @@ export class Wallet {
 		Object.assign(this, createRes.value);
 		await this.updateFeeEstimates(true);
 		this.isSwitchingNetworks = false;
-		return ok(`Successfully switched to ${network}.`);
+		return ok(this);
 	}
 
 	/**

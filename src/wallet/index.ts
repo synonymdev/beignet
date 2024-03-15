@@ -2121,7 +2121,8 @@ export class Wallet {
 	/**
 	 * This method will clear the utxo array for each address type and reset the
 	 * address indexes back to the original/default app values. Once cleared & reset
-	 * the app will rescan the wallet's addresses from index zero.
+	 * the app will rescan the wallet's addresses from index zero at the standard gap
+	 * limit or higher (if previously set higher by the user).
 	 * @async
 	 * @param {boolean} [shouldClearAddresses] - Clears and re-generates all addresses when true.
 	 * @param shouldClearTransactions
@@ -2134,6 +2135,23 @@ export class Wallet {
 		shouldClearAddresses?: boolean;
 		shouldClearTransactions?: boolean;
 	}): Promise<Result<IWalletData>> {
+		// If the gap limit settings are less than the standard, ensure we set the standard gap limit before rescanning.
+		const currentGapLimitOptions = this.gapLimitOptions;
+		if (
+			currentGapLimitOptions.lookBehind < GAP_LIMIT ||
+			currentGapLimitOptions.lookAhead < GAP_LIMIT
+		) {
+			this.updateGapLimit({
+				lookBehind:
+					currentGapLimitOptions.lookBehind < GAP_LIMIT
+						? GAP_LIMIT
+						: currentGapLimitOptions.lookBehind,
+				lookAhead:
+					currentGapLimitOptions.lookAhead < GAP_LIMIT
+						? GAP_LIMIT
+						: currentGapLimitOptions.lookAhead
+			});
+		}
 		if (shouldClearAddresses) {
 			await this.clearAddresses();
 		}
@@ -2144,9 +2162,12 @@ export class Wallet {
 		await this.resetAddressIndexes();
 		// Wait to generate our zero index addresses.
 		await this.setZeroIndexAddresses();
-		return await this.refreshWallet({
+		const refreshWalletRes = await this.refreshWallet({
 			scanAllAddresses: true
 		});
+		// Revert gap limit options to the original settings.
+		this.updateGapLimit(currentGapLimitOptions);
+		return refreshWalletRes;
 	}
 
 	/**

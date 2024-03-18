@@ -748,11 +748,12 @@ export class Electrum {
 		const subscribeResponse: ISubscribeToHeader =
 			await electrum.subscribeHeader({
 				network: this.electrumNetwork,
-				onReceive: (data: INewBlock[]) => {
+				onReceive: async (data: INewBlock[]) => {
 					const hex = data[0].hex;
 					const hash = this.getBlockHashFromHex({ blockHex: hex });
 					const header: IHeader = { ...data[0], hash };
-					this._wallet.updateHeader(header);
+					await this._wallet.updateHeader(header);
+					await this._wallet.refreshWallet();
 					this.onReceive?.(data);
 					this.sendMessage(onMessageKeys.newBlock, data[0]);
 				}

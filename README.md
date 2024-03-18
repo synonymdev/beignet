@@ -79,6 +79,9 @@ const addressBalance = addressBalanceRes.value;
 // Get wallet balance
 const walletBalance = wallet.getBalance();
 
+// Refresh Wallet
+const walletRefresh = await wallet.refreshWallet();
+
 // Get fee information to perform a transaction.
 const feeInfo = wallet.getFeeInfo();
 

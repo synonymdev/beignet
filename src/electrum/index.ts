@@ -9,6 +9,7 @@ import {
 	IGetAddressHistoryResponse,
 	IGetAddressScriptHashBalances,
 	IGetAddressScriptHashesHistoryResponse,
+	IGetAddressTxResponse,
 	IGetHeaderResponse,
 	IGetTransactions,
 	IGetTransactionsFromInputs,
@@ -419,6 +420,26 @@ export class Electrum {
 	}
 
 	/**
+	 * Returns an array of tx_hashes and their height for a given array of address script hashes.
+	 * @param {string[]} scriptHashes
+	 * @returns {Promise<Result<TTxResponse>>}
+	 */
+	async getAddressScriptHashesHistory(
+		scriptHashes: string[] = []
+	): Promise<Result<IGetAddressTxResponse>> {
+		const response = await electrum.getAddressScriptHashesHistory({
+			scriptHashes,
+			network: this.electrumNetwork
+		});
+		if (response.error) {
+			return err(
+				response?.data ?? 'Unable to get address script hashes history.'
+			);
+		}
+		return ok(response);
+	}
+
+	/**
 	 * Returns UTXO's for a given wallet and network along with the available balance.
 	 * @param {EScanningStrategy} [scanningStrategy]
 	 * @param {number} addressIndex
@@ -752,7 +773,11 @@ export class Electrum {
 					const hex = data[0].hex;
 					const hash = this.getBlockHashFromHex({ blockHex: hex });
 					const header: IHeader = { ...data[0], hash };
+					const reorgDetected = header.height < this.getBlockHeader().height;
 					await this._wallet.updateHeader(header);
+					if (reorgDetected) {
+						await this._wallet.checkUnconfirmedTransactions(reorgDetected);
+					}
 					await this._wallet.refreshWallet();
 					this.onReceive?.(data);
 					this.sendMessage(onMessageKeys.newBlock, data[0]);

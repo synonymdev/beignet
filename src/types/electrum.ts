@@ -67,6 +67,22 @@ export type TTxResponse = {
 	result: TTxResult[];
 };
 
+export interface IGetAddressTxResponse {
+	data: TAddressTxResponse[];
+	error: boolean;
+	id: number;
+	method: string;
+	network: string;
+}
+export type TAddressTxResponse = {
+	data: string;
+	id: number;
+	jsonrpc: string;
+	param: string;
+	result: TTxResult[];
+	error?: { code: number; message: string };
+};
+
 export interface IGetAddressScriptHashBalances {
 	error: boolean;
 	data:

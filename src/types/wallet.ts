@@ -334,23 +334,26 @@ export interface ITransaction<T> {
 	jsonrpc: string;
 	param: string;
 	data: T;
-	result: {
-		blockhash: string;
-		confirmations: number;
-		hash: string;
-		hex: string;
-		locktime: number;
-		size: number;
-		txid: string;
-		version: number;
-		vin: IVin[];
-		vout: IVout[];
-		vsize: number;
-		weight: number;
-		blocktime?: number;
-		time?: number;
-	};
+	result: TTxDetails;
+	error?: { code: number; message: string };
 }
+
+export type TTxDetails = {
+	blockhash: string;
+	confirmations: number;
+	hash: string;
+	hex: string;
+	locktime: number;
+	size: number;
+	txid: string;
+	version: number;
+	vin: IVin[];
+	vout: IVout[];
+	vsize: number;
+	weight: number;
+	blocktime?: number;
+	time?: number;
+};
 
 export interface IVout {
 	n: number; //0

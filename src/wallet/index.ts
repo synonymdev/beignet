@@ -57,6 +57,8 @@ import {
 	TSetData,
 	TSetupTransactionResponse,
 	TTransactionMessage,
+	TTxDetails,
+	TTxResult,
 	TUnspentAddressScriptHashData,
 	TWalletDataKeys
 } from '../types';
@@ -901,11 +903,19 @@ export class Wallet {
 			let lastUsedChangeAddressIndex =
 				currentWallet.lastUsedChangeAddressIndex[addressType];
 
-			const startingAddressIndex = addressIndex?.index ?? 0;
-			const startingChangeAddressIndex = changeAddressIndex?.index ?? 0;
+			const originalHighestStoredIndexes = this.getHighestStoredAddressIndex({
+				addressType
+			});
+			if (originalHighestStoredIndexes.isErr()) {
+				return err(originalHighestStoredIndexes.error.message);
+			}
+			const originalHighestStoredIndex =
+				originalHighestStoredIndexes.value.addressIndex;
+			const originalHighestStoredChangeIndex =
+				originalHighestStoredIndexes.value.changeAddressIndex;
 
 			const addressIndexDiff = getAddressIndexDiff(
-				startingAddressIndex,
+				originalHighestStoredIndex.index,
 				lastUsedAddressIndex.index
 			);
 			const addressesToGenerate =
@@ -936,7 +946,7 @@ export class Wallet {
 			}
 
 			const changeAddressIndexDiff = getAddressIndexDiff(
-				startingChangeAddressIndex,
+				originalHighestStoredChangeIndex.index,
 				lastUsedChangeAddressIndex.index
 			);
 			const changeAddressesToGenerate =
@@ -1927,7 +1937,9 @@ export class Wallet {
 	 * @async
 	 * @returns {Promise<Result<string>>}
 	 */
-	private async checkUnconfirmedTransactions(): Promise<Result<string>> {
+	async checkUnconfirmedTransactions(
+		reorgDetected = false
+	): Promise<Result<string>> {
 		try {
 			const processRes = await this.processUnconfirmedTransactions();
 			if (processRes.isErr()) {
@@ -1935,7 +1947,7 @@ export class Wallet {
 			}
 
 			const { unconfirmedTxs, outdatedTxs, ghostTxs } = processRes.value;
-			if (outdatedTxs.length > 0) {
+			if (outdatedTxs.length > 0 || reorgDetected) {
 				this.sendMessage('reorg', outdatedTxs);
 				//We need to update the height of the transactions that were reorg'd out.
 				await this.updateTransactionHeights(outdatedTxs);
@@ -3666,5 +3678,54 @@ export class Wallet {
 		}
 		this.gapLimitOptions = gapLimitOptions;
 		return ok(this.gapLimitOptions);
+	}
+
+	/**
+	 * Returns an array of tx_hashes and their height for a given address.
+	 * @param {string} address
+	 * @returns {Promise<Result<TTxResult[]>>}
+	 */
+	public async getAddressHistory(
+		address: string
+	): Promise<Result<TTxResult[]>> {
+		try {
+			const scriptHash = getScriptHash({ address, network: this._network });
+			const response = await this.electrum.getAddressScriptHashesHistory([
+				scriptHash
+			]);
+			if (response.isErr()) {
+				return err(response.error.message);
+			}
+			if (response.value.data[0].error?.message) {
+				return err(response.value.data[0].error.message);
+			}
+			return ok(response.value.data[0].result);
+		} catch (e) {
+			return err(e);
+		}
+	}
+
+	/**
+	 * Returns the transaction details for a given tx_hash.
+	 * @param {string} tx_hash
+	 * @returns {Promise<Result<TTxDetails>>}
+	 */
+	public async getTransactionDetails(
+		tx_hash: string
+	): Promise<Result<TTxDetails>> {
+		try {
+			const details = await this.electrum.getTransactions({
+				txHashes: [{ tx_hash }]
+			});
+			if (details.isErr()) {
+				return err(details.error.message);
+			}
+			if (details.value.data[0]?.error?.message) {
+				return err(details.value.data[0].error.message);
+			}
+			return ok(details.value.data[0].result);
+		} catch (e) {
+			return err(e);
+		}
 	}
 }

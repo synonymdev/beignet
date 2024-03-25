@@ -178,6 +178,12 @@ const sweepPrivateKeyRes = await wallet.sweepPrivateKey({
 	satsPerByte: 5,
 	broadcast: false
 });
+
+// Get tx history for a given address. { tx_hash: string; height: number; }[]
+const history = await wallet.getAddressHistory('address');
+
+// Get transaction details for a given transaction id. TTxDetails
+const txDetails = await wallet.getTransactionDetails('txid');
 ```
 
 ## Documentation

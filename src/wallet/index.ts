@@ -234,6 +234,22 @@ export class Wallet {
 		return this._data;
 	}
 
+	public get transactions(): IFormattedTransactions {
+		return this._data.transactions;
+	}
+
+	public get unconfirmedTransactions(): IFormattedTransactions {
+		return this._data.unconfirmedTransactions;
+	}
+
+	public get utxos(): IUtxo[] {
+		return this._data.utxos;
+	}
+
+	public get balance(): number {
+		return this._data.balance;
+	}
+
 	public get network(): EAvailableNetworks {
 		return this._network;
 	}

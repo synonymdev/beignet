@@ -17,7 +17,7 @@
 
 #### Defined in
 
-[types/wallet.ts:474](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L474)
+[types/wallet.ts:474](https://github.com/synonymdev/beignet/blob/3144d66/src/types/wallet.ts#L474)
 
 ___
 
@@ -27,4 +27,4 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:473](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L473)
+[types/wallet.ts:473](https://github.com/synonymdev/beignet/blob/3144d66/src/types/wallet.ts#L473)

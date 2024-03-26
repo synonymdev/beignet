@@ -13,6 +13,7 @@
 ### Properties
 
 - [data](ITransaction.md#data)
+- [error](ITransaction.md#error)
 - [id](ITransaction.md#id)
 - [jsonrpc](ITransaction.md#jsonrpc)
 - [param](ITransaction.md#param)
@@ -26,7 +27,24 @@
 
 #### Defined in
 
-[types/wallet.ts:332](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L332)
+[types/wallet.ts:336](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L336)
+
+___
+
+### error
+
+• `Optional` **error**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `code` | `number` |
+| `message` | `string` |
+
+#### Defined in
+
+[types/wallet.ts:338](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L338)
 
 ___
 
@@ -36,7 +54,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:329](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L329)
+[types/wallet.ts:333](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L333)
 
 ___
 
@@ -46,7 +64,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:330](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L330)
+[types/wallet.ts:334](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L334)
 
 ___
 
@@ -56,33 +74,14 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:331](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L331)
+[types/wallet.ts:335](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L335)
 
 ___
 
 ### result
 
-• **result**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `blockhash` | `string` |
-| `blocktime?` | `number` |
-| `confirmations` | `number` |
-| `hash` | `string` |
-| `hex` | `string` |
-| `locktime` | `number` |
-| `size` | `number` |
-| `time?` | `number` |
-| `txid` | `string` |
-| `version` | `number` |
-| `vin` | [`IVin`](IVin.md)[] |
-| `vout` | [`IVout`](IVout.md)[] |
-| `vsize` | `number` |
-| `weight` | `number` |
+• **result**: [`TTxDetails`](../README.md#ttxdetails)
 
 #### Defined in
 
-[types/wallet.ts:333](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L333)
+[types/wallet.ts:337](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L337)

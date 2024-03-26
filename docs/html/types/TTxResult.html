@@ -24,7 +24,7 @@
 <li class="tsd-parameter">
 <h5><span class="tsd-kind-property">tx_<wbr/>hash</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5></li></ul></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/05d5011/src/types/electrum.ts#L42">types/electrum.ts:42</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/electrum.ts#L49">types/electrum.ts:49</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -50,6 +50,7 @@
 <li><a href="../enums/EFeeId.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>EFee<wbr/>Id</span></a></li>
 <li><a href="../enums/EPaymentType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>EPayment<wbr/>Type</span></a></li>
 <li><a href="../enums/EProtocol.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>EProtocol</span></a></li>
+<li><a href="../enums/EScanningStrategy.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>EScanning<wbr/>Strategy</span></a></li>
 <li><a href="../enums/EUnit.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>EUnit</span></a></li>
 <li><a href="../classes/Electrum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-128"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-class)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)"></path></g></svg><span>Electrum</span></a></li>
 <li><a href="../classes/Transaction.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Transaction</span></a></li>
@@ -78,6 +79,7 @@
 <li><a href="../interfaces/IGetAddressResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Address<wbr/>Response</span></a></li>
 <li><a href="../interfaces/IGetAddressScriptHashBalances.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Address<wbr/>Script<wbr/>Hash<wbr/>Balances</span></a></li>
 <li><a href="../interfaces/IGetAddressScriptHashesHistoryResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Address<wbr/>Script<wbr/>Hashes<wbr/>History<wbr/>Response</span></a></li>
+<li><a href="../interfaces/IGetAddressTxResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Address<wbr/>Tx<wbr/>Response</span></a></li>
 <li><a href="../interfaces/IGetAddressesFromKeyPair.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Addresses<wbr/>From<wbr/>Key<wbr/>Pair</span></a></li>
 <li><a href="../interfaces/IGetAddressesFromPrivateKey.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Addresses<wbr/>From<wbr/>Private<wbr/>Key</span></a></li>
 <li><a href="../interfaces/IGetDerivationPath.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IGet<wbr/>Derivation<wbr/>Path</span></a></li>
@@ -121,6 +123,7 @@
 <li><a href="Result.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Result</span></a></li>
 <li><a href="TAddressIndexInfo.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TAddress<wbr/>Index<wbr/>Info</span></a></li>
 <li><a href="TAddressLabel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TAddress<wbr/>Label</span></a></li>
+<li><a href="TAddressTxResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TAddress<wbr/>Tx<wbr/>Response</span></a></li>
 <li><a href="TAddressType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TAddress<wbr/>Type</span></a></li>
 <li><a href="TAddressTypeContent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TAddress<wbr/>Type<wbr/>Content</span></a></li>
 <li><a href="TAddressTypes.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TAddress<wbr/>Types</span></a></li>
@@ -128,6 +131,7 @@
 <li><a href="TConnectToElectrumRes.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TConnect<wbr/>To<wbr/>Electrum<wbr/>Res</span></a></li>
 <li><a href="TDecodeRawTx.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TDecode<wbr/>Raw<wbr/>Tx</span></a></li>
 <li><a href="TElectrumNetworks.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TElectrum<wbr/>Networks</span></a></li>
+<li><a href="TGapLimitOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TGap<wbr/>Limit<wbr/>Options</span></a></li>
 <li><a href="TGetAddressHistory.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TGet<wbr/>Address<wbr/>History</span></a></li>
 <li><a href="TGetByteCountInput.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TGet<wbr/>Byte<wbr/>Count<wbr/>Input</span></a></li>
 <li><a href="TGetByteCountInputs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TGet<wbr/>Byte<wbr/>Count<wbr/>Inputs</span></a></li>
@@ -151,6 +155,7 @@
 <li><a href="TStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TStorage</span></a></li>
 <li><a href="TSubscribedReceive.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TSubscribed<wbr/>Receive</span></a></li>
 <li><a href="TTransactionMessage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TTransaction<wbr/>Message</span></a></li>
+<li><a href="TTxDetails.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TTx<wbr/>Details</span></a></li>
 <li><a href="TTxResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TTx<wbr/>Response</span></a></li>
 <li><a href="TTxResult.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TTx<wbr/>Result</span></a></li>
 <li><a href="TUnspentAddressScriptHashData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>TUnspent<wbr/>Address<wbr/>Script<wbr/>Hash<wbr/>Data</span></a></li>
@@ -162,12 +167,17 @@
 <li><a href="../functions/decodeOpReturnMessage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>decode<wbr/>Op<wbr/>Return<wbr/>Message</span></a></li>
 <li><a href="../functions/decodeRawTransaction.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>decode<wbr/>Raw<wbr/>Transaction</span></a></li>
 <li><a href="../functions/err.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>err</span></a></li>
+<li><a href="../functions/filterAddressesForGapLimit.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>filter<wbr/>Addresses<wbr/>For<wbr/>Gap<wbr/>Limit</span></a></li>
+<li><a href="../functions/filterAddressesObjForGapLimit.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>filter<wbr/>Addresses<wbr/>Obj<wbr/>For<wbr/>Gap<wbr/>Limit</span></a></li>
+<li><a href="../functions/filterAddressesObjForSingleIndex.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>filter<wbr/>Addresses<wbr/>Obj<wbr/>For<wbr/>Single<wbr/>Index</span></a></li>
+<li><a href="../functions/filterAddressesObjForStartingIndex.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>filter<wbr/>Addresses<wbr/>Obj<wbr/>For<wbr/>Starting<wbr/>Index</span></a></li>
 <li><a href="../functions/formatKeyDerivationPath.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>format<wbr/>Key<wbr/>Derivation<wbr/>Path</span></a></li>
 <li><a href="../functions/formatPeerData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>format<wbr/>Peer<wbr/>Data</span></a></li>
 <li><a href="../functions/generateMnemonic.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>generate<wbr/>Mnemonic</span></a></li>
 <li><a href="../functions/generateWalletId.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>generate<wbr/>Wallet<wbr/>Id</span></a></li>
 <li><a href="../functions/getAddressFromKeyPair.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Address<wbr/>From<wbr/>Key<wbr/>Pair</span></a></li>
 <li><a href="../functions/getAddressFromScriptPubKey.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Address<wbr/>From<wbr/>Script<wbr/>Pub<wbr/>Key</span></a></li>
+<li><a href="../functions/getAddressIndexDiff.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Address<wbr/>Index<wbr/>Diff</span></a></li>
 <li><a href="../functions/getAddressTypeFromPath.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Address<wbr/>Type<wbr/>From<wbr/>Path</span></a></li>
 <li><a href="../functions/getAddressesFromPrivateKey.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Addresses<wbr/>From<wbr/>Private<wbr/>Key</span></a></li>
 <li><a href="../functions/getByteCount.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Byte<wbr/>Count</span></a></li>
@@ -192,6 +202,7 @@
 <li><a href="../functions/getTxFee.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Tx<wbr/>Fee</span></a></li>
 <li><a href="../functions/getWalletDataStorageKey.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Wallet<wbr/>Data<wbr/>Storage<wbr/>Key</span></a></li>
 <li><a href="../functions/isP2trPrefix.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>is<wbr/>P2tr<wbr/>Prefix</span></a></li>
+<li><a href="../functions/isPositive.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>is<wbr/>Positive</span></a></li>
 <li><a href="../functions/isValidBech32mEncodedString.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>is<wbr/>Valid<wbr/>Bech32m<wbr/>Encoded<wbr/>String</span></a></li>
 <li><a href="../functions/objectKeys-1.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>object<wbr/>Keys</span></a></li>
 <li><a href="../functions/objectsMatch.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>objects<wbr/>Match</span></a></li>

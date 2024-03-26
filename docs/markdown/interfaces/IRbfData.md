@@ -21,7 +21,7 @@
 
 #### Defined in
 
-[types/wallet.ts:485](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L485)
+[types/wallet.ts:492](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L492)
 
 ___
 
@@ -31,7 +31,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:484](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L484)
+[types/wallet.ts:491](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L491)
 
 ___
 
@@ -41,7 +41,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:486](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L486)
+[types/wallet.ts:493](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L493)
 
 ___
 
@@ -51,7 +51,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:487](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L487)
+[types/wallet.ts:494](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L494)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:488](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L488)
+[types/wallet.ts:495](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L495)
 
 ___
 
@@ -71,4 +71,4 @@ ___
 
 #### Defined in
 
-[types/wallet.ts:483](https://github.com/synonymdev/beignet/blob/05d5011/src/types/wallet.ts#L483)
+[types/wallet.ts:490](https://github.com/synonymdev/beignet/blob/0e5dd24/src/types/wallet.ts#L490)

@@ -67,6 +67,9 @@ const mnemonic = generateMnemonic();
 const createWalletRes = await Wallet.create({ mnemonic });
 if (createWalletRes.isErr()) return;
 const wallet = createWalletRes.value;
+
+// View wallet data (addresses, indexes, utxos, transactions, etc.)
+const walletData = wallet.data;
   
 // Get receiving address
 const address = await wallet.getAddress();

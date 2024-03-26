@@ -1548,16 +1548,19 @@ export class Wallet {
 	 * Generate a new receive address for the provided addresstype up to the set gap limit.
 	 * @async
 	 * @param {EAddressType} addressType
+	 * @param {boolean} [overrideGapLimit] WARNING: Only set to true if you understand what you're doing. This can result in other wallets not seeing your funds as this will override the previously set/standard gap limit.
 	 * @param {IKeyDerivationPath} keyDerivationPath
 	 * @returns {Promise<Result<IAddress>>}
 	 */
 	public async generateNewReceiveAddress({
 		addressType = this.addressType,
+		overrideGapLimit = false, // WARNING: Only set to true if you understand what you're doing. This can result in other wallets not seeing your funds as this will override the previously set/standard gap limit.
 		keyDerivationPath
 	}: {
 		addressType?: EAddressType;
+		overrideGapLimit?: boolean; // WARNING: Only set to true if you understand what you're doing. This can result in other wallets not seeing your funds as this will override the previously set/standard gap limit.
 		keyDerivationPath?: IKeyDerivationPath;
-	}): Promise<Result<IAddress>> {
+	} = {}): Promise<Result<IAddress>> {
 		try {
 			const network = this._network;
 			const currentWallet = this.data;
@@ -1571,7 +1574,10 @@ export class Wallet {
 			const { addressDelta } = getGapLimitResponse.value;
 
 			// If the address delta exceeds the default gap limit, only return the current address index.
-			if (addressDelta >= this.gapLimitOptions.lookBehind) {
+			if (
+				addressDelta >= this.gapLimitOptions.lookBehind &&
+				!overrideGapLimit
+			) {
 				const addressIndex = currentWallet.addressIndex;
 				const receiveAddress = addressIndex[addressType];
 				return ok(receiveAddress);
@@ -1622,6 +1628,18 @@ export class Wallet {
 			// If for any reason we're unable to generate the new address, return error.
 			if (!addressIndex) {
 				return err('Unable to generate addresses at this time.');
+			}
+			if (overrideGapLimit) {
+				this.updateGapLimit({
+					lookBehind:
+						addressDelta > this.gapLimitOptions.lookBehind
+							? addressDelta
+							: this.gapLimitOptions.lookBehind,
+					lookAhead:
+						addressDelta > this.gapLimitOptions.lookAhead
+							? addressDelta
+							: this.gapLimitOptions.lookAhead
+				});
 			}
 			this._data.addressIndex[addressType] = addressIndex;
 			await this.saveWalletData('addressIndex', this._data.addressIndex);

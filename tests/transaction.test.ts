@@ -8,6 +8,7 @@ import {
 import { EAvailableNetworks, Result } from '../src';
 import { TRANSACTION_TEST_MNEMONIC } from './constants';
 import { servers } from '../example/helpers';
+import { EXPECTED_TRANSACTION_RESULTS } from './expected-results';
 
 const expect = chai.expect;
 
@@ -74,49 +75,9 @@ describe('Transaction Test', async function (): Promise<void> {
 		const decodeRes = decodeRawTransaction(sendRes.value, wallet.network);
 		expect(decodeRes.isErr()).to.equal(false);
 		if (decodeRes.isErr()) return;
-		const expectedDecodeRes = {
-			txid: '5afdbcb5ffa6e1104c4a67e80e8fde2280cb615b70b33c99951debc2d5e5f500',
-			tx_hash:
-				'094e314cbab1a268950a47216293d6ed170133ad265389e8dde7babf5eebed51',
-			size: 223,
-			vsize: 141,
-			weight: 562,
-			version: 2,
-			locktime: 0,
-			vin: [
-				{
-					txid: '8d805dd2088da26440bcd515f04f89a4f7bbb820726fc2d100818ae479d3444b',
-					vout: 0,
-					scriptSig: { asm: '', hex: '' },
-					txinwitness: [
-						'3045022100dd709b656c271c7e2ab4c83e0245b9b8d9096a1c7a33eddc9a32113f436851d9022033f8e5cb016ae4c440badfa34e438ada7bea2cdd36e782c136e516350b502bca01',
-						'02e86b90924963237c59e5389aab1cc5350c114549d1c5e7186a56ef33aea24ff9'
-					],
-					sequence: 0
-				}
-			],
-			vout: [
-				{
-					value: 5000,
-					n: 0,
-					scriptPubKey: {
-						asm: 'OP_0 3f1a7a1802e377d01602acf1cad403368ed3bb89',
-						hex: '00143f1a7a1802e377d01602acf1cad403368ed3bb89',
-						address: 'tb1q8ud85xqzudmaq9sz4ncu44qrx68d8wuf2cwdqg'
-					}
-				},
-				{
-					value: 74170,
-					n: 1,
-					scriptPubKey: {
-						asm: 'OP_0 a6bd95db4dd6979189cad389daad006e236f4ba8',
-						hex: '0014a6bd95db4dd6979189cad389daad006e236f4ba8',
-						address: 'tb1q567etk6d66terzw26wya4tgqdc3k7jag0zcw3r'
-					}
-				}
-			]
-		};
-		expect(decodeRes.value).to.deep.equal(expectedDecodeRes);
+		expect(decodeRes.value).to.deep.equal(
+			EXPECTED_TRANSACTION_RESULTS.decodeRawTransaction
+		);
 	});
 
 	it('Should successfully create and decode a sendMany transaction.', async (): Promise<void> => {
@@ -146,58 +107,9 @@ describe('Transaction Test', async function (): Promise<void> {
 		const decodeRes = decodeRawTransaction(sendManyRes.value, wallet.network);
 		expect(decodeRes.isErr()).to.equal(false);
 		if (decodeRes.isErr()) return;
-		const expectedDecodeRes = {
-			txid: '3fb40fc55d80c46d08f412c2c9a6b18e6b46264a6ae6fd4be8409480d1a53b45',
-			tx_hash:
-				'6b124dc403f6db7ce9c7967b8b3b5b3223d4df98626ece3b5d253450c47c9b88',
-			size: 253,
-			vsize: 172,
-			weight: 685,
-			version: 2,
-			locktime: 0,
-			vin: [
-				{
-					txid: '8d805dd2088da26440bcd515f04f89a4f7bbb820726fc2d100818ae479d3444b',
-					vout: 0,
-					scriptSig: { asm: '', hex: '' },
-					txinwitness: [
-						'304402207e7b5de41cb9bf33e434c2136390bf40d6b6552b69234a62f6bf48b89f0d44ac022056121c9a9d79d9d84896c9896a6fddb358b48667021ff2832b5c5871d90b701a01',
-						'02e86b90924963237c59e5389aab1cc5350c114549d1c5e7186a56ef33aea24ff9'
-					],
-					sequence: 0
-				}
-			],
-			vout: [
-				{
-					value: 5000,
-					n: 0,
-					scriptPubKey: {
-						asm: 'OP_0 a6b760eaa96a9ba91bae9465dfc4eabe711e1d67',
-						hex: '0014a6b760eaa96a9ba91bae9465dfc4eabe711e1d67',
-						address: 'tb1q56mkp64fd2d6jxawj3jal382hec3u8t8af83d7'
-					}
-				},
-				{
-					value: 6000,
-					n: 1,
-					scriptPubKey: {
-						asm: 'OP_0 6bcf920595e09b5d8f7b8d03b3694ad305757289',
-						hex: '00146bcf920595e09b5d8f7b8d03b3694ad305757289',
-						address: 'tb1qd08eypv4uzd4mrmm35pmx6226vzh2u5fqkpeyd'
-					}
-				},
-				{
-					value: 68140,
-					n: 2,
-					scriptPubKey: {
-						asm: 'OP_0 a6bd95db4dd6979189cad389daad006e236f4ba8',
-						hex: '0014a6bd95db4dd6979189cad389daad006e236f4ba8',
-						address: 'tb1q567etk6d66terzw26wya4tgqdc3k7jag0zcw3r'
-					}
-				}
-			]
-		};
-		expect(decodeRes.value).to.deep.equal(expectedDecodeRes);
+		expect(decodeRes.value).to.deep.equal(
+			EXPECTED_TRANSACTION_RESULTS.decodeRawSendManyTransaction
+		);
 	});
 
 	it('Should successfully sweep from a private key.', async (): Promise<void> => {

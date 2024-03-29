@@ -183,3 +183,26 @@ export type ElectrumConnectionSubscription = {
 };
 
 export type TGetAddressHistory = { txid: string; height: number };
+
+export type TUnspentAddressScriptHash = {
+	height: number;
+	tx_hash: string;
+	tx_pos: number;
+	value: number;
+};
+
+export type TUnspentAddressScriptHashResult = {
+	id: number;
+	jsonrpc: string;
+	result: TUnspentAddressScriptHash[];
+	param: string;
+	data: IAddress;
+};
+
+export type TUnspentAddressScriptHashResponse = {
+	id: number;
+	error: boolean;
+	method: string;
+	data: TUnspentAddressScriptHashResult[];
+	network: string;
+};

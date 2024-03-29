@@ -6,6 +6,7 @@ import {
 	EElectrumNetworks,
 	ElectrumConnectionPubSub,
 	ElectrumConnectionSubscription,
+	IAddresses,
 	IFormattedPeerData,
 	TProtocol
 } from '../types';
@@ -206,4 +207,27 @@ export const getElectrumNetwork = (
 		default:
 			return EElectrumNetworks.bitcoinTestnet;
 	}
+};
+
+/**
+ * Splits the addresses into chunks of the specified batch limit.
+ * @param {IAddresses} addresses
+ * @param {number} batchLimit
+ * @returns {IAddresses[]}
+ */
+export const splitAddresses = (
+	addresses: IAddresses,
+	batchLimit: number
+): IAddresses[] => {
+	const chunks: IAddresses[] = [];
+	const scriptHashes = Object.keys(addresses);
+	for (let i = 0; i < scriptHashes.length; i += batchLimit) {
+		const chunk: IAddresses = {};
+		const chunkScriptHashes = scriptHashes.slice(i, i + batchLimit);
+		for (const scriptHash of chunkScriptHashes) {
+			chunk[scriptHash] = addresses[scriptHash];
+		}
+		chunks.push(chunk);
+	}
+	return chunks;
 };

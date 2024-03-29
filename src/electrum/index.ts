@@ -30,7 +30,8 @@ import {
 	TSubscribedReceive,
 	TTxResponse,
 	TTxResult,
-	TUnspentAddressScriptHashData
+	TUnspentAddressScriptHashData,
+	TUnspentAddressScriptHashResponse
 } from '../types';
 import * as electrum from 'rn-electrum-client/helpers';
 import {
@@ -44,7 +45,8 @@ import {
 	getScriptHash,
 	ok,
 	Result,
-	sleep
+	sleep,
+	splitAddresses
 } from '../utils';
 import { Wallet } from '../wallet';
 import { onMessageKeys, POLLING_INTERVAL } from '../shapes';
@@ -215,8 +217,8 @@ export class Electrum {
 
 	/**
 	 * Queries Electrum to return the available UTXO's and balance of the provided addresses.
-	 * @param {EAvailableNetworks} [selectedNetwork]
 	 * @param {TUnspentAddressScriptHashData} addresses
+	 * @returns {Promise<Result<IGetUtxosResponse>>}
 	 */
 	async listUnspentAddressScriptHashes({
 		addresses
@@ -224,30 +226,39 @@ export class Electrum {
 		addresses: TUnspentAddressScriptHashData;
 	}): Promise<Result<IGetUtxosResponse>> {
 		try {
-			const unspentAddressResult =
-				await electrum.listUnspentAddressScriptHashes({
-					scriptHashes: {
-						key: 'scriptHash',
-						data: addresses
-					},
-					network: this.electrumNetwork
-				});
-			if (unspentAddressResult.error) {
-				return err(unspentAddressResult.data);
-			}
+			const addressBatches = splitAddresses(addresses, this.batchLimit);
 			let balance = 0;
 			const utxos: IUtxo[] = [];
-			unspentAddressResult.data.map(({ data, result }) => {
-				if (result?.length > 0) {
-					return result.map((unspentAddress: IUtxo) => {
-						balance = balance + unspentAddress.value;
-						utxos.push({
-							...data,
-							...unspentAddress
-						});
+			for (const batch of addressBatches) {
+				const unspentAddressResult: TUnspentAddressScriptHashResponse =
+					await electrum.listUnspentAddressScriptHashes({
+						scriptHashes: {
+							key: 'scriptHash',
+							data: batch
+						},
+						network: this.electrumNetwork
 					});
+
+				if (unspentAddressResult.error) {
+					return err(JSON.stringify(unspentAddressResult?.data ?? ''));
 				}
-			});
+
+				unspentAddressResult.data.forEach(
+					({ data, result: unspentAddresses }) => {
+						if (unspentAddresses?.length > 0) {
+							unspentAddresses.forEach((unspentAddress) => {
+								balance += unspentAddress.value;
+								utxos.push({
+									...data,
+									...unspentAddress
+								});
+							});
+						}
+					}
+				);
+				await sleep(this.batchDelay);
+			}
+
 			return ok({ utxos, balance });
 		} catch (e) {
 			return err(e);

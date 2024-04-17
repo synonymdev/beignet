@@ -109,7 +109,7 @@ import { Server } from 'net';
 
 const bip32 = BIP32Factory(ecc);
 
-class Wallet {
+export class Wallet {
 	private _network: EAvailableNetworks;
 	private readonly _mnemonic: string;
 	private readonly _passphrase: string;
@@ -3763,5 +3763,3 @@ class Wallet {
 		}
 	}
 }
-
-export { Wallet };

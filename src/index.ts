@@ -1,4 +1,4 @@
-export * from './wallet';
+export * from './wallet/index';
 export * from './types';
 export * from './utils';
 export * from './electrum';

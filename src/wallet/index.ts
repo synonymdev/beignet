@@ -13,6 +13,7 @@ import {
 	IAddresses,
 	IBoostedTransaction,
 	IBoostedTransactions,
+	IBtInfo,
 	ICustomGetAddress,
 	ICustomGetScriptHash,
 	IFormattedTransaction,
@@ -2617,15 +2618,8 @@ export class Wallet {
 	public async getFeeEstimates(network = this._network): Promise<IOnchainFees> {
 		try {
 			if (network === EAvailableNetworks.bitcoinRegtest) {
-				return {
-					fast: 4, // 10-20 mins
-					normal: 2, // 20-60 mins
-					slow: 1, // 1-2 hrs
-					minimum: 1,
-					timestamp: Date.now() - 60 * 30 * 1000 - 1
-				};
+				return defaultFeesShape;
 			}
-
 			const urlModifier = network === 'bitcoin' ? '' : 'testnet/';
 			const response = await fetch(
 				`https://mempool.space/${urlModifier}api/v1/fees/recommended`
@@ -2639,6 +2633,36 @@ export class Wallet {
 				timestamp: Date.now()
 			};
 		} catch {
+			// Falls back to using blocktank for fee estimates if mempool.space is down.
+			return this.getFallbackFeeEstimates(network);
+		}
+	}
+
+	/**
+	 * Fallback method to use blocktank for fee estimates if mempool.space is down.
+	 * @param {EAvailableNetworks} network
+	 * @returns {Promise<IOnchainFees>}
+	 */
+	public async getFallbackFeeEstimates(
+		network = this._network
+	): Promise<IOnchainFees> {
+		try {
+			if (network !== EAvailableNetworks.bitcoinMainnet) {
+				return defaultFeesShape;
+			}
+			const url = 'https://blocktank.synonym.to/api/v2/info';
+			const response = await fetch(url);
+			const res: IBtInfo = await response.json();
+			const { fast, mid, slow } = res.onchain.feeRates;
+			return {
+				fast,
+				normal: mid,
+				slow,
+				minimum: slow,
+				timestamp: Date.now()
+			};
+		} catch (e) {
+			console.log('Unable to fetch fee estimates.', e);
 			return defaultFeesShape;
 		}
 	}

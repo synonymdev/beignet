@@ -1,13 +1,10 @@
-import { EAvailableNetworks, Wallet } from '../src';
+import { EAvailableNetworks, generateMnemonic, Wallet } from '../src';
 import { getData, onMessage, servers, setData } from './helpers';
 import * as repl from 'repl';
-//import { generateMnemonic } from 'bip39';
-//const mnemonic = generateMnemonic();
 
-const mnemonic =
-	'develop under powder delay tunnel kite finger spend deal tiger pluck cherry';
+const mnemonic = generateMnemonic();
 
-const network: EAvailableNetworks = EAvailableNetworks.regtest;
+const network: EAvailableNetworks = EAvailableNetworks.mainnet;
 
 const runExample = async (): Promise<void> => {
 	// Create Wallet

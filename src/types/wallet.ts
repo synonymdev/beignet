@@ -526,3 +526,88 @@ export interface ISweepPrivateKeyRes {
 	id: string;
 	hex: string;
 }
+
+export interface IBtInfo {
+	/**
+	 * @deprecated Use the `versions` object instead.
+	 */
+	version: number;
+	/**
+	 * Available nodes.
+	 */
+	nodes: ILspNode[];
+	options: {
+		/**
+		 * Minimum channel size
+		 */
+		minChannelSizeSat: number;
+		/**
+		 * Maximum channel size
+		 */
+		maxChannelSizeSat: number;
+		/**
+		 * Minimum channel lease time in weeks.
+		 */
+		minExpiryWeeks: number;
+		/**
+		 * Maximum channel lease time in weeks.
+		 */
+		maxExpiryWeeks: number;
+		/**
+		 * Minimum payment confirmation for safe payments.
+		 */
+		minPaymentConfirmations: number;
+		/**
+		 * Minimum payment confirmations for high value payments.
+		 */
+		minHighRiskPaymentConfirmations: number;
+		/**
+		 * Maximum clientBalanceSat that is accepted as 0conf/turbochannel.
+		 */
+		max0ConfClientBalanceSat: number;
+		/**
+		 * Maximum clientBalanceSat in general.
+		 */
+		maxClientBalanceSat: number;
+	};
+	/**
+	 * SemVer versions of the micro services.
+	 */
+	versions: {
+		/**
+		 * SemVer versions of the http micro services.
+		 */
+		http: string;
+		/**
+		 * SemVer versions of the btc micro services.
+		 */
+		btc: string;
+		/**
+		 * SemVer versions of the ln2 micro services.
+		 */
+		ln2: string;
+	};
+	onchain: {
+		network: EAvailableNetworks;
+		feeRates: {
+			/**
+			 * Fast fee in sat/vbyte.
+			 */
+			fast: number;
+			/**
+			 * Mid fee in sat/vbyte.
+			 */
+			mid: number;
+			/**
+			 * Slow fee in sat/vbyte.
+			 */
+			slow: number;
+		};
+	};
+}
+
+interface ILspNode {
+	alias: string;
+	pubkey: string;
+	connectionStrings: string[];
+}

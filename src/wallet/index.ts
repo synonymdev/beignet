@@ -261,7 +261,7 @@ export class Wallet {
 			if (wallet._disableMessagesOnCreate) wallet.disableMessages = true;
 			const res = await wallet.setWalletData();
 			if (res.isErr()) return err(res.error.message);
-			wallet.updateFeeEstimates();
+			wallet.updateFeeEstimates(true);
 			console.log('Syncing Wallet...');
 			await wallet.refreshWallet({});
 			if (wallet._disableMessagesOnCreate) wallet.disableMessages = false;

@@ -549,7 +549,7 @@ export class Transaction {
 			const changeAddressValue = balance - (outputValue + fee);
 			// Ensure we're not creating unspendable dust.
 			// If we have less than 2x the recommended base fee, just contribute it to the fee in this transaction.
-			if (changeAddressValue > TRANSACTION_DEFAULTS.dustLimit) {
+			if (changeAddressValue >= TRANSACTION_DEFAULTS.dustLimit) {
 				targets.push({
 					address: changeAddress,
 					value: changeAddressValue,
@@ -561,7 +561,7 @@ export class Transaction {
 		} else if (outputValue + fee < balance) {
 			// If we have spare sats hanging around and the difference is greater than the dust limit, generate a changeAddress to send them to.
 			const diffValue = balance - (outputValue + fee);
-			if (diffValue > TRANSACTION_DEFAULTS.dustLimit) {
+			if (diffValue >= TRANSACTION_DEFAULTS.dustLimit) {
 				const changeAddressRes = await this._wallet.getChangeAddress();
 				if (changeAddressRes.isErr()) {
 					return err(changeAddressRes.error.message);
@@ -669,7 +669,7 @@ export class Transaction {
 				return err('No input provided.');
 			}
 
-			if (input.value <= TRANSACTION_DEFAULTS.dustLimit) {
+			if (input.value < TRANSACTION_DEFAULTS.dustLimit) {
 				return err('Input value is below dust limit.');
 			}
 
@@ -823,7 +823,7 @@ export class Transaction {
 		value,
 		index = 0
 	}: IOutput): Promise<Result<string>> => {
-		if (value <= TRANSACTION_DEFAULTS.dustLimit) {
+		if (value < TRANSACTION_DEFAULTS.dustLimit) {
 			return err('Output value is below dust limit.');
 		}
 		if (!this.data.inputs?.length) {

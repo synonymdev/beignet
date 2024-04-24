@@ -297,7 +297,7 @@ export const getByteCount = (
  */
 export const removeDustOutputs = (outputs: IOutput[]): IOutput[] => {
 	return outputs.filter((output) => {
-		return output.value > TRANSACTION_DEFAULTS.dustLimit;
+		return output.value >= TRANSACTION_DEFAULTS.dustLimit;
 	});
 };
 

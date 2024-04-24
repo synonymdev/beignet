@@ -88,6 +88,7 @@ import {
 	objectKeys,
 	objectsMatch,
 	ok,
+	removeDustUtxos,
 	Result,
 	shuffleArray,
 	validateAddress,
@@ -1730,7 +1731,7 @@ export class Wallet {
 		if (getUtxosRes.isErr()) {
 			return err(getUtxosRes.error.message);
 		}
-		const utxos = getUtxosRes.value?.utxos ?? [];
+		const utxos = removeDustUtxos(getUtxosRes.value?.utxos ?? []);
 		const balance = getUtxosRes.value?.balance ?? 0;
 		this._data.utxos = utxos;
 		this._data.balance = balance;
@@ -3399,7 +3400,7 @@ export class Wallet {
 	 */
 	public addTxInput({ input }: { input: IUtxo }): Result<IUtxo[]> {
 		try {
-			if (input.value <= TRANSACTION_DEFAULTS.dustLimit) {
+			if (input.value < TRANSACTION_DEFAULTS.dustLimit) {
 				return err('Input value is below dust limit.');
 			}
 			const txData = this.transaction.data;

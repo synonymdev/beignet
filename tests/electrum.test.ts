@@ -65,8 +65,8 @@ describe('Electrum Methods', async function (): Promise<void> {
 		expect(getUtxosRes.isErr()).to.equal(false);
 		if (getUtxosRes.isErr()) return;
 		expect(Array.isArray(getUtxosRes.value.utxos)).to.equal(true);
-		expect(getUtxosRes.value.utxos.length).to.equal(2);
-		expect(getUtxosRes.value.balance).to.equal(4855);
+		expect(getUtxosRes.value.utxos.length).to.equal(3);
+		expect(getUtxosRes.value.balance).to.equal(5855);
 		expect(getUtxosRes.value).to.deep.equal(EXPECTED_SHARED_RESULTS.getUtxos);
 	});
 });

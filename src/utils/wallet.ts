@@ -9,6 +9,7 @@ import {
 	IKeyDerivationPath,
 	IKeyDerivationPathData,
 	ITxHashes,
+	IUtxo,
 	IWalletData,
 	ObjectKeys,
 	TGapLimitOptions,
@@ -17,6 +18,7 @@ import {
 } from '../types';
 import { err, ok, Result } from './result';
 import {
+	getAddressTypeFromPath,
 	getKeyDerivationPathObject,
 	getKeyDerivationPathString
 } from './derivation-path';
@@ -24,8 +26,9 @@ import { bech32m } from 'bech32';
 import * as bip39 from 'bip39';
 import * as bitcoin from 'bitcoinjs-lib';
 import {
-	WALLET_ID_PREFIX,
-	BITKIT_WALLET_SEED_HASH_PREFIX
+	BITKIT_WALLET_SEED_HASH_PREFIX,
+	TRANSACTION_DEFAULTS,
+	WALLET_ID_PREFIX
 } from '../wallet/constants';
 import { getAddressIndexDiff } from './helpers';
 
@@ -421,4 +424,21 @@ export const filterAddressesObjForSingleIndex = ({
 		if (a.index === addressIndex) response[a.scriptHash] = a;
 	});
 	return response;
+};
+
+/**
+ * Removes dust utxos from an array of utxos.
+ * @param {IUtxo[]} utxos
+ * @returns {IUtxo[]}
+ */
+export const removeDustUtxos = (utxos: IUtxo[]): IUtxo[] => {
+	//const dustLimits = DUST_LIMITS;
+	const dustLimit = TRANSACTION_DEFAULTS.dustLimit;
+	return utxos.filter((utxo) => {
+		const { path, value } = utxo;
+		const addressType = getAddressTypeFromPath(path);
+		if (addressType.isErr()) return false;
+		//const dustLimit = dustLimits[addressType.value];
+		return value >= dustLimit;
+	});
 };

@@ -158,7 +158,15 @@ describe('Wallet Library', async function () {
 		expect(Array.isArray(getUtxosRes.value.utxos)).to.equal(true);
 		expect(getUtxosRes.value.utxos.length).to.equal(3);
 		expect(getUtxosRes.value.balance).to.equal(5855);
-		expect(getUtxosRes.value).to.deep.equal(EXPECTED_SHARED_RESULTS.getUtxos);
+		const sortedUtxos = getUtxosRes.value.utxos.sort((a, b) => {
+			if (a.height !== b.height) {
+				return a.height - b.height;
+			}
+			return a.index - b.index;
+		});
+		expect({ ...getUtxosRes.value, utxos: sortedUtxos }).to.deep.equal(
+			EXPECTED_SHARED_RESULTS.getUtxos
+		);
 	});
 
 	it('Should return addresses in range of the provided gap limit', async () => {

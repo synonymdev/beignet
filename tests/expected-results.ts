@@ -205,20 +205,6 @@ export const EXPECTED_SHARED_RESULTS = {
 	getUtxos: {
 		utxos: [
 			{
-				address: 'tb1qmja98kkd540qtesjqdanfg0ywags845vehfg66',
-				height: 2638717,
-				index: 0,
-				path: "m/84'/1'/0'/0/0",
-				publicKey:
-					'02189e644b5fe9acf24374b35f01f652e011867568b6e01765cace9b7ef07809cc',
-				scriptHash:
-					'1cc3af572e4c847a1adf7ab3658fa7ae36926088c762821930dadc60e41217c2',
-				tx_hash:
-					'3f1ce6216b0c9f4cc8c9466770f3297622a94075351dac0e111df38a035839ad',
-				tx_pos: 3,
-				value: 1000
-			},
-			{
 				address: 'tb1qy45r5c84eh7tuke772lrvj2q5kqlylp2ghgdlk',
 				path: "m/84'/1'/0'/0/1",
 				publicKey:
@@ -245,6 +231,20 @@ export const EXPECTED_SHARED_RESULTS = {
 				tx_pos: 1,
 				height: 2539268,
 				value: 3855
+			},
+			{
+				address: 'tb1qmja98kkd540qtesjqdanfg0ywags845vehfg66',
+				height: 2638717,
+				index: 0,
+				path: "m/84'/1'/0'/0/0",
+				publicKey:
+					'02189e644b5fe9acf24374b35f01f652e011867568b6e01765cace9b7ef07809cc',
+				scriptHash:
+					'1cc3af572e4c847a1adf7ab3658fa7ae36926088c762821930dadc60e41217c2',
+				tx_hash:
+					'3f1ce6216b0c9f4cc8c9466770f3297622a94075351dac0e111df38a035839ad',
+				tx_pos: 3,
+				value: 1000
 			}
 		],
 		balance: 5855

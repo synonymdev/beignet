@@ -43,6 +43,7 @@ import {
 	ITransaction,
 	ITxHash,
 	IUtxo,
+	IVout,
 	IWallet,
 	IWalletData,
 	TAddressIndexInfo,
@@ -2448,13 +2449,16 @@ export class Wallet {
 					if (sequence < 0xffffffff - 1) rbf = true;
 				} catch {}
 
-				const { addresses: _addresses, value } = inputData[`${txid}${vout}`];
-				totalInputValue = totalInputValue + value;
-				_addresses.map((address) => {
-					if (address in combinedAddressObj) {
-						matchedInputValue = matchedInputValue + value;
-					}
-				});
+				const key = `${txid}${vout}`;
+				if (key in inputData) {
+					const { addresses: _addresses, value } = inputData[key];
+					totalInputValue = totalInputValue + value;
+					_addresses.map((address) => {
+						if (address in combinedAddressObj) {
+							matchedInputValue = matchedInputValue + value;
+						}
+					});
+				}
 			});
 
 			//Iterate over each output
@@ -2534,6 +2538,7 @@ export class Wallet {
 	}): Promise<Result<InputData>> {
 		try {
 			const inputData: InputData = {};
+			const failedRequests: { tx_hash: string; vout: number }[] = [];
 
 			const batchLimit = this.electrum.batchLimit;
 			for (let i = 0; i < inputs.length; i += batchLimit) {
@@ -2550,22 +2555,98 @@ export class Wallet {
 							getTransactionsResponse.error?.data
 					);
 				}
-				getTransactionsResponse.value.data.map(({ data, result }) => {
-					const vout = result.vout[data.vout];
-					const addresses = vout.scriptPubKey.addresses
-						? vout.scriptPubKey.addresses
-						: vout.scriptPubKey.address
-						? [vout.scriptPubKey.address]
-						: [];
-					const value = vout.value;
-					const key = `${data.tx_hash}${vout.n}`;
-					inputData[key] = { addresses, value };
+				getTransactionsResponse.value.data.map(({ data, result, error }) => {
+					if (result && result?.vout) {
+						const { addresses, value, key } = this._extractVoutData(
+							result.vout[data.vout],
+							data
+						);
+						inputData[key] = { addresses, value };
+					} else if (error) {
+						if (
+							error?.message &&
+							error.message.includes('response too large')
+						) {
+							// No point in re-running this tx_hash since Electrum considers the tx too large, just log the error.
+							this._logGetInputDataError(error, data);
+						} else {
+							failedRequests.push(data);
+						}
+					}
+				});
+			}
+
+			// Attempt to retrieve the data for any failed getTransactionsFromInputs request.
+			for (const input of failedRequests) {
+				const getTransactionsResponse =
+					await this.electrum.getTransactionsFromInputs({
+						txHashes: [input]
+					});
+				if (getTransactionsResponse.isErr()) {
+					return err(
+						getTransactionsResponse.error?.message ??
+							// @ts-ignore
+							getTransactionsResponse.error?.data
+					);
+				}
+				getTransactionsResponse.value.data.map(({ data, result, error }) => {
+					if (result && result?.vout) {
+						const { addresses, value, key } = this._extractVoutData(
+							result.vout[data.vout],
+							data
+						);
+						inputData[key] = { addresses, value };
+					} else if (error) {
+						this._logGetInputDataError(error, data);
+					}
 				});
 			}
 			return ok(inputData);
 		} catch (e) {
 			return err(e);
 		}
+	}
+
+	/**
+	 * Extracts data from the provided vout.
+	 * @private
+	 * @param {IVout} vout
+	 * @param { tx_hash: string; vout: number } data
+	 * @returns { addresses: string[]; value: number; key: string }
+	 */
+	private _extractVoutData(
+		vout: IVout,
+		data: { tx_hash: string; vout: number }
+	): { addresses: string[]; value: number; key: string } {
+		const addresses = vout.scriptPubKey.addresses
+			? vout.scriptPubKey.addresses
+			: vout.scriptPubKey.address
+			? [vout.scriptPubKey.address]
+			: [];
+		const value = vout.value;
+		const key = `${data.tx_hash}${vout.n}`;
+		return { addresses, value, key };
+	}
+
+	/*
+	 * Logs an error message when getInputData fails to retrieve getTransactionsFromInputs data.
+	 * @private
+	 * @param { code?: number; message?: string } error
+	 * @param { tx_hash: string; vout: number } data
+	 * @returns {void}
+	 */
+	private _logGetInputDataError(
+		error: { code?: number; message?: string },
+		data: { tx_hash: string; vout: number }
+	): void {
+		console.error('\nError:', error);
+		if (data) {
+			console.warn('Unable to retrieve input data for:', data);
+		}
+		if (error?.code && error.code === -32600)
+			console.info(
+				'Suggestion: Please increase the response limit on your Electrum server.'
+			);
 	}
 
 	/**

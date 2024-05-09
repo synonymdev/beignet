@@ -297,7 +297,8 @@ export class Wallet {
 				getData: this._getData,
 				setData: this._setData
 			},
-			data: getDefaultWalletData()
+			data: getDefaultWalletData(),
+			onMessage: this.sendMessage
 		};
 		const createRes = await Wallet.create(params);
 		if (createRes.isErr()) return err(createRes.error.message);

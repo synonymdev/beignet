@@ -18,6 +18,10 @@ const runExample = async (): Promise<void> => {
 		},
 		electrumOptions: {
 			servers: servers[network]
+		},
+		gapLimitOptions: {
+			lookAhead: 5,
+			lookBehind: 5
 		}
 	});
 	if (createWalletResponse.isErr()) return;

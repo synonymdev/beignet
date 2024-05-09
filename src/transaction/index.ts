@@ -1169,31 +1169,31 @@ export class Transaction {
 		txid?: string; // txid of utxo to include in the CPFP tx. Undefined will gather all utxo's.
 		satsPerByte?: number;
 	}): Promise<Result<ISendTransaction>> {
-		const response = await this.setupTransaction({
+		await this.resetSendTransaction();
+		const setupTransactionRes = await this.setupTransaction({
 			inputTxHashes: txid ? [txid] : undefined,
 			rbf: true
 		});
-
+		if (setupTransactionRes.isErr()) {
+			return err(setupTransactionRes.error.message);
+		}
 		const receiveAddress = await this._wallet.getReceiveAddress({});
 		if (receiveAddress.isErr()) {
 			return err(receiveAddress.error.message);
 		}
-
-		this._data = {
-			...this._data,
-			...response,
-			satsPerByte: satsPerByte ?? this.data?.satsPerByte ?? 1,
-			boostType: EBoostType.cpfp
-		};
-
-		// Construct the tx to send funds back to ourselves using the assigned inputs, receive address and fee.
-		const sendMaxResponse = await this.sendMax({
-			address: receiveAddress.value
+		const sendMaxRes = await this.sendMax({
+			transaction: {
+				...this.data,
+				...setupTransactionRes.value,
+				boostType: EBoostType.cpfp
+			},
+			address: receiveAddress.value,
+			satsPerByte: satsPerByte ?? this._wallet.feeEstimates.normal,
+			rbf: this._wallet.rbf
 		});
-		if (sendMaxResponse.isErr()) {
-			return err(sendMaxResponse.error.message);
+		if (sendMaxRes.isErr()) {
+			return err(sendMaxRes.error.message);
 		}
-
 		return ok(this.data);
 	}
 }

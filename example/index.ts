@@ -2,11 +2,9 @@ import { EAvailableNetworks, generateMnemonic, Wallet } from '../src';
 import { getData, onMessage, servers, setData } from './helpers';
 import * as repl from 'repl';
 
-const mnemonic = generateMnemonic();
-
 const network: EAvailableNetworks = EAvailableNetworks.mainnet;
 
-const runExample = async (): Promise<void> => {
+const runExample = async (mnemonic = generateMnemonic()): Promise<void> => {
 	// Create Wallet
 	const createWalletResponse = await Wallet.create({
 		mnemonic,
@@ -75,4 +73,5 @@ const runExample = async (): Promise<void> => {
 	r.context.wallet = wallet;
 };
 
-runExample().then();
+const mnemonic = process.argv[2];
+runExample(mnemonic).then();

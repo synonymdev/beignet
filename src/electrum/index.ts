@@ -858,7 +858,7 @@ export class Electrum {
 		}
 
 		// Subscribe to all provided script hashes.
-		const allScriptHashesPromise = scriptHashes.map(async (scriptHash) => {
+		const allScriptHashesPromises = scriptHashes.map(async (scriptHash) => {
 			const response: ISubscribeToAddress = await electrum.subscribeAddress({
 				scriptHash,
 				network: this.electrumNetwork,
@@ -872,7 +872,7 @@ export class Electrum {
 			}
 		});
 
-		const allUtxosPromise = allUtxos.map(async (utxo) => {
+		const allUtxosPromises = allUtxos.map(async (utxo) => {
 			const response: ISubscribeToAddress = await electrum.subscribeAddress({
 				scriptHash: utxo.scriptHash,
 				network: this.electrumNetwork,
@@ -892,7 +892,7 @@ export class Electrum {
 		});
 
 		try {
-			await Promise.all([allScriptHashesPromise, allUtxosPromise]);
+			await Promise.all([...allScriptHashesPromises, ...allUtxosPromises]);
 		} catch (e) {
 			return err(e);
 		}

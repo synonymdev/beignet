@@ -3,12 +3,12 @@ import {
 	EElectrumNetworks,
 	IHeader,
 	INewBlock,
+	Net,
 	TServer,
-	TTxResult
+	TTxResult,
+	Tls
 } from './electrum';
 import { EFeeId, TGapLimitOptions } from './transaction';
-import { TLSSocket } from 'tls';
-import { Server } from 'net';
 import { ECPairInterface } from 'ecpair';
 import { BIP32Interface } from 'bip32';
 
@@ -190,10 +190,10 @@ export interface IWallet {
 	addressType?: EAddressType;
 	data?: IWalletData;
 	storage?: TStorage;
-	electrumOptions?: {
+	electrumOptions: {
+		net: Net;
+		tls: Tls;
 		servers?: TServer | TServer[];
-		tls?: TLSSocket;
-		net?: Server;
 		batchLimit?: number; // Maximum number of requests to be sent in a single batch
 		batchDelay?: number; // Delay (in milliseconds) between each batch of requests
 	};

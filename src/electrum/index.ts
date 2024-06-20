@@ -1,3 +1,6 @@
+import { Block } from 'bitcoinjs-lib';
+import * as electrum from 'rn-electrum-client/helpers';
+
 import {
 	EAddressType,
 	EAvailableNetworks,
@@ -22,6 +25,7 @@ import {
 	ITransaction,
 	ITxHash,
 	IUtxo,
+	Net,
 	TAddressTypeContent,
 	TConnectToElectrumRes,
 	TGetAddressHistory,
@@ -31,9 +35,9 @@ import {
 	TTxResponse,
 	TTxResult,
 	TUnspentAddressScriptHashData,
-	TUnspentAddressScriptHashResponse
+	TUnspentAddressScriptHashResponse,
+	Tls
 } from '../types';
-import * as electrum from 'rn-electrum-client/helpers';
 import {
 	err,
 	filterAddressesForGapLimit,
@@ -50,25 +54,14 @@ import {
 } from '../utils';
 import { Wallet } from '../wallet';
 import { onMessageKeys, POLLING_INTERVAL } from '../shapes';
-import { Block } from 'bitcoinjs-lib';
-import { Server } from 'net';
-import { TLSSocket } from 'tls';
-
-let tls, net;
-try {
-	tls = require('tls');
-	net = require('net');
-} catch {
-	// Modules not available, will attempt to use passed instances, if any.
-}
 
 export class Electrum {
 	private readonly _wallet: Wallet;
 	private sendMessage: TOnMessage;
 	private latestConnectionState: boolean | null = null;
 	private connectionPollingInterval: NodeJS.Timeout | null;
-	private tls: TLSSocket;
-	private net: Server;
+	private net: Net;
+	private tls: Tls;
 
 	public servers?: TServer | TServer[];
 	public network: EAvailableNetworks;
@@ -77,24 +70,25 @@ export class Electrum {
 	public onReceive?: (data: unknown) => void;
 	public batchLimit: number;
 	public batchDelay: number;
+
 	constructor({
 		wallet,
-		servers,
 		network,
-		onReceive,
-		tls: _tls,
-		net: _net,
+		net,
+		tls,
+		servers,
 		batchLimit = 20,
-		batchDelay = 50
+		batchDelay = 50,
+		onReceive
 	}: {
 		wallet: Wallet;
-		servers?: TServer | TServer[];
 		network: EAvailableNetworks;
-		onReceive?: (data: unknown) => void;
-		tls?: TLSSocket;
-		net?: Server;
+		net: Net;
+		tls: Tls;
+		servers?: TServer | TServer[];
 		batchLimit?: number;
 		batchDelay?: number;
+		onReceive?: (data: unknown) => void;
 	}) {
 		this._wallet = wallet;
 		this.sendMessage = wallet.sendMessage;
@@ -103,15 +97,10 @@ export class Electrum {
 		this.electrumNetwork = getElectrumNetwork(this.network);
 		this.connectedToElectrum = false;
 		this.onReceive = onReceive;
-		this.tls = _tls ?? tls;
-		this.net = _net ?? net;
+		this.net = net;
+		this.tls = tls;
 		this.batchLimit = batchLimit;
 		this.batchDelay = batchDelay;
-		if (!this.tls || !this.net) {
-			throw new Error(
-				'TLS and NET modules are not available and were not passed as instances'
-			);
-		}
 		this.connectionPollingInterval = setInterval(
 			(): Promise<void> => this.checkConnection(),
 			POLLING_INTERVAL
@@ -148,8 +137,8 @@ export class Electrum {
 		}
 		const startResponse = await electrum.start({
 			network: electrumNetwork,
-			tls: this.tls,
 			net: this.net,
+			tls: this.tls,
 			customPeers
 		});
 		if (startResponse.error && !this.wallet.isSwitchingNetworks)

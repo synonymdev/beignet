@@ -99,6 +99,8 @@ const sendMaxRes = await wallet.sendMax({ address: 'address to send sats to', sa
 
 ```typescript
 import { Wallet, generateMnemonic } from 'beignet';
+import net from 'net'
+import tls from 'tls'
 import { TStorage } from './wallet';
 
 // Generate a mnemonic phrase
@@ -152,7 +154,11 @@ const storage: TStorage = {
 const createWalletRes = await Wallet.create({
 	mnemonic,
 	passphrase,
-	electrumOptions: { servers },
+	electrumOptions: {
+		servers,
+		net,
+		tls
+	},
 	network,
 	onMessage,
 	storage, 
@@ -187,6 +193,17 @@ const history = await wallet.getAddressHistory('address');
 
 // Get transaction details for a given transaction id. TTxDetails
 const txDetails = await wallet.getTransactionDetails('txid');
+```
+
+## React Native
+
+You can use `react-native-tcp-socket` as a drop in replacement for `net` & `tls` in a react-native environment. In `package.json`:
+
+```json
+"react-native": {
+	"net": "react-native-tcp-socket",
+	"tls": "react-native-tcp-socket"
+}
 ```
 
 ## Documentation

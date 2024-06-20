@@ -6,6 +6,9 @@ import {
 	IUtxo
 } from './wallet';
 
+export type Net = typeof import('net');
+export type Tls = typeof import('tls');
+
 export type TElectrumNetworks = 'bitcoin' | 'bitcoinTestnet' | 'bitcoinRegtest';
 export enum EElectrumNetworks {
 	bitcoin = 'bitcoin',

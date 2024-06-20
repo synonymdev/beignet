@@ -46,12 +46,14 @@ import {
 	IVout,
 	IWallet,
 	IWalletData,
+	Net,
 	TAddressIndexInfo,
 	TAddressTypeContent,
 	TAvailableNetworks,
 	TGapLimitOptions,
 	TGetData,
 	TGetTotalFeeObj,
+	Tls,
 	TMessageDataMap,
 	TOnMessage,
 	TProcessUnconfirmedTransactions,
@@ -107,8 +109,6 @@ import { GAP_LIMIT, TRANSACTION_DEFAULTS } from './constants';
 import cloneDeep from 'lodash.clonedeep';
 import { btcToSats } from '../utils/conversion';
 import * as bip39 from 'bip39';
-import { TLSSocket } from 'tls';
-import { Server } from 'net';
 
 const bip32 = BIP32Factory(ecc);
 
@@ -138,9 +138,9 @@ export class Wallet {
 	public readonly id: string;
 	public readonly name: string;
 	public electrumOptions?: {
+		net: Net;
+		tls: Tls;
 		servers?: TServer | TServer[];
-		tls?: TLSSocket;
-		net?: Server;
 		batchLimit?: number; // Maximum number of requests to be sent in a single batch
 		batchDelay?: number; // Delay (in milliseconds) between each batch of requests
 	};
@@ -160,7 +160,7 @@ export class Wallet {
 		network = EAvailableNetworks.mainnet,
 		addressType = EAddressType.p2wpkh,
 		storage,
-		electrumOptions = {},
+		electrumOptions,
 		onMessage = (): null => null,
 		customGetAddress,
 		customGetScriptHash,

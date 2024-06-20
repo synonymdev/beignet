@@ -1,5 +1,8 @@
 import * as chai from 'chai';
 import { validateMnemonic } from 'bip39';
+import net from 'net';
+import tls from 'tls';
+
 import { Wallet } from '../';
 import {
 	EAddressType,
@@ -32,7 +35,9 @@ before(async function () {
 			setData
 		},
 		electrumOptions: {
-			servers: servers[EAvailableNetworks.testnet]
+			servers: servers[EAvailableNetworks.testnet],
+			net,
+			tls
 		}
 	});
 	if (res.isErr()) {

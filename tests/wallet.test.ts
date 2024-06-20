@@ -1,5 +1,8 @@
 import * as chai from 'chai';
 import { validateMnemonic } from 'bip39';
+import net from 'net';
+import tls from 'tls';
+
 import {
 	filterAddressesObjForGapLimit,
 	IAddress,
@@ -36,7 +39,9 @@ before(async function () {
 		network: EAvailableNetworks.testnet,
 		addressType: EAddressType.p2wpkh,
 		electrumOptions: {
-			servers: servers[EAvailableNetworks.testnet]
+			servers: servers[EAvailableNetworks.testnet],
+			net,
+			tls
 		}
 	});
 	if (res.isErr()) {

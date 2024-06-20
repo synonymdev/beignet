@@ -1,4 +1,7 @@
 import * as chai from 'chai';
+import net from 'net';
+import tls from 'tls';
+
 import {
 	decodeRawTransaction,
 	IPrivateKeyInfo,
@@ -22,7 +25,9 @@ before(async function () {
 		mnemonic: TRANSACTION_TEST_MNEMONIC,
 		network: EAvailableNetworks.testnet,
 		electrumOptions: {
-			servers: servers[EAvailableNetworks.testnet]
+			servers: servers[EAvailableNetworks.testnet],
+			net,
+			tls,
 		}
 	});
 	if (res.isErr()) {

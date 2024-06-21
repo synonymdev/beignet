@@ -1,10 +1,14 @@
 import * as chai from 'chai';
+import net from 'net';
+import tls from 'tls';
+
 import { Wallet } from '../';
 import { EAvailableNetworks, EAddressType, IGetUtxosResponse } from '../src';
 import { TEST_MNEMONIC } from './constants';
 import { Result } from '../src';
 import { servers } from '../example/helpers';
 import { EXPECTED_SHARED_RESULTS } from './expected-results';
+
 const expect = chai.expect;
 
 const testTimeout = 60000;
@@ -18,7 +22,9 @@ before(async function () {
 		network: EAvailableNetworks.testnet,
 		addressType: EAddressType.p2wpkh,
 		electrumOptions: {
-			servers: servers[EAvailableNetworks.testnet]
+			servers: servers[EAvailableNetworks.testnet],
+			net,
+			tls
 		}
 	});
 	if (res.isErr()) {

@@ -27,7 +27,7 @@ before(async function () {
 		electrumOptions: {
 			servers: servers[EAvailableNetworks.testnet],
 			net,
-			tls,
+			tls
 		}
 	});
 	if (res.isErr()) {

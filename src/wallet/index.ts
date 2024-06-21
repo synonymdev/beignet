@@ -100,6 +100,7 @@ import {
 import {
 	addressTypes,
 	defaultFeesShape,
+	getDefaultGapLimitOptions,
 	getAddressTypeContent,
 	getAddressTypes
 } from '../shapes';
@@ -169,12 +170,7 @@ export class Wallet {
 		disableMessages = false,
 		disableMessagesOnCreate = false,
 		addressTypesToMonitor = Object.values(EAddressType),
-		gapLimitOptions = {
-			lookBehind: GAP_LIMIT,
-			lookAhead: GAP_LIMIT,
-			lookBehindChange: GAP_LIMIT_CHANGE,
-			lookAheadChange: GAP_LIMIT_CHANGE
-		}
+		gapLimitOptions = getDefaultGapLimitOptions()
 	}: IWallet) {
 		if (!mnemonic) throw new Error('No mnemonic specified.');
 		if (!validateMnemonic(mnemonic)) throw new Error('Invalid mnemonic.');

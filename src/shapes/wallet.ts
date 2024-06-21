@@ -3,7 +3,8 @@ import {
 	TAddressTypeContent,
 	IHeader,
 	TAddressTypes,
-	IOnchainFees
+	IOnchainFees,
+	TGapLimitOptions
 } from '../types';
 import cloneDeep from 'lodash.clonedeep';
 import {
@@ -14,6 +15,7 @@ import {
 	EAddressType
 } from '../types';
 import { EFeeId } from '../types';
+import { GAP_LIMIT, GAP_LIMIT_CHANGE } from '../wallet/constants';
 
 export const addressTypes: Readonly<TAddressTypes> = {
 	[EAddressType.p2wpkh]: {
@@ -141,4 +143,15 @@ export const defaultFeesShape: IOnchainFees = {
 
 export const getAddressTypes = (): EAddressType[] => {
 	return cloneDeep(Object.values(EAddressType));
+};
+
+export const getDefaultGapLimitOptions = (): TGapLimitOptions => {
+	return cloneDeep(defaultGapLimitOptions);
+};
+
+export const defaultGapLimitOptions: TGapLimitOptions = {
+	lookBehind: GAP_LIMIT,
+	lookAhead: GAP_LIMIT,
+	lookBehindChange: GAP_LIMIT_CHANGE,
+	lookAheadChange: GAP_LIMIT_CHANGE
 };

@@ -358,13 +358,21 @@ export const getTxFee = ({
 export const filterAddressesForGapLimit = ({
 	addresses,
 	index,
-	gapLimitOptions
+	gapLimitOptions,
+	change
 }: {
 	addresses: IAddress[];
 	index: number;
 	gapLimitOptions: TGapLimitOptions;
+	change: boolean;
 }): IAddress[] => {
-	const { lookBehind, lookAhead } = gapLimitOptions;
+	const lookBehind = change
+		? gapLimitOptions.lookBehindChange
+		: gapLimitOptions.lookBehind;
+	const lookAhead = change
+		? gapLimitOptions.lookAheadChange
+		: gapLimitOptions.lookAhead;
+
 	return addresses.filter((a) => {
 		if (a.index >= index) {
 			return getAddressIndexDiff(index, a.index) <= lookAhead;
@@ -376,13 +384,21 @@ export const filterAddressesForGapLimit = ({
 export const filterAddressesObjForGapLimit = ({
 	addresses,
 	index,
-	gapLimitOptions
+	gapLimitOptions,
+	change
 }: {
 	addresses: IAddresses;
 	index: number;
 	gapLimitOptions: TGapLimitOptions;
+	change: boolean;
 }): IAddresses => {
-	const { lookBehind, lookAhead } = gapLimitOptions;
+	const lookBehind = change
+		? gapLimitOptions.lookBehindChange
+		: gapLimitOptions.lookBehind;
+	const lookAhead = change
+		? gapLimitOptions.lookAheadChange
+		: gapLimitOptions.lookAhead;
+
 	const response: IAddresses = {};
 	Object.values(addresses).map((a) => {
 		if (a.index >= index) {

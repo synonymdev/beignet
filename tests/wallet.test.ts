@@ -177,7 +177,9 @@ describe('Wallet Library', async function () {
 	it('Should return addresses in range of the provided gap limit', async () => {
 		const gapLimitOptions = {
 			lookAhead: 2,
-			lookBehind: 2
+			lookBehind: 2,
+			lookAheadChange: 1,
+			lookBehindChange: 1
 		};
 		const addressesObj = wallet.data.addresses[EAddressType.p2wpkh];
 		const addresses: IAddress[] = Object.values(addressesObj);
@@ -190,7 +192,8 @@ describe('Wallet Library', async function () {
 		const filteredAddresses = filterAddressesForGapLimit({
 			addresses,
 			index,
-			gapLimitOptions
+			gapLimitOptions,
+			change: false
 		});
 		let indexes = filteredAddresses.map((a) => a.index);
 		let minIndex = Math.min(...indexes);
@@ -202,7 +205,8 @@ describe('Wallet Library', async function () {
 		const filteredAddressesObj = filterAddressesObjForGapLimit({
 			addresses: addressesObj,
 			index,
-			gapLimitOptions
+			gapLimitOptions,
+			change: false
 		});
 		indexes = Object.values(filteredAddressesObj).map((a: IAddress) => a.index);
 		minIndex = Math.min(...indexes);

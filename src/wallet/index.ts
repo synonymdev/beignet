@@ -1854,8 +1854,16 @@ export class Wallet {
 			return ok(undefined);
 		}
 
+		// Filter out transactions that are already confirmed.
+		let filteredTxHashes = history.value;
+		if (!replaceStoredTransactions) {
+			filteredTxHashes = history.value.filter((tx) => {
+				return !(this.data.transactions[tx.tx_hash]?.height ?? 0 >= 6);
+			});
+		}
+
 		const getTransactionsResponse = await this.electrum.getTransactions({
-			txHashes: history.value
+			txHashes: filteredTxHashes
 		});
 		if (getTransactionsResponse.isErr()) {
 			return err(getTransactionsResponse.error.message);
@@ -1905,7 +1913,7 @@ export class Wallet {
 						transactions[txid]?.timestamp ??
 						Date.now()
 				};
-				if (formattedTransactions[txid]?.height > 0)
+				if (formattedTransactions[txid]?.height ?? 0 > 0)
 					confirmedTxs.push({ transaction: formattedTransactions[txid] });
 			}
 
@@ -2521,6 +2529,7 @@ export class Wallet {
 			const { address, height, scriptHash } = data;
 			let timestamp = Date.now();
 			let confirmTimestamp: number | undefined;
+			const blockhash = result.blockhash;
 
 			if (height > 0 && result.blocktime) {
 				confirmTimestamp = result.blocktime * 1000;
@@ -2532,6 +2541,7 @@ export class Wallet {
 
 			formattedTransactions[txid] = {
 				address,
+				blockhash,
 				height,
 				scriptHash,
 				totalInputValue,

@@ -62,4 +62,6 @@ export type TGetTotalFeeObj = {
 export type TGapLimitOptions = {
 	lookAhead: number;
 	lookBehind: number;
+	lookAheadChange: number;
+	lookBehindChange: number;
 };

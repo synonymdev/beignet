@@ -302,12 +302,14 @@ export class Electrum {
 						addressValues = filterAddressesForGapLimit({
 							addresses: addressValues,
 							index: addressIndex,
-							gapLimitOptions: this._wallet.gapLimitOptions
+							gapLimitOptions: this._wallet.gapLimitOptions,
+							change: false
 						});
 						changeAddressValues = filterAddressesForGapLimit({
 							addresses: changeAddressValues,
 							index: changeAddressIndex,
-							gapLimitOptions: this._wallet.gapLimitOptions
+							gapLimitOptions: this._wallet.gapLimitOptions,
+							change: true
 						});
 					}
 					const utxoScriptHashes: IAddress[] = currentWallet.utxos;
@@ -515,7 +517,8 @@ export class Electrum {
 								...filterAddressesObjForGapLimit({
 									addresses: allAddresses,
 									index: lowestAddressIndex,
-									gapLimitOptions: this._wallet.gapLimitOptions
+									gapLimitOptions: this._wallet.gapLimitOptions,
+									change: false
 								})
 							};
 							changeAddresses = {
@@ -523,7 +526,8 @@ export class Electrum {
 								...filterAddressesObjForGapLimit({
 									addresses: allChangeAddresses,
 									index: lowestChangeAddressIndex,
-									gapLimitOptions: this._wallet.gapLimitOptions
+									gapLimitOptions: this._wallet.gapLimitOptions,
+									change: true
 								})
 							};
 							break;
@@ -830,7 +834,8 @@ export class Electrum {
 					const addressesInRangeToSubscribe = filterAddressesForGapLimit({
 						addresses: Object.values(addresses),
 						index: addressIndex,
-						gapLimitOptions: this._wallet.gapLimitOptions
+						gapLimitOptions: this._wallet.gapLimitOptions,
+						change: false
 					});
 					const _scriptHashes = addressesInRangeToSubscribe.map(
 						(address) => address.scriptHash

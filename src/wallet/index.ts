@@ -105,7 +105,7 @@ import {
 } from '../shapes';
 import { Electrum } from '../electrum';
 import { Transaction } from '../transaction';
-import { GAP_LIMIT, TRANSACTION_DEFAULTS } from './constants';
+import { GAP_LIMIT, GAP_LIMIT_CHANGE, TRANSACTION_DEFAULTS } from './constants';
 import cloneDeep from 'lodash.clonedeep';
 import { btcToSats } from '../utils/conversion';
 import * as bip39 from 'bip39';
@@ -171,7 +171,9 @@ export class Wallet {
 		addressTypesToMonitor = Object.values(EAddressType),
 		gapLimitOptions = {
 			lookBehind: GAP_LIMIT,
-			lookAhead: GAP_LIMIT
+			lookAhead: GAP_LIMIT,
+			lookBehindChange: GAP_LIMIT_CHANGE,
+			lookAheadChange: GAP_LIMIT_CHANGE
 		}
 	}: IWallet) {
 		if (!mnemonic) throw new Error('No mnemonic specified.');
@@ -229,6 +231,12 @@ export class Wallet {
 				: 1,
 			lookAhead: isPositive(gapLimitOptions.lookAhead)
 				? gapLimitOptions.lookAhead
+				: 1,
+			lookBehindChange: isPositive(gapLimitOptions.lookBehindChange)
+				? gapLimitOptions.lookBehindChange
+				: 1,
+			lookAheadChange: isPositive(gapLimitOptions.lookAheadChange)
+				? gapLimitOptions.lookAheadChange
 				: 1
 		};
 	}
@@ -970,7 +978,7 @@ export class Wallet {
 				lastUsedChangeAddressIndex.index
 			);
 			const changeAddressesToGenerate =
-				this.gapLimitOptions.lookAhead - changeAddressIndexDiff;
+				this.gapLimitOptions.lookAheadChange - changeAddressIndexDiff;
 
 			if (changeAddressesToGenerate > 0) {
 				const generatedAddresses = await this.addAddresses({
@@ -1010,12 +1018,14 @@ export class Wallet {
 			let addresses = filterAddressesObjForGapLimit({
 				addresses: this._data.addresses[addressType],
 				index: addressIndex.index,
-				gapLimitOptions: this.gapLimitOptions
+				gapLimitOptions: this.gapLimitOptions,
+				change: false
 			});
 			let changeAddresses = filterAddressesObjForGapLimit({
 				addresses: this._data.changeAddresses[addressType],
 				index: changeAddressIndex.index,
-				gapLimitOptions: this.gapLimitOptions
+				gapLimitOptions: this.gapLimitOptions,
+				change: true
 			});
 
 			//Store all addresses that are to be searched and used in this method.
@@ -1119,7 +1129,7 @@ export class Wallet {
 					getAddressIndexDiff(
 						highestUsedChangeAddressIndex.index,
 						highestStoredChangeAddressIndex.index
-					) >= this.gapLimitOptions.lookAhead
+					) >= this.gapLimitOptions.lookAheadChange
 				) {
 					foundLastUsedChangeAddress = true;
 				}
@@ -1197,7 +1207,7 @@ export class Wallet {
 				//Create change addresses for the next round
 				if (!foundLastUsedChangeAddress) {
 					const changeAddressAmount =
-						this.gapLimitOptions.lookAhead -
+						this.gapLimitOptions.lookAheadChange -
 						getAddressIndexDiff(
 							highestUsedChangeAddressIndex.index,
 							highestStoredChangeAddressIndex.index
@@ -1486,8 +1496,9 @@ export class Wallet {
 				const currentChangeAddressGap = Math.abs(
 					changeAddressIndex.index - lastUsedChangeIndex
 				);
-				if (currentChangeAddressGap > this.gapLimitOptions.lookBehind) {
-					const excessAmount = currentGap - this.gapLimitOptions.lookBehind;
+				if (currentChangeAddressGap > this.gapLimitOptions.lookBehindChange) {
+					const excessAmount =
+						currentGap - this.gapLimitOptions.lookBehindChange;
 					const newIndex = addressIndex.index - excessAmount;
 					const _changeAddressIndex = await this.generateAddresses({
 						addressType: addressTypeKey,
@@ -1658,7 +1669,15 @@ export class Wallet {
 					lookAhead:
 						addressDelta > this.gapLimitOptions.lookAhead
 							? addressDelta
-							: this.gapLimitOptions.lookAhead
+							: this.gapLimitOptions.lookAhead,
+					lookBehindChange:
+						addressDelta > this.gapLimitOptions.lookBehindChange
+							? addressDelta
+							: this.gapLimitOptions.lookBehindChange,
+					lookAheadChange:
+						addressDelta > this.gapLimitOptions.lookAheadChange
+							? addressDelta
+							: this.gapLimitOptions.lookAheadChange
 				});
 			}
 			this._data.addressIndex[addressType] = addressIndex;
@@ -1958,7 +1977,8 @@ export class Wallet {
 				await this.getUtxos({
 					scanningStrategy: EScanningStrategy.startingIndex,
 					addressIndex: lowestIndex - this.gapLimitOptions.lookBehind,
-					changeAddressIndex: lowestIndex - this.gapLimitOptions.lookBehind,
+					changeAddressIndex:
+						lowestIndex - this.gapLimitOptions.lookBehindChange,
 					addressTypesToCheck: [addressType]
 				});
 			}
@@ -2189,7 +2209,9 @@ export class Wallet {
 		const currentGapLimitOptions = this.gapLimitOptions;
 		if (
 			currentGapLimitOptions.lookBehind < GAP_LIMIT ||
-			currentGapLimitOptions.lookAhead < GAP_LIMIT
+			currentGapLimitOptions.lookAhead < GAP_LIMIT ||
+			currentGapLimitOptions.lookBehindChange < GAP_LIMIT_CHANGE ||
+			currentGapLimitOptions.lookAheadChange < GAP_LIMIT_CHANGE
 		) {
 			this.updateGapLimit({
 				lookBehind:
@@ -2199,7 +2221,15 @@ export class Wallet {
 				lookAhead:
 					currentGapLimitOptions.lookAhead < GAP_LIMIT
 						? GAP_LIMIT
-						: currentGapLimitOptions.lookAhead
+						: currentGapLimitOptions.lookAhead,
+				lookBehindChange:
+					currentGapLimitOptions.lookBehindChange < GAP_LIMIT_CHANGE
+						? GAP_LIMIT_CHANGE
+						: currentGapLimitOptions.lookBehindChange,
+				lookAheadChange:
+					currentGapLimitOptions.lookAheadChange < GAP_LIMIT_CHANGE
+						? GAP_LIMIT_CHANGE
+						: currentGapLimitOptions.lookAheadChange
 			});
 		}
 		if (shouldClearAddresses) {
@@ -3065,7 +3095,7 @@ export class Wallet {
 				addressIndex: index,
 				changeAddressAmount:
 					indexToUpdate === 'changeAddressIndex'
-						? this.gapLimitOptions.lookAhead
+						? this.gapLimitOptions.lookAheadChange
 						: 0,
 				changeAddressIndex: index,
 				addressType,
@@ -3813,9 +3843,11 @@ export class Wallet {
 		}
 		if (
 			!isPositive(gapLimitOptions.lookAhead) ||
-			!isPositive(gapLimitOptions.lookBehind)
+			!isPositive(gapLimitOptions.lookBehind) ||
+			!isPositive(gapLimitOptions.lookAheadChange) ||
+			!isPositive(gapLimitOptions.lookBehindChange)
 		) {
-			return err('Both gap limit options must be positive.');
+			return err('All gap limit options must be positive.');
 		}
 		this.gapLimitOptions = gapLimitOptions;
 		return ok(this.gapLimitOptions);

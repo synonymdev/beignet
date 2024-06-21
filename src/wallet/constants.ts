@@ -11,6 +11,7 @@ export const GENERATE_ADDRESS_AMOUNT = 5;
 
 // TODO: Add this as a settings for users to adjust when needed.
 export const GAP_LIMIT = 20;
+export const GAP_LIMIT_CHANGE = 20;
 
 export const DUST_LIMITS = {
 	[EAddressType.p2pkh]: 546,

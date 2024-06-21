@@ -84,7 +84,9 @@ export interface IVin {
 
 export interface IFormattedTransaction {
 	address: string;
-	height: number;
+	blockhash?: string;
+	/** @private does not update on confirmed transaction */
+	height?: number;
 	scriptHash: string;
 	totalInputValue: number;
 	matchedInputValue: number;
@@ -339,8 +341,8 @@ export interface ITransaction<T> {
 }
 
 export type TTxDetails = {
-	blockhash: string;
-	confirmations: number;
+	blockhash?: string;
+	confirmations?: number;
 	hash: string;
 	hex: string;
 	locktime: number;

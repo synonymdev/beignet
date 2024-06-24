@@ -2,6 +2,7 @@ import * as chai from 'chai';
 import { validateMnemonic } from 'bip39';
 import net from 'net';
 import tls from 'tls';
+import sinon from 'sinon';
 
 import {
 	filterAddressesObjForGapLimit,
@@ -30,7 +31,7 @@ const expect = chai.expect;
 
 const testTimeout = 60000;
 
-let wallet;
+let wallet: Wallet;
 
 before(async function () {
 	this.timeout(testTimeout);
@@ -362,5 +363,17 @@ describe('Wallet Library', async function () {
 		expect(privateKey2).to.equal(
 			'L2cB657yFF88YEebxoad3YgeezYKAu61AhmnDHMFo7GjjpPqBZG1'
 		);
+	});
+
+	describe('Wallet refresh', () => {
+		let spy;
+		before(async () => {
+			spy = sinon.spy(wallet, 'formatTransactions');
+			wallet.refreshWallet({});
+		});
+
+		it('Format transactions should not be called', () => {
+			expect(spy.called).to.equal(false);
+		});
 	});
 });

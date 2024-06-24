@@ -85,7 +85,6 @@ export interface IVin {
 export interface IFormattedTransaction {
 	address: string;
 	blockhash?: string;
-	/** @private does not update on confirmed transaction */
 	height?: number;
 	scriptHash: string;
 	totalInputValue: number;

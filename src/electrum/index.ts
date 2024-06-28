@@ -41,6 +41,7 @@ import {
 import {
 	err,
 	filterAddressesForGapLimit,
+	filterAddressesObjForAddressesList,
 	filterAddressesObjForGapLimit,
 	filterAddressesObjForSingleIndex,
 	filterAddressesObjForStartingIndex,
@@ -447,18 +448,21 @@ export class Electrum {
 	 * @param {number} addressIndex
 	 * @param {number} changeAddressIndex
 	 * @param {EAddressType[]} [addressTypesToCheck]
+	 * @additionalAddresses {string[]} [additionalAddresses]
 	 * @returns {Promise<Result<IGetUtxosResponse>>}
 	 */
 	async getUtxos({
 		scanningStrategy = EScanningStrategy.gapLimit,
 		addressIndex,
 		changeAddressIndex,
-		addressTypesToCheck = this._wallet.addressTypesToMonitor
+		addressTypesToCheck = this._wallet.addressTypesToMonitor,
+		additionalAddresses = []
 	}: {
 		scanningStrategy?: EScanningStrategy;
 		addressIndex?: number;
 		changeAddressIndex?: number;
 		addressTypesToCheck?: EAddressType[];
+		additionalAddresses?: string[];
 	}): Promise<Result<IGetUtxosResponse>> {
 		try {
 			if (!this.connectedToElectrum)
@@ -519,6 +523,10 @@ export class Electrum {
 									index: lowestAddressIndex,
 									gapLimitOptions: this._wallet.gapLimitOptions,
 									change: false
+								}),
+								...filterAddressesObjForAddressesList({
+									addresses: allAddresses,
+									additionalAddresses
 								})
 							};
 							changeAddresses = {
@@ -537,6 +545,10 @@ export class Electrum {
 								...filterAddressesObjForStartingIndex({
 									addresses: allAddresses,
 									index: lowestAddressIndex
+								}),
+								...filterAddressesObjForAddressesList({
+									addresses: allAddresses,
+									additionalAddresses
 								})
 							};
 							changeAddresses = {
@@ -553,6 +565,10 @@ export class Electrum {
 								...filterAddressesObjForSingleIndex({
 									addresses: allAddresses,
 									addressIndex: _addressIndex
+								}),
+								...filterAddressesObjForAddressesList({
+									addresses: allAddresses,
+									additionalAddresses
 								})
 							};
 							changeAddresses = {

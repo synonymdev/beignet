@@ -442,6 +442,23 @@ export const filterAddressesObjForSingleIndex = ({
 	return response;
 };
 
+export const filterAddressesObjForAddressesList = ({
+	addresses,
+	additionalAddresses
+}: {
+	addresses: IAddresses;
+	additionalAddresses: string[];
+}): IAddresses => {
+	const response: IAddresses = {};
+	if (additionalAddresses.length === 0) {
+		return response;
+	}
+	Object.values(addresses).map((a) => {
+		if (additionalAddresses.includes(a.address)) response[a.scriptHash] = a;
+	});
+	return response;
+};
+
 /**
  * Removes dust utxos from an array of utxos.
  * @param {IUtxo[]} utxos

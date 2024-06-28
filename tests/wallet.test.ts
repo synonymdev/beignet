@@ -6,6 +6,7 @@ import sinon from 'sinon';
 
 import {
 	filterAddressesObjForGapLimit,
+	filterAddressesObjForAddressesList,
 	IAddress,
 	IAddresses,
 	Wallet
@@ -239,6 +240,22 @@ describe('Wallet Library', async function () {
 		expect(singleAddress.length).to.equal(1);
 		expect(minIndex).to.equal(5);
 		expect(maxIndex).to.equal(5);
+
+		const filteredAddressesList = filterAddressesObjForAddressesList({
+			addresses: addressesObj,
+			additionalAddresses: [
+				'tb1qhvc8wz32n6y3gxcw5dwdyq4ae5p83ur872shju', // path: m/84'/1'/0'/0/14
+				'tb1q7r8hpn4ymwxl8n9yjeluw6yda5rgjsw72pmmxy' // path: m/84'/1'/0'/0/15
+			]
+		});
+		indexes = Object.values(filteredAddressesList).map(
+			(a: IAddress) => a.index
+		);
+		minIndex = Math.min(...indexes);
+		maxIndex = Math.max(...indexes);
+		expect(indexes.length).to.equal(2);
+		expect(minIndex).to.equal(14);
+		expect(maxIndex).to.equal(15);
 	});
 
 	it('Should successfully return the private testnet key for a given path', async () => {

@@ -69,7 +69,7 @@ export const servers = {
 			host: 'testnet.aranguren.org',
 			ssl: 51002,
 			tcp: 51001,
-			protocol: EProtocol.tcp,
+			protocol: EProtocol.tcp
 		}
 	],
 	[EAvailableNetworks.regtest]: [

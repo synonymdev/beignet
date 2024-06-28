@@ -333,11 +333,16 @@ export class Wallet {
 	/**
 	 * Refreshes/Syncs the wallet data.
 	 * @param {boolean} [scanAllAddresses]
+	 * @param {string[]} [additionalAddresses]
 	 * @returns {Promise<Result<IWalletData>>}
 	 */
-	public async refreshWallet({ scanAllAddresses = false } = {}): Promise<
-		Result<IWalletData>
-	> {
+	public async refreshWallet({
+		scanAllAddresses = false,
+		additionalAddresses = []
+	}: {
+		scanAllAddresses?: boolean;
+		additionalAddresses?: string[];
+	} = {}): Promise<Result<IWalletData>> {
 		if (this.isRefreshing) {
 			return new Promise((resolve) => {
 				this._pendingRefreshPromises.push(resolve);
@@ -351,7 +356,8 @@ export class Wallet {
 				return this._handleRefreshError(r1.error.message);
 			}
 			const r2 = await this.getUtxos({
-				scanningStrategy: scanAllAddresses ? EScanningStrategy.all : undefined
+				scanningStrategy: scanAllAddresses ? EScanningStrategy.all : undefined,
+				additionalAddresses
 			});
 			if (r2.isErr()) {
 				return this._handleRefreshError(r2.error.message);
@@ -1734,12 +1740,14 @@ export class Wallet {
 		scanningStrategy = EScanningStrategy.gapLimit,
 		addressIndex,
 		changeAddressIndex,
-		addressTypesToCheck
+		addressTypesToCheck,
+		additionalAddresses = []
 	}: {
 		scanningStrategy?: EScanningStrategy;
 		addressIndex?: number;
 		changeAddressIndex?: number;
 		addressTypesToCheck?: EAddressType[];
+		additionalAddresses?: string[];
 	}): Promise<Result<IGetUtxosResponse>> {
 		const checkRes = await this.checkElectrumConnection();
 		if (checkRes.isErr()) return err(checkRes.error.message);
@@ -1747,7 +1755,8 @@ export class Wallet {
 			scanningStrategy,
 			addressIndex,
 			changeAddressIndex,
-			addressTypesToCheck
+			addressTypesToCheck,
+			additionalAddresses
 		});
 		if (getUtxosRes.isErr()) {
 			return err(getUtxosRes.error.message);

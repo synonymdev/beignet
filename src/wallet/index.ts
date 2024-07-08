@@ -1867,7 +1867,7 @@ export class Wallet {
 		let filteredTxHashes = history.value;
 		if (!replaceStoredTransactions) {
 			filteredTxHashes = history.value.filter((tx) => {
-				return !(this.data.transactions[tx.tx_hash]?.height ?? 0 >= 6);
+				return !((this.data.transactions[tx.tx_hash]?.height ?? 0) >= 6);
 			});
 		}
 
@@ -1922,7 +1922,7 @@ export class Wallet {
 						transactions[txid]?.timestamp ??
 						Date.now()
 				};
-				if (formattedTransactions[txid]?.height ?? 0 > 0)
+				if ((formattedTransactions[txid]?.height ?? 0) > 0)
 					confirmedTxs.push({ transaction: formattedTransactions[txid] });
 			}
 

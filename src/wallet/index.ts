@@ -14,6 +14,7 @@ import {
 	IBoostedTransaction,
 	IBoostedTransactions,
 	IBtInfo,
+	ICanBoostResponse,
 	ICustomGetAddress,
 	ICustomGetScriptHash,
 	IFormattedTransaction,
@@ -3335,7 +3336,7 @@ export class Wallet {
 			if (!address) {
 				continue;
 			}
-			const changeAddressScriptHash = await getScriptHash({
+			const changeAddressScriptHash = getScriptHash({
 				address,
 				network: this._network
 			});
@@ -3927,6 +3928,56 @@ export class Wallet {
 			return ok(details.value.data[0].result);
 		} catch (e) {
 			return err(e);
+		}
+	}
+
+	/**
+	 * Used to determine if we're able to boost a transaction either by RBF or CPFP.
+	 * @param {string} txid
+	 */
+	public async canBoost(txid: string): Promise<ICanBoostResponse> {
+		const failure = { canBoost: false, rbf: false, cpfp: false };
+		try {
+			const t =
+				this._data.unconfirmedTransactions[txid] ??
+				this._data.transactions[txid];
+
+			// transaction not found
+			if (!t) {
+				return failure;
+			}
+
+			// transaction already confirmed
+			if (t.height && t.height > 0) {
+				return failure;
+			}
+
+			// balance is below the recommended base fee
+			if (this.getBalance() < TRANSACTION_DEFAULTS.recommendedBaseFee) {
+				return failure;
+			}
+
+			/*
+			 * For an RBF, technically we can reduce the output value and apply it to the fee,
+			 * but this might cause issues when paying a merchant that requested a specific amount.
+			 */
+			const rbf =
+				this.rbf &&
+				(t.rbf ?? false) &&
+				t.type === EPaymentType.sent &&
+				t.matchedOutputValue !== t.totalOutputValue &&
+				t.matchedOutputValue > t.fee &&
+				btcToSats(t.matchedOutputValue) >
+					TRANSACTION_DEFAULTS.recommendedBaseFee;
+
+			// Performing a CPFP tx requires a new tx and higher fee.
+			const cpfp =
+				btcToSats(t.matchedOutputValue) >=
+				TRANSACTION_DEFAULTS.recommendedBaseFee * 3;
+
+			return { canBoost: rbf || cpfp, rbf, cpfp };
+		} catch (e) {
+			return failure;
 		}
 	}
 }

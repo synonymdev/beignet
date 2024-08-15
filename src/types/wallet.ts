@@ -612,3 +612,9 @@ interface ILspNode {
 	pubkey: string;
 	connectionStrings: string[];
 }
+
+export interface ICanBoostResponse {
+	canBoost: boolean;
+	rbf: boolean;
+	cpfp: boolean;
+}

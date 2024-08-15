@@ -1000,6 +1000,9 @@ export class Transaction {
 				const setupRes = await this.setupTransaction({ rbf });
 				if (setupRes.isErr()) return err(setupRes.error.message);
 			}
+			if (!satsPerByte) {
+				satsPerByte = transaction?.satsPerByte ?? 1;
+			}
 			const outputs = transaction.outputs ?? [];
 			// No address specified, attempt to assign the address currently specified in the current output index.
 			if (!address) {
@@ -1007,7 +1010,7 @@ export class Transaction {
 			}
 
 			const maxAmountResponse = this.getMaxSendAmount({
-				satsPerByte: satsPerByte ?? transaction?.satsPerByte ?? 1,
+				satsPerByte,
 				selectedFeeId: transaction.selectedFeeId,
 				transaction
 			});
@@ -1019,6 +1022,7 @@ export class Transaction {
 			if (!transaction.max) {
 				this.updateSendTransaction({
 					transaction: {
+						satsPerByte,
 						max: true,
 						outputs: [{ address, value: amount, index }],
 						fee
@@ -1172,7 +1176,7 @@ export class Transaction {
 		await this.resetSendTransaction();
 		const setupTransactionRes = await this.setupTransaction({
 			inputTxHashes: txid ? [txid] : undefined,
-			rbf: true
+			rbf: this._wallet.rbf
 		});
 		if (setupTransactionRes.isErr()) {
 			return err(setupTransactionRes.error.message);
@@ -1181,6 +1185,27 @@ export class Transaction {
 		if (receiveAddress.isErr()) {
 			return err(receiveAddress.error.message);
 		}
+
+		// try to calculate satsPerByte if not provided.
+		// child + parent combined fee rate should be higher than fastest.
+		if (!satsPerByte && txid) {
+			const parent = this._wallet.data.transactions[txid];
+			if (parent) {
+				const parentVsize = parent.vsize;
+				const childVsize = 141; // assume segwit 1 input 1 output
+				const fast = this._wallet.feeEstimates.fast;
+				const res = Math.ceil(
+					(fast * (parentVsize + childVsize) - parent.fee) / childVsize
+				);
+				satsPerByte = res;
+			}
+		}
+
+		// if we still don't have a satsPerByte, use 1.5x fastest.
+		if (!satsPerByte) {
+			satsPerByte = Math.ceil(this._wallet.feeEstimates.fast * 1.5);
+		}
+
 		const sendMaxRes = await this.sendMax({
 			transaction: {
 				...this.data,
@@ -1188,7 +1213,7 @@ export class Transaction {
 				boostType: EBoostType.cpfp
 			},
 			address: receiveAddress.value,
-			satsPerByte: satsPerByte ?? this._wallet.feeEstimates.normal,
+			satsPerByte,
 			rbf: this._wallet.rbf
 		});
 		if (sendMaxRes.isErr()) {

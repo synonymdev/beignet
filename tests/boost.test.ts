@@ -73,13 +73,9 @@ beforeEach(async function () {
 describe('Boost', async function () {
 	this.timeout(testTimeout);
 
-	it('Should successfully create a wallet.', () => {
-		expect(wallet).not.to.be.null;
-	});
-
 	it('Should fail in some cases.', async () => {
 		// tx not found
-		const b1 = await wallet.canBoost('fake-txid');
+		const b1 = wallet.canBoost('fake-txid');
 		expect(b1).to.deep.equal(failure);
 
 		// balance is 0
@@ -103,7 +99,7 @@ describe('Boost', async function () {
 		}
 		await wallet.refreshWallet({});
 		expect(wallet.data.balance).to.be.below(256);
-		const b2 = await wallet.canBoost(s1.value);
+		const b2 = wallet.canBoost(s1.value);
 		expect(b2).to.deep.equal(failure);
 
 		// tx is already confirmed
@@ -120,7 +116,7 @@ describe('Boost', async function () {
 		}
 		await rpc.generateToAddress(1, await rpc.getNewAddress()); // confirm tx
 		await wallet.refreshWallet({});
-		const b3 = await wallet.canBoost(s2.value);
+		const b3 = wallet.canBoost(s2.value);
 		expect(b3).to.deep.equal(failure);
 	});
 
@@ -147,7 +143,7 @@ describe('Boost', async function () {
 			throw s1.error;
 		}
 		await wallet.refreshWallet({});
-		const b1 = await wallet.canBoost(s1.value);
+		const b1 = wallet.canBoost(s1.value);
 		expect(b1).to.deep.equal({ canBoost: true, rbf: false, cpfp: true });
 
 		const setup = await wallet.transaction.setupCpfp({ txid: s1.value });

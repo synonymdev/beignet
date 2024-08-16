@@ -3926,7 +3926,7 @@ export class Wallet {
 	 * Used to determine if we're able to boost a transaction either by RBF or CPFP.
 	 * @param {string} txid
 	 */
-	public async canBoost(txid: string): Promise<ICanBoostResponse> {
+	public canBoost(txid: string): ICanBoostResponse {
 		const failure = { canBoost: false, rbf: false, cpfp: false };
 		try {
 			const t =

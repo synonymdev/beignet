@@ -338,12 +338,14 @@ export class Wallet {
 	 */
 	public async refreshWallet({
 		scanAllAddresses = false,
-		additionalAddresses = []
+		additionalAddresses = [],
+		force = false
 	}: {
 		scanAllAddresses?: boolean;
 		additionalAddresses?: string[];
+		force?: boolean;
 	} = {}): Promise<Result<IWalletData>> {
-		if (this.isRefreshing) {
+		if (this.isRefreshing && !force) {
 			return new Promise((resolve) => {
 				this._pendingRefreshPromises.push(resolve);
 			});
@@ -367,10 +369,16 @@ export class Wallet {
 				return this._handleRefreshError(r3.error.message);
 			}
 			await this.electrum.subscribeToAddresses();
-			this._resolveAllPendingRefreshPromises(ok(this.data));
+			if (!force) {
+				this._resolveAllPendingRefreshPromises(ok(this.data));
+			}
 			return ok(this.data);
 		} catch (e) {
-			return this._handleRefreshError(e);
+			if (force) {
+				return err(e);
+			} else {
+				return this._handleRefreshError(e);
+			}
 		}
 	}
 
@@ -2260,7 +2268,8 @@ export class Wallet {
 		// Wait to generate our zero index addresses.
 		await this.setZeroIndexAddresses();
 		const refreshWalletRes = await this.refreshWallet({
-			scanAllAddresses: true
+			scanAllAddresses: true,
+			force: true
 		});
 		// Revert gap limit options to the original settings.
 		this.updateGapLimit(currentGapLimitOptions);

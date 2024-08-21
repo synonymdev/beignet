@@ -1174,6 +1174,7 @@ export class Transaction {
 		satsPerByte?: number;
 	}): Promise<Result<ISendTransaction>> {
 		try {
+			let minFee = this._wallet.feeEstimates.fast;
 			await this.resetSendTransaction();
 			const setupTransactionRes = await this.setupTransaction({
 				inputTxHashes: txid ? [txid] : undefined,
@@ -1195,11 +1196,13 @@ export class Transaction {
 				if (parent) {
 					const parentVsize = parent.vsize;
 					const childVsize = 141; // assume segwit 1 input 1 output
-					const fast = this._wallet.feeEstimates.fast;
-					const res = Math.ceil(
+					const { fast, normal } = this._wallet.feeEstimates;
+					satsPerByte = Math.ceil(
 						(fast * (parentVsize + childVsize) - parent.fee) / childVsize
 					);
-					satsPerByte = res;
+					minFee = Math.ceil(
+						(normal * (parentVsize + childVsize) - parent.fee) / childVsize
+					);
 				}
 			}
 
@@ -1221,6 +1224,9 @@ export class Transaction {
 			if (sendMaxRes.isErr()) {
 				return err(sendMaxRes.error.message);
 			}
+
+			this.updateSendTransaction({ transaction: { minFee } });
+
 			return ok(this.data);
 		} catch (e) {
 			return err(e);
@@ -1287,7 +1293,7 @@ export class Transaction {
 			const newTransaction: Partial<ISendTransaction> = {
 				...transaction,
 				outputs,
-				minFee: satsPerByte,
+				minFee: this._wallet.feeEstimates.slow,
 				fee: newFee,
 				satsPerByte,
 				rbf: true,

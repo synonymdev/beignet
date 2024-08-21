@@ -3367,7 +3367,7 @@ export class Wallet {
 			 * Instead of pulling sats from that output to accommodate the higher fee (reducing how much the recipient receives)
 			 * suggest a CPFP transaction.
 			 */
-			return err('cpfp');
+			return err('Unable to determine change address.');
 		}
 
 		if (outputTotal > inputTotal) {
@@ -3396,11 +3396,16 @@ export class Wallet {
 	}: {
 		txid: string;
 	}): Promise<void> {
-		const transactions = this.data.transactions;
+		const transactions = this._data.transactions;
+		const unconfirmed = this._data.unconfirmedTransactions;
 		if (txid in transactions) {
 			delete transactions[txid];
 		}
+		if (txid in unconfirmed) {
+			delete unconfirmed[txid];
+		}
 		await this.saveWalletData('transactions', transactions);
+		await this.saveWalletData('unconfirmedTransactions', unconfirmed);
 	}
 
 	/**
@@ -3425,12 +3430,12 @@ export class Wallet {
 	async addBoostedTransaction({
 		newTxId,
 		oldTxId,
-		type = EBoostType.cpfp,
+		type,
 		fee
 	}: {
 		newTxId: string;
 		oldTxId: string;
-		type?: EBoostType;
+		type: EBoostType;
 		fee: number;
 	}): Promise<Result<IBoostedTransaction>> {
 		try {
@@ -3453,6 +3458,12 @@ export class Wallet {
 				...this.data.boostedTransactions,
 				...boostedTransaction
 			};
+
+			// Only delete the old transaction if it was an RBF
+			if (type === EBoostType.rbf) {
+				await this.deleteOnChainTransactionById({ txid: oldTxId });
+			}
+
 			await this.saveWalletData(
 				'boostedTransactions',
 				this._data.boostedTransactions

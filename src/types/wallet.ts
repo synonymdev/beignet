@@ -494,6 +494,7 @@ export interface IRbfData {
 	fee: number; // Total fee in sats.
 	inputs: IUtxo[];
 	message: string;
+	changeAddress: string;
 }
 
 export interface IBoostedTransaction {

@@ -162,6 +162,7 @@ describe('Boost', async function () {
 		expect(setup.value.inputs.length).to.equal(1);
 		expect(setup.value.outputs.length).to.equal(1);
 		expect(setup.value.boostType).to.equal(EBoostType.cpfp);
+		expect(setup.value.minFee).to.be.above(1);
 		expect(setup.value.max).to.equal(true);
 		// with parent tx at 1 sat/vbyte, and high fee at 4, child tx fee should be around 8
 		expect(setup.value.satsPerByte).to.be.above(6);
@@ -241,6 +242,7 @@ describe('Boost', async function () {
 			throw setup.error;
 		}
 		expect(setup.value.boostType).to.equal(EBoostType.rbf);
+		expect(setup.value.minFee).to.be.above(1);
 		const createRes = await wallet.transaction.createTransaction();
 		if (createRes.isErr()) {
 			throw createRes.error;

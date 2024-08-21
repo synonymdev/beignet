@@ -1173,52 +1173,134 @@ export class Transaction {
 		txid?: string; // txid of utxo to include in the CPFP tx. Undefined will gather all utxo's.
 		satsPerByte?: number;
 	}): Promise<Result<ISendTransaction>> {
-		await this.resetSendTransaction();
-		const setupTransactionRes = await this.setupTransaction({
-			inputTxHashes: txid ? [txid] : undefined,
-			rbf: this._wallet.rbf
-		});
-		if (setupTransactionRes.isErr()) {
-			return err(setupTransactionRes.error.message);
-		}
-		const receiveAddress = await this._wallet.getReceiveAddress({});
-		if (receiveAddress.isErr()) {
-			return err(receiveAddress.error.message);
-		}
-
-		// try to calculate satsPerByte if not provided.
-		// child + parent combined fee rate should be higher than fastest.
-		if (!satsPerByte && txid) {
-			const parent = this._wallet.data.transactions[txid];
-			if (parent) {
-				const parentVsize = parent.vsize;
-				const childVsize = 141; // assume segwit 1 input 1 output
-				const fast = this._wallet.feeEstimates.fast;
-				const res = Math.ceil(
-					(fast * (parentVsize + childVsize) - parent.fee) / childVsize
-				);
-				satsPerByte = res;
+		try {
+			await this.resetSendTransaction();
+			const setupTransactionRes = await this.setupTransaction({
+				inputTxHashes: txid ? [txid] : undefined,
+				rbf: this._wallet.rbf
+			});
+			if (setupTransactionRes.isErr()) {
+				return err(setupTransactionRes.error.message);
 			}
-		}
+			const receiveAddress = await this._wallet.getReceiveAddress({});
+			if (receiveAddress.isErr()) {
+				return err(receiveAddress.error.message);
+			}
 
-		// if we still don't have a satsPerByte, use 1.5x fastest.
-		if (!satsPerByte) {
-			satsPerByte = Math.ceil(this._wallet.feeEstimates.fast * 1.5);
-		}
+			// try to calculate satsPerByte if not provided.
+			// child + parent combined fee rate should be higher than fastest.
+			// TODO: take all possible unconfirmed parent UTXOs into account.
+			if (!satsPerByte && txid) {
+				const parent = this._wallet.data.transactions[txid];
+				if (parent) {
+					const parentVsize = parent.vsize;
+					const childVsize = 141; // assume segwit 1 input 1 output
+					const fast = this._wallet.feeEstimates.fast;
+					const res = Math.ceil(
+						(fast * (parentVsize + childVsize) - parent.fee) / childVsize
+					);
+					satsPerByte = res;
+				}
+			}
 
-		const sendMaxRes = await this.sendMax({
-			transaction: {
-				...this.data,
-				...setupTransactionRes.value,
-				boostType: EBoostType.cpfp
-			},
-			address: receiveAddress.value,
-			satsPerByte,
-			rbf: this._wallet.rbf
-		});
-		if (sendMaxRes.isErr()) {
-			return err(sendMaxRes.error.message);
+			// if we still don't have a satsPerByte, use 1.5x fastest.
+			if (!satsPerByte) {
+				satsPerByte = Math.ceil(this._wallet.feeEstimates.fast * 1.5);
+			}
+
+			const sendMaxRes = await this.sendMax({
+				transaction: {
+					...this.data,
+					...setupTransactionRes.value,
+					boostType: EBoostType.cpfp
+				},
+				address: receiveAddress.value,
+				satsPerByte,
+				rbf: this._wallet.rbf
+			});
+			if (sendMaxRes.isErr()) {
+				return err(sendMaxRes.error.message);
+			}
+			return ok(this.data);
+		} catch (e) {
+			return err(e);
 		}
-		return ok(this.data);
+	}
+
+	/**
+	 * Sets up a transaction for RBF.
+	 * @param {string} txid
+	 */
+	async setupRbf({
+		txid
+	}: {
+		txid: string;
+	}): Promise<Result<ISendTransaction>> {
+		try {
+			await this.resetSendTransaction();
+			const setupTransactionRes = await this.setupTransaction({
+				rbf: true
+			});
+			if (setupTransactionRes.isErr()) {
+				return err(setupTransactionRes.error.message);
+			}
+
+			const response = await this._wallet.getRbfData({
+				txHash: { tx_hash: txid }
+			});
+			if (response.isErr()) {
+				return err(response.error.message);
+			}
+			const transaction = response.value;
+
+			const satsPerByte = this._wallet.feeEstimates.fast;
+			const newFee = this.getTotalFee({
+				transaction,
+				satsPerByte,
+				message: transaction.message
+			});
+
+			// filter out change address, otherwise getTransactionOutputValue will include it
+			const outputs = transaction.outputs
+				.filter((output) => output.address !== transaction.changeAddress)
+				.map((output, index) => ({ ...output, index }));
+
+			const inputTotal = this.getTransactionInputValue({
+				inputs: transaction.inputs
+			});
+			// Ensure we have enough funds to perform an RBF transaction.
+			const outputTotal = this.getTransactionOutputValue({
+				outputs
+			});
+
+			if (outputTotal + newFee >= inputTotal || newFee >= inputTotal / 2) {
+				/*
+				 * We could always pull the fee from the output total,
+				 * but this may negatively impact the transaction made by the user.
+				 * (Ex: Reducing the amount paid to the recipient).
+				 * We could always include additional unconfirmed utxo's to cover the fee as well,
+				 * but this may negatively impact the user's privacy by including sensitive utxos.
+				 * Instead of allowing either scenario, we attempt a CPFP instead.
+				 */
+				return err('Not enough sats to support an RBF transaction.');
+			}
+			const newTransaction: Partial<ISendTransaction> = {
+				...transaction,
+				outputs,
+				minFee: satsPerByte,
+				fee: newFee,
+				satsPerByte,
+				rbf: true,
+				boostType: EBoostType.rbf
+			};
+
+			this.updateSendTransaction({
+				transaction: newTransaction
+			});
+
+			return ok(this.data);
+		} catch (e) {
+			return err(e);
+		}
 	}
 }

@@ -47,6 +47,7 @@ beforeEach(async function () {
 	const mnemonic = generateMnemonic();
 
 	const res = await Wallet.create({
+		rbf: true,
 		mnemonic,
 		// mnemonic: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
 		network: EAvailableNetworks.regtest,
@@ -62,6 +63,13 @@ beforeEach(async function () {
 			],
 			net,
 			tls
+		},
+		// reduce gap limit to speed up tests
+		gapLimitOptions: {
+			lookAhead: 2,
+			lookBehind: 2,
+			lookAheadChange: 2,
+			lookBehindChange: 2
 		}
 	});
 	if (res.isErr()) {
@@ -142,11 +150,12 @@ describe('Boost', async function () {
 		if (s1.isErr()) {
 			throw s1.error;
 		}
+		const oldTxId = s1.value;
 		await wallet.refreshWallet({});
-		const b1 = wallet.canBoost(s1.value);
+		const b1 = wallet.canBoost(oldTxId);
 		expect(b1).to.deep.equal({ canBoost: true, rbf: false, cpfp: true });
 
-		const setup = await wallet.transaction.setupCpfp({ txid: s1.value });
+		const setup = await wallet.transaction.setupCpfp({ txid: oldTxId });
 		if (setup.isErr()) {
 			throw setup.error;
 		}
@@ -161,14 +170,115 @@ describe('Boost', async function () {
 		if (createRes.isErr()) {
 			throw createRes.error;
 		}
+		const newTxId = createRes.value.id;
 		wallet.electrum.broadcastTransaction({ rawTx: createRes.value.hex });
+
+		const addBoost = await wallet.addBoostedTransaction({
+			oldTxId,
+			newTxId,
+			type: EBoostType.cpfp,
+			fee: setup.value.fee
+		});
+		if (addBoost.isErr()) {
+			throw addBoost.error;
+		}
+		const boosted = wallet.getBoostedTransactions();
+		expect(boosted).to.deep.equal({
+			[oldTxId]: {
+				parentTransactions: [oldTxId],
+				childTransaction: newTxId,
+				type: EBoostType.cpfp,
+				fee: setup.value.fee
+			}
+		});
 
 		await wallet.refreshWallet({});
 		expect(Object.keys(wallet.transactions).length).to.equal(3);
 
 		// FIXME: Broadcasted tx fee and setup fee should be the same
-		// expect(wallet.transactions[createRes.value.id].satsPerByte).to.equal(
+		// expect(wallet.transactions[newTxId].satsPerByte).to.equal(
 		// 	setup.value.satsPerByte
 		// );
+	});
+
+	it('Should generate RBF for send transaction', async () => {
+		const r = await wallet.getNextAvailableAddress();
+		if (r.isErr()) {
+			throw r.error;
+		}
+		const a1 = r.value.addressIndex.address;
+		await rpc.sendToAddress(a1, '0.0001'); // 10000 sats
+		await rpc.generateToAddress(1, await rpc.getNewAddress());
+
+		await waitForElectrum();
+		const r1 = await wallet.refreshWallet({});
+		if (r1.isErr()) {
+			throw r1.error;
+		}
+		expect(wallet.data.balance).to.equal(10000);
+
+		// create and send original transaction
+		const s1 = await wallet.send({
+			address: 'bcrt1q6rz28mcfaxtmd6v789l9rrlrusdprr9pz3cppk',
+			amount: 1000,
+			satsPerByte: 1,
+			rbf: true
+		});
+		if (s1.isErr()) {
+			throw s1.error;
+		}
+		const oldTxId = s1.value;
+		const r2 = await wallet.refreshWallet({});
+		if (r2.isErr()) {
+			throw r2.error;
+		}
+		const b1 = wallet.canBoost(oldTxId);
+		expect(b1).to.deep.equal({ canBoost: true, rbf: true, cpfp: true });
+
+		// replace original transaction using RBF
+		const setup = await wallet.transaction.setupRbf({ txid: oldTxId });
+		if (setup.isErr()) {
+			throw setup.error;
+		}
+		expect(setup.value.boostType).to.equal(EBoostType.rbf);
+		const createRes = await wallet.transaction.createTransaction();
+		if (createRes.isErr()) {
+			throw createRes.error;
+		}
+		const newTxId = createRes.value.id;
+		const broadcastResp = await wallet.electrum.broadcastTransaction({
+			rawTx: createRes.value.hex
+		});
+		if (broadcastResp.isErr()) {
+			throw broadcastResp.error;
+		}
+
+		const addBoost = await wallet.addBoostedTransaction({
+			oldTxId,
+			newTxId,
+			type: EBoostType.rbf,
+			fee: setup.value.fee
+		});
+		if (addBoost.isErr()) {
+			throw addBoost.error;
+		}
+		const boosted = wallet.getBoostedTransactions();
+		expect(boosted).to.deep.equal({
+			[oldTxId]: {
+				parentTransactions: [oldTxId],
+				childTransaction: newTxId,
+				type: EBoostType.rbf,
+				fee: setup.value.fee
+			}
+		});
+
+		const r3 = await wallet.refreshWallet({});
+		if (r3.isErr()) {
+			throw r3.error;
+		}
+
+		expect(Object.keys(wallet.transactions).length).to.equal(2);
+		expect(wallet.transactions).not.to.have.property(oldTxId);
+		expect(wallet.transactions).to.have.property(newTxId);
 	});
 });

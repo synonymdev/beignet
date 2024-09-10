@@ -3976,7 +3976,6 @@ export class Wallet {
 				this.rbf &&
 				(t.rbf ?? false) &&
 				t.type === EPaymentType.sent &&
-				t.matchedOutputValue !== t.totalOutputValue &&
 				t.matchedOutputValue > t.fee &&
 				btcToSats(t.matchedOutputValue) >
 					TRANSACTION_DEFAULTS.recommendedBaseFee;

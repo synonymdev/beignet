@@ -61,7 +61,7 @@ export const servers = {
 			host: '35.187.18.233',
 			ssl: 8900,
 			tcp: 8911,
-			protocol: EProtocol.ssl
+			protocol: EProtocol.tcp
 		}
 	],
 	[EAvailableNetworks.testnet]: [

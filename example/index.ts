@@ -1,6 +1,8 @@
 import { EAvailableNetworks, generateMnemonic, Wallet } from '../src';
 import { getData, onMessage, servers, setData } from './helpers';
 import * as repl from 'repl';
+import net from 'net';
+import tls from 'tls';
 
 const network: EAvailableNetworks = EAvailableNetworks.mainnet;
 
@@ -15,11 +17,15 @@ const runExample = async (mnemonic = generateMnemonic()): Promise<void> => {
 			setData
 		},
 		electrumOptions: {
+			net,
+			tls,
 			servers: servers[network]
 		},
 		gapLimitOptions: {
 			lookAhead: 5,
-			lookBehind: 5
+			lookBehind: 5,
+			lookAheadChange: 5,
+			lookBehindChange: 5
 		}
 	});
 	if (createWalletResponse.isErr()) return;

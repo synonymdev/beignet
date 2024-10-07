@@ -273,8 +273,7 @@ export class Wallet {
 			const res = await wallet.setWalletData();
 			if (res.isErr()) return err(res.error.message);
 			wallet.updateFeeEstimates(true);
-			console.log('Syncing Wallet...');
-			await wallet.refreshWallet({});
+			wallet.refreshWallet({});
 			if (wallet._disableMessagesOnCreate) wallet.disableMessages = false;
 			return ok(wallet);
 		} catch (e) {

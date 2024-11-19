@@ -76,6 +76,7 @@ beforeEach(async function () {
 		throw res.error;
 	}
 	wallet = res.value;
+	await wallet.refreshWallet({});
 });
 
 describe('Boost', async function () {

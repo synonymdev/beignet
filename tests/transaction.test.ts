@@ -17,7 +17,7 @@ const expect = chai.expect;
 
 const testTimeout = 60000;
 
-let wallet;
+let wallet: Wallet;
 
 before(async function () {
 	this.timeout(testTimeout);
@@ -35,6 +35,7 @@ before(async function () {
 		return;
 	}
 	wallet = res.value;
+	await wallet.refreshWallet({});
 });
 
 describe('Transaction Test', async function (): Promise<void> {
@@ -158,7 +159,11 @@ describe('Transaction Test', async function (): Promise<void> {
 		await wallet.transaction.resetSendTransaction();
 		const setupResponse = await wallet.transaction.setupTransaction({
 			outputs: [
-				{ address: 'tb1qaq7jszepjuntxx494xhwrxs746v94583ls02ke', value: 5000 }
+				{
+					index: 0,
+					address: 'tb1qaq7jszepjuntxx494xhwrxs746v94583ls02ke',
+					value: 5000
+				}
 			]
 		});
 		expect(setupResponse.isErr()).to.equal(false);

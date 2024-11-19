@@ -52,6 +52,7 @@ before(async function () {
 		return;
 	}
 	wallet = res.value;
+	await wallet.refreshWallet({});
 });
 
 describe('Wallet Library', async function () {

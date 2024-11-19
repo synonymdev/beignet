@@ -19,7 +19,7 @@ const expect = chai.expect;
 
 const testTimeout = 60000;
 
-let wallet;
+let wallet: Wallet;
 const WALLET_NAME = 'storagetestwallet0';
 
 before(async function () {

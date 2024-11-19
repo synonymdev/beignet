@@ -351,6 +351,7 @@ export class Wallet {
 			});
 		}
 		this.isRefreshing = true;
+		this.updateFeeEstimates();
 		try {
 			await this.setZeroIndexAddresses();
 			const r1 = await this.updateAddressIndexes();
@@ -2759,13 +2760,25 @@ export class Wallet {
 	public async getFeeEstimates(network = this._network): Promise<IOnchainFees> {
 		try {
 			if (network === EAvailableNetworks.bitcoinRegtest) {
-				return defaultFeesShape;
+				return { ...defaultFeesShape, timestamp: Date.now() };
 			}
 			const urlModifier = network === 'bitcoin' ? '' : 'testnet/';
 			const response = await fetch(
 				`https://mempool.space/${urlModifier}api/v1/fees/recommended`
 			);
 			const res: IGetFeeEstimatesResponse = await response.json();
+			// check the response for the expected properties
+			if (
+				!(
+					res.fastestFee > 0 &&
+					res.halfHourFee > 0 &&
+					res.hourFee > 0 &&
+					res.minimumFee > 0
+				)
+			) {
+				throw new Error('Unexpected response from mempool.space');
+			}
+
 			return {
 				fast: res.fastestFee,
 				normal: res.halfHourFee,
@@ -2791,9 +2804,19 @@ export class Wallet {
 			if (network !== EAvailableNetworks.bitcoinMainnet) {
 				return defaultFeesShape;
 			}
-			const url = 'https://blocktank.synonym.to/api/v2/info';
+			const url = 'https://api1.blocktank.to/api/info';
 			const response = await fetch(url);
 			const res: IBtInfo = await response.json();
+			// check the response for the expected properties
+			if (
+				!(
+					res?.onchain?.feeRates?.fast > 0 &&
+					res?.onchain?.feeRates?.mid > 0 &&
+					res?.onchain?.feeRates?.slow > 0
+				)
+			) {
+				throw new Error('Unexpected response from blocktank');
+			}
 			const { fast, mid, slow } = res.onchain.feeRates;
 			return {
 				fast,
@@ -2804,7 +2827,7 @@ export class Wallet {
 			};
 		} catch (e) {
 			console.log('Unable to fetch fee estimates.', e);
-			return defaultFeesShape;
+			return this.feeEstimates;
 		}
 	}
 
@@ -3698,7 +3721,7 @@ export class Wallet {
 	 * Updates the fee estimates for the current network.
 	 * @public
 	 * @async
-	 * @param {true} [forceUpdate] Ignores the timestamp if set true and forces the update
+	 * @param {boolean} [forceUpdate] Ignores the timestamp if set true and forces the update
 	 * @returns {Promise<Result<IOnchainFees>>}
 	 */
 	public async updateFeeEstimates(
@@ -3706,13 +3729,10 @@ export class Wallet {
 	): Promise<Result<IOnchainFees>> {
 		const timestamp = this.feeEstimates.timestamp;
 		const difference = Math.floor((Date.now() - timestamp) / 1000);
-		if (!forceUpdate && difference < 1800) {
+		if (!forceUpdate && difference < 60) {
 			return ok(this.feeEstimates);
 		}
 		const feeEstimates = await this.getFeeEstimates();
-		if (!feeEstimates) {
-			return err('Unable to retrieve fee estimates.');
-		}
 		this.feeEstimates = feeEstimates;
 		await this.saveWalletData('feeEstimates', feeEstimates);
 		return ok(feeEstimates);

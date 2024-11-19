@@ -13,7 +13,7 @@ const expect = chai.expect;
 
 const testTimeout = 60000;
 
-let wallet;
+let wallet: Wallet;
 
 before(async function () {
 	this.timeout(testTimeout);
@@ -33,6 +33,7 @@ before(async function () {
 		return;
 	}
 	wallet = res.value;
+	await wallet.refreshWallet({});
 });
 
 describe('Electrum Methods', async function (): Promise<void> {
@@ -40,6 +41,7 @@ describe('Electrum Methods', async function (): Promise<void> {
 	it('connectToElectrum: Should connect to a random Electrum server', async () => {
 		const connectResponse = await wallet.connectToElectrum();
 		expect(connectResponse.isErr()).to.equal(false);
+		if (connectResponse.isErr()) return;
 		expect(connectResponse.value).to.equal('Connected to Electrum server.');
 	});
 

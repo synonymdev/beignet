@@ -274,7 +274,6 @@ export class Wallet {
 			if (res.isErr()) return err(res.error.message);
 			wallet.updateFeeEstimates(true);
 			wallet.refreshWallet({});
-			if (wallet._disableMessagesOnCreate) wallet.disableMessages = false;
 			return ok(wallet);
 		} catch (e) {
 			return err(e);
@@ -380,6 +379,8 @@ export class Wallet {
 			} else {
 				return this._handleRefreshError(e);
 			}
+		} finally {
+			if (this._disableMessagesOnCreate) this.disableMessages = false;
 		}
 	}
 

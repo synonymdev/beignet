@@ -27,11 +27,7 @@ before(async function () {
 			tls
 		}
 	});
-	if (res.isErr()) {
-		console.log('error: ', res.error.message);
-		//throw new Error(res.error.message);
-		return;
-	}
+	if (res.isErr()) throw res.error;
 	wallet = res.value;
 	await wallet.refreshWallet({});
 });
@@ -40,8 +36,7 @@ describe('Electrum Methods', async function (): Promise<void> {
 	this.timeout(testTimeout);
 	it('connectToElectrum: Should connect to a random Electrum server', async () => {
 		const connectResponse = await wallet.connectToElectrum();
-		expect(connectResponse.isErr()).to.equal(false);
-		if (connectResponse.isErr()) return;
+		if (connectResponse.isErr()) throw connectResponse.error;
 		expect(connectResponse.value).to.equal('Connected to Electrum server.');
 	});
 
@@ -54,15 +49,13 @@ describe('Electrum Methods', async function (): Promise<void> {
 		const addressBalance = await wallet.getAddressBalance(
 			'tb1qyvc8r7338383xjshqsz38mfn2eql879nhrf8y0'
 		);
-		expect(addressBalance.isErr()).to.equal(false);
-		if (addressBalance.isErr()) return;
+		if (addressBalance.isErr()) throw addressBalance.error;
 		expect(addressBalance.value.confirmed).to.equal(20000);
 	});
 
 	it('getNextAvailableAddress: Should return the next available address/change index and the last used address/change index', async () => {
 		const r = await wallet.getNextAvailableAddress();
-		expect(r.isErr()).to.equal(false);
-		if (r.isErr()) return;
+		if (r.isErr()) throw r.error;
 		expect(r.value).to.deep.equal(
 			EXPECTED_SHARED_RESULTS.getNextAvailableAddress
 		);
@@ -70,8 +63,7 @@ describe('Electrum Methods', async function (): Promise<void> {
 
 	it("Should return available UTXO's", async () => {
 		const getUtxosRes: Result<IGetUtxosResponse> = await wallet.getUtxos({});
-		expect(getUtxosRes.isErr()).to.equal(false);
-		if (getUtxosRes.isErr()) return;
+		if (getUtxosRes.isErr()) throw getUtxosRes.error;
 		expect(Array.isArray(getUtxosRes.value.utxos)).to.equal(true);
 		expect(getUtxosRes.value.utxos.length).to.equal(3);
 		expect(getUtxosRes.value.balance).to.equal(5855);

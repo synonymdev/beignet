@@ -79,6 +79,12 @@ beforeEach(async function () {
 	await wallet.refreshWallet({});
 });
 
+afterEach(async function () {
+	if (wallet?.electrum) {
+		await wallet.electrum.disconnect();
+	}
+});
+
 describe('Boost', async function () {
 	this.timeout(testTimeout);
 

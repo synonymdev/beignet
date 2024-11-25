@@ -1,7 +1,13 @@
 import net from 'net';
 import BitcoinJsonRpc from 'bitcoin-json-rpc';
 import ElectrumClient from 'bw-electrum-client';
-import { EProtocol, sleep } from '../src';
+import {
+	EProtocol,
+	sleep,
+	TMessageDataMap,
+	TMessageKeys,
+	TOnMessage
+} from '../src';
 
 export const bitcoinURL = 'http://polaruser:polarpass@127.0.0.1:43782';
 export const electrumHost = '127.0.0.1';
@@ -82,3 +88,55 @@ export const initWaitForElectrumToSync = async (
 
 	return waitForElectrum;
 };
+
+type TMessage = {
+	key: TMessageKeys;
+	data: TMessageDataMap[keyof TMessageDataMap];
+	timestamp: number;
+};
+
+export class MessageListener {
+	public messages: TMessage[] = [];
+	private resolvers: ((message: TMessage) => void)[] = [];
+
+	onMessage: TOnMessage = (key, data) => {
+		const message: TMessage = {
+			key,
+			data,
+			timestamp: Date.now()
+		};
+		this.messages.push(message);
+		this.resolvers.forEach((resolve) => resolve(message));
+	};
+
+	waitFor<K extends TMessageKeys>(
+		messageKey: K,
+		timeout = 20000
+	): Promise<TMessageDataMap[K]> {
+		// Check if message already received
+		const existingMessage = this.messages.find((msg) => msg.key === messageKey);
+		if (existingMessage) {
+			return Promise.resolve(existingMessage.data as TMessageDataMap[K]);
+		}
+
+		// Wait for new message
+		return new Promise((resolve, reject) => {
+			const timer = setTimeout(() => {
+				reject(new Error('Timeout waiting for message'));
+			}, timeout);
+
+			const resolver = (msg: TMessage): void => {
+				if (msg.key === messageKey) {
+					clearTimeout(timer);
+					resolve(msg.data as TMessageDataMap[K]);
+				}
+			};
+			this.resolvers.push(resolver);
+		});
+	}
+
+	clear(): void {
+		this.messages = [];
+		this.resolvers = [];
+	}
+}

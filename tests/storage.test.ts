@@ -40,11 +40,7 @@ before(async function () {
 			tls
 		}
 	});
-	if (res.isErr()) {
-		console.log('error: ', res.error.message);
-		//throw new Error(res.error.message);
-		return;
-	}
+	if (res.isErr()) throw res.error;
 	wallet = res.value;
 });
 
@@ -100,8 +96,7 @@ describe('Storage Test', async function (): Promise<void> {
 
 	it('Should generate a bech32 receiving address at index 0 via its path', async () => {
 		const address = await wallet.getAddressByPath({ path: "m/84'/1'/0'/0/0" });
-		expect(address.isErr()).to.equal(false);
-		if (address.isErr()) return;
+		if (address.isErr()) throw address.error;
 		expect(address.value.address).to.equal(
 			'tb1qmja98kkd540qtesjqdanfg0ywags845vehfg66'
 		);
@@ -109,8 +104,7 @@ describe('Storage Test', async function (): Promise<void> {
 
 	it('Should generate a segwit change address at index 1 via its path', async () => {
 		const address = await wallet.getAddressByPath({ path: "m/49'/1'/0'/1/1" });
-		expect(address.isErr()).to.equal(false);
-		if (address.isErr()) return;
+		if (address.isErr()) throw address.error;
 		expect(address.value.address).to.equal(
 			'2NDRG1ZGhWMGGNW7Mp58BKcyBs4Hyat8Law'
 		);
@@ -118,8 +112,7 @@ describe('Storage Test', async function (): Promise<void> {
 
 	it('Should generate a testnet legacy receiving address at index 5 via its path', async () => {
 		const address = await wallet.getAddressByPath({ path: "m/44'/1'/0'/0/5" });
-		expect(address.isErr()).to.equal(false);
-		if (address.isErr()) return;
+		if (address.isErr()) throw address.error;
 		expect(address.value.address).to.equal(
 			'mohdq3fadTtT4uSH4oNr4F1Dp3YM4pR3VF'
 		);
@@ -127,8 +120,7 @@ describe('Storage Test', async function (): Promise<void> {
 
 	it('getNextAvailableAddress: Should return the next available address/change index and the last used address/change index', async () => {
 		const r = await wallet.getNextAvailableAddress();
-		expect(r.isErr()).to.equal(false);
-		if (r.isErr()) return;
+		if (r.isErr()) throw r.error;
 		expect(r.value).to.deep.equal(
 			EXPECTED_SHARED_RESULTS.getNextAvailableAddress
 		);
@@ -136,8 +128,7 @@ describe('Storage Test', async function (): Promise<void> {
 
 	it("Should return available UTXO's", async () => {
 		const getUtxosRes: Result<IGetUtxosResponse> = await wallet.getUtxos({});
-		expect(getUtxosRes.isErr()).to.equal(false);
-		if (getUtxosRes.isErr()) return;
+		if (getUtxosRes.isErr()) throw getUtxosRes.error;
 		expect(Array.isArray(getUtxosRes.value.utxos)).to.equal(true);
 		expect(getUtxosRes.value.utxos.length).to.equal(3);
 		expect(getUtxosRes.value.balance).to.equal(5855);

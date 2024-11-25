@@ -46,11 +46,7 @@ before(async function () {
 			tls
 		}
 	});
-	if (res.isErr()) {
-		console.log('error: ', res.error.message);
-		//throw new Error(res.error.message);
-		return;
-	}
+	if (res.isErr()) throw res.error;
 	wallet = res.value;
 	await wallet.refreshWallet({});
 });
@@ -125,8 +121,7 @@ describe('Wallet Library', async function () {
 
 	it('Should generate a bech32 receiving address at index 0 via its path', async () => {
 		const address = await wallet.getAddressByPath({ path: "m/84'/1'/0'/0/0" });
-		expect(address.isErr()).to.equal(false);
-		if (address.isErr()) return;
+		if (address.isErr()) throw address.error;
 		expect(address.value.address).to.equal(
 			'tb1qmja98kkd540qtesjqdanfg0ywags845vehfg66'
 		);
@@ -134,8 +129,7 @@ describe('Wallet Library', async function () {
 
 	it('Should generate a segwit change address at index 1 via its path', async () => {
 		const address = await wallet.getAddressByPath({ path: "m/49'/1'/0'/1/1" });
-		expect(address.isErr()).to.equal(false);
-		if (address.isErr()) return;
+		if (address.isErr()) throw address.error;
 		expect(address.value.address).to.equal(
 			'2NDRG1ZGhWMGGNW7Mp58BKcyBs4Hyat8Law'
 		);
@@ -143,8 +137,7 @@ describe('Wallet Library', async function () {
 
 	it('Should generate a testnet legacy receiving address at index 5 via its path', async () => {
 		const address = await wallet.getAddressByPath({ path: "m/44'/1'/0'/0/5" });
-		expect(address.isErr()).to.equal(false);
-		if (address.isErr()) return;
+		if (address.isErr()) throw address.error;
 		expect(address.value.address).to.equal(
 			'mohdq3fadTtT4uSH4oNr4F1Dp3YM4pR3VF'
 		);
@@ -152,8 +145,7 @@ describe('Wallet Library', async function () {
 
 	it('getNextAvailableAddress: Should return the next available address/change index and the last used address/change index', async () => {
 		const r = await wallet.getNextAvailableAddress();
-		expect(r.isErr()).to.equal(false);
-		if (r.isErr()) return;
+		if (r.isErr()) throw r.error;
 		expect(r.value).to.deep.equal(
 			EXPECTED_SHARED_RESULTS.getNextAvailableAddress
 		);
@@ -161,8 +153,7 @@ describe('Wallet Library', async function () {
 
 	it("Should return available UTXO's", async () => {
 		const getUtxosRes: Result<IGetUtxosResponse> = await wallet.getUtxos({});
-		expect(getUtxosRes.isErr()).to.equal(false);
-		if (getUtxosRes.isErr()) return;
+		if (getUtxosRes.isErr()) throw getUtxosRes.error;
 		expect(Array.isArray(getUtxosRes.value.utxos)).to.equal(true);
 		expect(getUtxosRes.value.utxos.length).to.equal(3);
 		expect(getUtxosRes.value.balance).to.equal(5855);
@@ -267,13 +258,13 @@ describe('Wallet Library', async function () {
 		);
 		expect(addressData1).to.not.be.undefined;
 		if (!addressData1) return;
-		const privateKey1: string = await wallet.getPrivateKey(addressData1.path);
+		const privateKey1: string = wallet.getPrivateKey(addressData1.path);
 		expect(typeof privateKey1).to.equal('string');
 		expect(privateKey1).to.equal(
 			'cSkdqJTnvZ56deaW5PpVJPeUCAQfPV7xJocfiZxdgm9UHHmXuXzY'
 		);
 
-		const privateKey2: string = await wallet.getPrivateKey("m/84'/1'/0'/0/19");
+		const privateKey2: string = wallet.getPrivateKey("m/84'/1'/0'/0/19");
 		expect(typeof privateKey2).to.equal('string');
 		expect(privateKey2).to.equal(
 			'cUcpwVpcwvVz17qnBzwNfNQpp9FsfXH1ogjKCkxgbB2ZzGGjrK2r'
@@ -283,8 +274,7 @@ describe('Wallet Library', async function () {
 	it('Should successfully return the tx history for a given address', async () => {
 		const address = 'tb1qmja98kkd540qtesjqdanfg0ywags845vehfg66';
 		const history = await wallet.getAddressHistory(address);
-		expect(history.isErr()).to.equal(false);
-		if (history.isErr()) return;
+		if (history.isErr()) throw history.error;
 		expect(history.value).to.deep.equal(EXPECTED_WALLET_RESULTS.addressHistory);
 	});
 
@@ -292,8 +282,7 @@ describe('Wallet Library', async function () {
 		const tx =
 			'e12dec55bd19c709ed5cc3213aab814315fd9716afc99dfe914b9190fdcb8452';
 		const txDetails = await wallet.getTransactionDetails(tx);
-		expect(txDetails.isErr()).to.equal(false);
-		if (txDetails.isErr()) return;
+		if (txDetails.isErr()) throw txDetails.error;
 		expect(txDetails.value.confirmations).to.be.a('number');
 		delete txDetails.value.confirmations;
 		expect(txDetails.value).to.deep.equal(
@@ -370,13 +359,13 @@ describe('Wallet Library', async function () {
 		);
 		expect(addressData1).to.not.be.undefined;
 		if (!addressData1) return;
-		const privateKey1: string = await wallet.getPrivateKey(addressData1.path);
+		const privateKey1: string = wallet.getPrivateKey(addressData1.path);
 		expect(typeof privateKey1).to.equal('string');
 		expect(privateKey1).to.equal(
 			'L2iqFGgLkMzQossGaQ9B2tmhSsLq3vgunnHb8vnLavXUh54GSLnK'
 		);
 
-		const privateKey2: string = await wallet.getPrivateKey("m/84'/0'/0'/0/19");
+		const privateKey2: string = wallet.getPrivateKey("m/84'/0'/0'/0/19");
 		expect(typeof privateKey2).to.equal('string');
 		expect(privateKey2).to.equal(
 			'L2cB657yFF88YEebxoad3YgeezYKAu61AhmnDHMFo7GjjpPqBZG1'

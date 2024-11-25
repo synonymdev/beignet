@@ -44,7 +44,7 @@ export const initWaitForElectrumToSync = async (
 
 	const waitForElectrum = (): Promise<void> => {
 		return new Promise(async (resolve, reject) => {
-			let count;
+			let count: number;
 			let running = true;
 
 			const timer = setTimeout(async () => {

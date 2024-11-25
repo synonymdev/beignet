@@ -30,10 +30,7 @@ before(async function () {
 			tls
 		}
 	});
-	if (res.isErr()) {
-		console.log('error: ', res.error.message);
-		return;
-	}
+	if (res.isErr()) throw res.error;
 	wallet = res.value;
 	await wallet.refreshWallet({});
 });
@@ -53,9 +50,7 @@ describe('Transaction Test', async function (): Promise<void> {
 
 	it('Should successfully return fee information.', (): void => {
 		const feeInfo = wallet.getFeeInfo({ satsPerByte: 5 });
-		expect(feeInfo.isErr()).to.equal(false);
-		if (feeInfo.isErr()) return;
-		expect(feeInfo).not.to.be.null;
+		if (feeInfo.isErr()) throw feeInfo.error;
 		expect(feeInfo.value.satsPerByte).to.equal(5);
 		expect(feeInfo.value.totalFee).to.equal(830);
 		expect(feeInfo.value.transactionByteCount).to.equal(166);
@@ -72,15 +67,13 @@ describe('Transaction Test', async function (): Promise<void> {
 			shuffleOutputs: false,
 			rbf: true
 		});
-		expect(sendRes.isErr()).to.equal(false);
-		if (sendRes.isErr()) return;
+		if (sendRes.isErr()) throw sendRes.error;
 		expect(sendRes.value).to.equal(
 			'020000000001014b44d379e48a8100d1c26f7220b8bbf7a4894ff015d5bc4064a28d08d25d808d0000000000000000000288130000000000001600143f1a7a1802e377d01602acf1cad403368ed3bb89ba21010000000000160014a6bd95db4dd6979189cad389daad006e236f4ba802483045022100dd709b656c271c7e2ab4c83e0245b9b8d9096a1c7a33eddc9a32113f436851d9022033f8e5cb016ae4c440badfa34e438ada7bea2cdd36e782c136e516350b502bca012102e86b90924963237c59e5389aab1cc5350c114549d1c5e7186a56ef33aea24ff900000000'
 		);
 
 		const decodeRes = decodeRawTransaction(sendRes.value, wallet.network);
-		expect(decodeRes.isErr()).to.equal(false);
-		if (decodeRes.isErr()) return;
+		if (decodeRes.isErr()) throw decodeRes.error;
 		expect(decodeRes.value).to.deep.equal(
 			EXPECTED_TRANSACTION_RESULTS.decodeRawTransaction
 		);
@@ -104,15 +97,13 @@ describe('Transaction Test', async function (): Promise<void> {
 			satsPerByte: 5,
 			rbf: true
 		});
-		expect(sendManyRes.isErr()).to.equal(false);
-		if (sendManyRes.isErr()) return;
+		if (sendManyRes.isErr()) throw sendManyRes.error;
 		expect(sendManyRes.value).to.equal(
 			'020000000001014b44d379e48a8100d1c26f7220b8bbf7a4894ff015d5bc4064a28d08d25d808d000000000000000000038813000000000000160014a6b760eaa96a9ba91bae9465dfc4eabe711e1d6770170000000000001600146bcf920595e09b5d8f7b8d03b3694ad3057572892c0a010000000000160014a6bd95db4dd6979189cad389daad006e236f4ba80247304402207e7b5de41cb9bf33e434c2136390bf40d6b6552b69234a62f6bf48b89f0d44ac022056121c9a9d79d9d84896c9896a6fddb358b48667021ff2832b5c5871d90b701a012102e86b90924963237c59e5389aab1cc5350c114549d1c5e7186a56ef33aea24ff900000000'
 		);
 
 		const decodeRes = decodeRawTransaction(sendManyRes.value, wallet.network);
-		expect(decodeRes.isErr()).to.equal(false);
-		if (decodeRes.isErr()) return;
+		if (decodeRes.isErr()) throw decodeRes.error;
 		expect(decodeRes.value).to.deep.equal(
 			EXPECTED_TRANSACTION_RESULTS.decodeRawSendManyTransaction
 		);
@@ -126,7 +117,7 @@ describe('Transaction Test', async function (): Promise<void> {
 				satsPerByte: 5,
 				broadcast: false
 			});
-		if (sweepPrivateKey.isErr()) return;
+		if (sweepPrivateKey.isErr()) throw sweepPrivateKey.error;
 		expect(sweepPrivateKey.value.id).to.equal(
 			'7fbef762e16676715bc94693a495923273259aa1190a5bf97bf18ab676393af5'
 		);
@@ -145,7 +136,7 @@ describe('Transaction Test', async function (): Promise<void> {
 				broadcast: false,
 				combineWithWalletUtxos: true
 			});
-		if (sweepPrivateKey.isErr()) return;
+		if (sweepPrivateKey.isErr()) throw sweepPrivateKey.error;
 		expect(sweepPrivateKey.value.id).to.equal(
 			'ea6677d40bbf44dbc2d19d3765fd440aa2344f928d724dc021884fc5984e91ff'
 		);
@@ -166,14 +157,13 @@ describe('Transaction Test', async function (): Promise<void> {
 				}
 			]
 		});
-		expect(setupResponse.isErr()).to.equal(false);
-		if (setupResponse.isErr()) return;
+		if (setupResponse.isErr()) throw setupResponse.error;
+
 		const privateKeyInfo: Result<IPrivateKeyInfo> =
 			await wallet.getPrivateKeyInfo(
 				'cUVwTLfHYrF7KGdTVU4AcP4yjtRTH3Y2BbTKHJbp2tsHDfpE8Zq5'
 			);
-		expect(privateKeyInfo.isErr()).to.equal(false);
-		if (privateKeyInfo.isErr()) return;
+		if (privateKeyInfo.isErr()) throw privateKeyInfo.error;
 		const utxos = privateKeyInfo.value.utxos;
 		const keyPair = privateKeyInfo.value.keyPair;
 		expect(Array.isArray(utxos)).to.equal(true);
@@ -185,13 +175,11 @@ describe('Transaction Test', async function (): Promise<void> {
 			inputs: utxos,
 			keyPair
 		});
-		expect(addExternRes.isErr()).to.equal(false);
-		if (addExternRes.isErr()) return;
+		if (addExternRes.isErr()) throw addExternRes.error;
 		const createTransaction = await wallet.transaction.createTransaction({
 			shuffleOutputs: false
 		});
-		expect(createTransaction.isErr()).to.equal(false);
-		if (createTransaction.isErr()) return;
+		if (createTransaction.isErr()) throw createTransaction.error;
 		expect(createTransaction.value.id).to.equal(
 			'c0b4a54d9b4f88a32c7d7349f03c71c84a16b99b5c82159474768e734afecd81'
 		);

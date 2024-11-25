@@ -89,9 +89,7 @@ describe('Boost', async function () {
 
 		// balance is 0
 		const r = await wallet.getNextAvailableAddress();
-		if (r.isErr()) {
-			throw r.error;
-		}
+		if (r.isErr()) throw r.error;
 		const a1 = r.value.addressIndex.address;
 		await rpc.sendToAddress(a1, '1');
 		await rpc.generateToAddress(1, await rpc.getNewAddress());
@@ -103,9 +101,7 @@ describe('Boost', async function () {
 			amount: 99999743,
 			satsPerByte: 1
 		});
-		if (s1.isErr()) {
-			throw s1.error;
-		}
+		if (s1.isErr()) throw s1.error;
 		await wallet.refreshWallet({});
 		expect(wallet.data.balance).to.be.below(256);
 		const b2 = wallet.canBoost(s1.value);
@@ -120,9 +116,7 @@ describe('Boost', async function () {
 			address: 'bcrt1q6rz28mcfaxtmd6v789l9rrlrusdprr9pz3cppk',
 			amount: 10000000
 		});
-		if (s2.isErr()) {
-			throw s2.error;
-		}
+		if (s2.isErr()) throw s2.error;
 		await rpc.generateToAddress(1, await rpc.getNewAddress()); // confirm tx
 		await wallet.refreshWallet({});
 		const b3 = wallet.canBoost(s2.value);
@@ -131,9 +125,7 @@ describe('Boost', async function () {
 
 	it('Should generate CPFP for send transaction', async () => {
 		const r = await wallet.getNextAvailableAddress();
-		if (r.isErr()) {
-			throw r.error;
-		}
+		if (r.isErr()) throw r.error;
 		const a1 = r.value.addressIndex.address;
 		await rpc.sendToAddress(a1, '1');
 		await rpc.generateToAddress(1, await rpc.getNewAddress());
@@ -148,18 +140,14 @@ describe('Boost', async function () {
 			satsPerByte: 1,
 			rbf: false
 		});
-		if (s1.isErr()) {
-			throw s1.error;
-		}
+		if (s1.isErr()) throw s1.error;
 		const oldTxId = s1.value;
 		await wallet.refreshWallet({});
 		const b1 = wallet.canBoost(oldTxId);
 		expect(b1).to.deep.equal({ canBoost: true, rbf: false, cpfp: true });
 
 		const setup = await wallet.transaction.setupCpfp({ txid: oldTxId });
-		if (setup.isErr()) {
-			throw setup.error;
-		}
+		if (setup.isErr()) throw setup.error;
 		expect(setup.value.inputs.length).to.equal(1);
 		expect(setup.value.outputs.length).to.equal(1);
 		expect(setup.value.boostType).to.equal(EBoostType.cpfp);
@@ -169,9 +157,7 @@ describe('Boost', async function () {
 		expect(setup.value.satsPerByte).to.be.above(6);
 
 		const createRes = await wallet.transaction.createTransaction();
-		if (createRes.isErr()) {
-			throw createRes.error;
-		}
+		if (createRes.isErr()) throw createRes.error;
 		const newTxId = createRes.value.id;
 		wallet.electrum.broadcastTransaction({ rawTx: createRes.value.hex });
 
@@ -181,9 +167,7 @@ describe('Boost', async function () {
 			type: EBoostType.cpfp,
 			fee: setup.value.fee
 		});
-		if (addBoost.isErr()) {
-			throw addBoost.error;
-		}
+		if (addBoost.isErr()) throw addBoost.error;
 		const boosted = wallet.getBoostedTransactions();
 		expect(boosted).to.deep.equal({
 			[oldTxId]: {
@@ -205,18 +189,14 @@ describe('Boost', async function () {
 
 	it('Should generate RBF for send transaction', async () => {
 		const r = await wallet.getNextAvailableAddress();
-		if (r.isErr()) {
-			throw r.error;
-		}
+		if (r.isErr()) throw r.error;
 		const a1 = r.value.addressIndex.address;
 		await rpc.sendToAddress(a1, '0.0001'); // 10000 sats
 		await rpc.generateToAddress(1, await rpc.getNewAddress());
 
 		await waitForElectrum();
 		const r1 = await wallet.refreshWallet({});
-		if (r1.isErr()) {
-			throw r1.error;
-		}
+		if (r1.isErr()) throw r1.error;
 		expect(wallet.data.balance).to.equal(10000);
 
 		// create and send original transaction
@@ -226,35 +206,25 @@ describe('Boost', async function () {
 			satsPerByte: 1,
 			rbf: true
 		});
-		if (s1.isErr()) {
-			throw s1.error;
-		}
+		if (s1.isErr()) throw s1.error;
 		const oldTxId = s1.value;
 		const r2 = await wallet.refreshWallet({});
-		if (r2.isErr()) {
-			throw r2.error;
-		}
+		if (r2.isErr()) throw r2.error;
 		const b1 = wallet.canBoost(oldTxId);
 		expect(b1).to.deep.equal({ canBoost: true, rbf: true, cpfp: true });
 
 		// replace original transaction using RBF
 		const setup = await wallet.transaction.setupRbf({ txid: oldTxId });
-		if (setup.isErr()) {
-			throw setup.error;
-		}
+		if (setup.isErr()) throw setup.error;
 		expect(setup.value.boostType).to.equal(EBoostType.rbf);
 		expect(setup.value.minFee).to.be.above(1);
 		const createRes = await wallet.transaction.createTransaction();
-		if (createRes.isErr()) {
-			throw createRes.error;
-		}
+		if (createRes.isErr()) throw createRes.error;
 		const newTxId = createRes.value.id;
 		const broadcastResp = await wallet.electrum.broadcastTransaction({
 			rawTx: createRes.value.hex
 		});
-		if (broadcastResp.isErr()) {
-			throw broadcastResp.error;
-		}
+		if (broadcastResp.isErr()) throw broadcastResp.error;
 
 		const addBoost = await wallet.addBoostedTransaction({
 			oldTxId,
@@ -262,9 +232,7 @@ describe('Boost', async function () {
 			type: EBoostType.rbf,
 			fee: setup.value.fee
 		});
-		if (addBoost.isErr()) {
-			throw addBoost.error;
-		}
+		if (addBoost.isErr()) throw addBoost.error;
 		const boosted = wallet.getBoostedTransactions();
 		expect(boosted).to.deep.equal({
 			[oldTxId]: {
@@ -276,9 +244,7 @@ describe('Boost', async function () {
 		});
 
 		const r3 = await wallet.refreshWallet({});
-		if (r3.isErr()) {
-			throw r3.error;
-		}
+		if (r3.isErr()) throw r3.error;
 
 		expect(Object.keys(wallet.transactions).length).to.equal(2);
 		expect(wallet.transactions).not.to.have.property(oldTxId);

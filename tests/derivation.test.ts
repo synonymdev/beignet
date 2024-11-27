@@ -1,4 +1,4 @@
-import * as chai from 'chai';
+import { expect } from 'chai';
 import {
 	EAddressType,
 	EAvailableNetworks,
@@ -7,8 +7,6 @@ import {
 	getKeyDerivationPathObject,
 	getKeyDerivationPathString
 } from '../src';
-
-const expect = chai.expect;
 
 describe('Derivation Methods', () => {
 	it('Should return default derivation path object for p2wpkh', () => {

@@ -1,51 +1,54 @@
-import * as chai from 'chai';
 import { validateMnemonic } from 'bip39';
+import { expect } from 'chai';
 import net from 'net';
 import tls from 'tls';
 
 import { Wallet } from '../';
+import { deleteDirectory, getData, servers, setData } from '../example/helpers';
 import {
 	EAddressType,
 	EAvailableNetworks,
+	generateMnemonic,
 	IGetUtxosResponse,
-	Result,
-	generateMnemonic
+	Result
 } from '../src';
 import { TEST_MNEMONIC } from './constants';
-import { deleteDirectory, getData, servers, setData } from '../example/helpers';
 import { EXPECTED_SHARED_RESULTS } from './expected-results';
-
-const expect = chai.expect;
 
 const testTimeout = 60000;
 
 let wallet: Wallet;
 const WALLET_NAME = 'storagetestwallet0';
 
-before(async function () {
-	this.timeout(testTimeout);
-	await deleteDirectory('example/walletData'); // Start test with clean slate.
-	const res = await Wallet.create({
-		mnemonic: TEST_MNEMONIC,
-		network: EAvailableNetworks.testnet,
-		name: WALLET_NAME,
-		addressType: EAddressType.p2wpkh,
-		storage: {
-			getData,
-			setData
-		},
-		electrumOptions: {
-			servers: servers[EAvailableNetworks.testnet],
-			net,
-			tls
-		}
-	});
-	if (res.isErr()) throw res.error;
-	wallet = res.value;
-});
-
 describe('Storage Test', async function (): Promise<void> {
 	this.timeout(testTimeout);
+
+	before(async function () {
+		this.timeout(testTimeout);
+		await deleteDirectory('example/walletData'); // Start test with clean slate.
+		const res = await Wallet.create({
+			mnemonic: TEST_MNEMONIC,
+			network: EAvailableNetworks.testnet,
+			name: WALLET_NAME,
+			addressType: EAddressType.p2wpkh,
+			storage: {
+				getData,
+				setData
+			},
+			electrumOptions: {
+				servers: servers[EAvailableNetworks.testnet],
+				net,
+				tls
+			}
+		});
+		if (res.isErr()) throw res.error;
+		wallet = res.value;
+	});
+
+	after(async function () {
+		await wallet?.electrum?.disconnect();
+	});
+
 	it('Should successfully create a wallet.', () => {
 		expect(wallet).not.to.be.null;
 	});

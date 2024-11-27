@@ -1,7 +1,10 @@
+import * as bip39 from 'bip39';
 import * as bitcoin from 'bitcoinjs-lib';
 import { Network, networks } from 'bitcoinjs-lib';
 import BIP32Factory, { BIP32Interface } from 'bip32';
 import * as ecc from '@bitcoinerlab/secp256k1';
+import cloneDeep from 'lodash.clonedeep';
+
 import {
 	EAddressType,
 	EAvailableNetworks,
@@ -107,9 +110,7 @@ import {
 import { Electrum } from '../electrum';
 import { Transaction } from '../transaction';
 import { GAP_LIMIT, GAP_LIMIT_CHANGE, TRANSACTION_DEFAULTS } from './constants';
-import cloneDeep from 'lodash.clonedeep';
 import { btcToSats } from '../utils/conversion';
-import * as bip39 from 'bip39';
 
 const bip32 = BIP32Factory(ecc);
 
@@ -1974,7 +1975,6 @@ export class Wallet {
 			[key: string]: number[];
 		} = {};
 		for (const tx of receivedTxs) {
-			this.sendMessage('transactionReceived', tx);
 			// No need to scan an address with a saved UTXO.
 			if (utxoScriptHashes.has(tx.transaction.scriptHash)) continue;
 			for (const addressType in addresses) {
@@ -2009,6 +2009,10 @@ export class Wallet {
 					addressTypesToCheck: [addressType]
 				});
 			}
+		}
+
+		for (const tx of receivedTxs) {
+			this.sendMessage('transactionReceived', tx);
 		}
 
 		return ok(notificationTxid);

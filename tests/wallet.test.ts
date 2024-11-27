@@ -1,16 +1,17 @@
-import * as chai from 'chai';
 import { validateMnemonic } from 'bip39';
+import { expect } from 'chai';
 import net from 'net';
-import tls from 'tls';
 import sinon from 'sinon';
+import tls from 'tls';
 
 import {
-	filterAddressesObjForGapLimit,
 	filterAddressesObjForAddressesList,
+	filterAddressesObjForGapLimit,
 	IAddress,
 	IAddresses,
 	Wallet
 } from '../';
+import { servers } from '../example/helpers';
 import {
 	EAddressType,
 	EAvailableNetworks,
@@ -22,37 +23,38 @@ import {
 	Result
 } from '../src';
 import { TEST_MNEMONIC } from './constants';
-import { servers } from '../example/helpers';
 import {
 	EXPECTED_SHARED_RESULTS,
 	EXPECTED_WALLET_RESULTS
 } from './expected-results';
 
-const expect = chai.expect;
-
 const testTimeout = 60000;
 
 let wallet: Wallet;
 
-before(async function () {
-	this.timeout(testTimeout);
-	const res = await Wallet.create({
-		mnemonic: TEST_MNEMONIC,
-		network: EAvailableNetworks.testnet,
-		addressType: EAddressType.p2wpkh,
-		electrumOptions: {
-			servers: servers[EAvailableNetworks.testnet],
-			net,
-			tls
-		}
-	});
-	if (res.isErr()) throw res.error;
-	wallet = res.value;
-	await wallet.refreshWallet({});
-});
-
 describe('Wallet Library', async function () {
 	this.timeout(testTimeout);
+
+	before(async function () {
+		this.timeout(testTimeout);
+		const res = await Wallet.create({
+			mnemonic: TEST_MNEMONIC,
+			network: EAvailableNetworks.testnet,
+			addressType: EAddressType.p2wpkh,
+			electrumOptions: {
+				servers: servers[EAvailableNetworks.testnet],
+				net,
+				tls
+			}
+		});
+		if (res.isErr()) throw res.error;
+		wallet = res.value;
+		await wallet.refreshWallet({});
+	});
+
+	after(async function () {
+		await wallet?.electrum?.disconnect();
+	});
 
 	it('Should successfully create a wallet.', () => {
 		expect(wallet).not.to.be.null;

@@ -25,62 +25,66 @@ let waitForElectrum: TWaitForElectrum;
 const rpc = new BitcoinJsonRpc(bitcoinURL);
 const failure = { canBoost: false, rbf: false, cpfp: false };
 
-beforeEach(async function () {
-	this.timeout(testTimeout);
-
-	let balance = await rpc.getBalance();
-	const address = await rpc.getNewAddress();
-	await rpc.generateToAddress(1, address);
-
-	while (balance < 10) {
-		await rpc.generateToAddress(10, address);
-		balance = await rpc.getBalance();
-	}
-
-	waitForElectrum = await initWaitForElectrumToSync(
-		{ host: electrumHost, port: electrumPort },
-		bitcoinURL
-	);
-
-	await waitForElectrum();
-
-	const mnemonic = generateMnemonic();
-
-	const res = await Wallet.create({
-		rbf: true,
-		mnemonic,
-		// mnemonic: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
-		network: EAvailableNetworks.regtest,
-		addressType: EAddressType.p2wpkh,
-		electrumOptions: {
-			servers: [
-				{
-					host: '127.0.0.1',
-					ssl: 60002,
-					tcp: 60001,
-					protocol: EProtocol.tcp
-				}
-			],
-			net,
-			tls
-		},
-		// reduce gap limit to speed up tests
-		gapLimitOptions: {
-			lookAhead: 2,
-			lookBehind: 2,
-			lookAheadChange: 2,
-			lookBehindChange: 2
-		}
-	});
-	if (res.isErr()) {
-		throw res.error;
-	}
-	wallet = res.value;
-	await wallet.refreshWallet({});
-});
-
 describe('Boost', async function () {
 	this.timeout(testTimeout);
+
+	beforeEach(async function () {
+		this.timeout(testTimeout);
+
+		let balance = await rpc.getBalance();
+		const address = await rpc.getNewAddress();
+		await rpc.generateToAddress(1, address);
+
+		while (balance < 10) {
+			await rpc.generateToAddress(10, address);
+			balance = await rpc.getBalance();
+		}
+
+		waitForElectrum = await initWaitForElectrumToSync(
+			{ host: electrumHost, port: electrumPort },
+			bitcoinURL
+		);
+
+		await waitForElectrum();
+
+		const mnemonic = generateMnemonic();
+
+		const res = await Wallet.create({
+			rbf: true,
+			mnemonic,
+			// mnemonic: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
+			network: EAvailableNetworks.regtest,
+			addressType: EAddressType.p2wpkh,
+			electrumOptions: {
+				servers: [
+					{
+						host: '127.0.0.1',
+						ssl: 60002,
+						tcp: 60001,
+						protocol: EProtocol.tcp
+					}
+				],
+				net,
+				tls
+			},
+			// reduce gap limit to speed up tests
+			gapLimitOptions: {
+				lookAhead: 2,
+				lookBehind: 2,
+				lookAheadChange: 2,
+				lookBehindChange: 2
+			}
+		});
+		if (res.isErr()) {
+			throw res.error;
+		}
+		wallet = res.value;
+		await wallet.refreshWallet({});
+	});
+
+	afterEach(async function () {
+		await wallet?.electrum?.disconnect();
+	});
 
 	it('Should fail in some cases.', async () => {
 		// tx not found

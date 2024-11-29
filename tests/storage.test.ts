@@ -2,6 +2,7 @@ import { validateMnemonic } from 'bip39';
 import { expect } from 'chai';
 import net from 'net';
 import tls from 'tls';
+import sinon from 'sinon';
 
 import { Wallet } from '../';
 import { deleteDirectory, getData, servers, setData } from '../example/helpers';
@@ -20,6 +21,10 @@ const testTimeout = 60000;
 let wallet: Wallet;
 const WALLET_NAME = 'storagetestwallet0';
 
+const storage = { getData, setData };
+const storageSpy = sinon.spy(storage, 'setData');
+const messageSpy = sinon.spy();
+
 describe('Storage Test', async function (): Promise<void> {
 	this.timeout(testTimeout);
 
@@ -31,10 +36,8 @@ describe('Storage Test', async function (): Promise<void> {
 			network: EAvailableNetworks.testnet,
 			name: WALLET_NAME,
 			addressType: EAddressType.p2wpkh,
-			storage: {
-				getData,
-				setData
-			},
+			storage,
+			onMessage: messageSpy,
 			electrumOptions: {
 				servers: servers[EAvailableNetworks.testnet],
 				net,
@@ -43,6 +46,7 @@ describe('Storage Test', async function (): Promise<void> {
 		});
 		if (res.isErr()) throw res.error;
 		wallet = res.value;
+		await wallet.refreshWallet({});
 	});
 
 	after(async function () {
@@ -144,6 +148,21 @@ describe('Storage Test', async function (): Promise<void> {
 		expect({ ...getUtxosRes.value, utxos: sortedUtxos }).to.deep.equal(
 			EXPECTED_SHARED_RESULTS.getUtxos
 		);
+	});
+
+	it('Should successfully stop the wallet', async () => {
+		wallet.refreshWallet(); // start wallet refresh in the background
+		const r = await wallet.stop();
+		if (r.isErr()) throw r.error;
+		storageSpy.resetHistory();
+		messageSpy.resetHistory();
+		// try to force the wallet to update it's data
+		wallet.feeEstimates.timestamp = 0;
+		await wallet.updateFeeEstimates(true);
+		await wallet.refreshWallet();
+		// make sure that the wallet did not call setData or onMessage
+		expect(storageSpy.called).to.equal(false);
+		expect(messageSpy.called).to.equal(false);
 	});
 
 	// it('Attempts to create a new wallet using the same name of an existing wallet in storage.', async () => {

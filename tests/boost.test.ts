@@ -10,7 +10,7 @@ import {
 	EProtocol,
 	generateMnemonic,
 	Wallet
-} from '../src';
+} from '../';
 import {
 	bitcoinURL,
 	electrumHost,

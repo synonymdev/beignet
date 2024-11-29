@@ -10,7 +10,7 @@ import {
 	generateMnemonic,
 	sleep,
 	Wallet
-} from '../src';
+} from '../';
 import {
 	bitcoinURL,
 	electrumHost,

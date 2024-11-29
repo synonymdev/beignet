@@ -281,6 +281,28 @@ export class Wallet {
 		}
 	}
 
+	/**
+	 * Stops the wallet. Use this method to prepare the wallet to be de
+	 * @returns {Promise<Result<string>>}
+	 */
+	public async stop(): Promise<Result<string>> {
+		try {
+			// if we are refreshing, we need to wait for it to finish
+			if (this.isRefreshing) {
+				await this.refreshWallet();
+			}
+			// disable onMessage callback
+			this.disableMessages = true;
+			// disable saving to storage
+			this._setData = undefined;
+			// disconnect from Electrum
+			await this.electrum.disconnect();
+			return ok('Wallet stopped.');
+		} catch (e) {
+			return err(e);
+		}
+	}
+
 	public async switchNetwork(
 		network: EAvailableNetworks,
 		servers?: TServer | TServer[]

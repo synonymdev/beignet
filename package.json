@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "yarn build && env mocha --exit -r ts-node/register 'tests/**/*.test.ts'",
+    "test:send": "yarn build && env mocha --exit -r ts-node/register 'tests/send.test.ts'",
     "test:boost": "yarn build && env mocha --exit -r ts-node/register 'tests/boost.test.ts'",
     "test:wallet": "yarn build && env mocha --exit -r ts-node/register 'tests/wallet.test.ts'",
     "test:receive": "yarn build && env mocha --exit -r ts-node/register 'tests/receive.test.ts'",

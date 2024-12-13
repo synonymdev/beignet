@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "yarn build && env mocha --exit -r ts-node/register 'tests/**/*.test.ts'",
+    "test:send": "yarn build && env mocha --exit -r ts-node/register 'tests/send.test.ts'",
     "test:boost": "yarn build && env mocha --exit -r ts-node/register 'tests/boost.test.ts'",
     "test:wallet": "yarn build && env mocha --exit -r ts-node/register 'tests/wallet.test.ts'",
     "test:receive": "yarn build && env mocha --exit -r ts-node/register 'tests/receive.test.ts'",
@@ -39,7 +40,9 @@
   },
   "homepage": "https://github.com/synonymdev/beignet#readme",
   "dependencies": {
-    "@bitcoinerlab/secp256k1": "1.0.5",
+    "@bitcoinerlab/coinselect": "1.2.1",
+    "@bitcoinerlab/descriptors": "2.2.0",
+    "@bitcoinerlab/secp256k1": "1.1.1",
     "bech32": "2.0.0",
     "bip21": "2.0.3",
     "bip32": "4.0.0",
@@ -64,7 +67,7 @@
     "eslint": "8.4.1",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-prettier": "5.0.0",
-    "mocha": "10.1.0",
+    "mocha": "^10.8.2",
     "prettier": "3.0.2",
     "sinon": "18.0.0",
     "ts-node": "10.9.0",

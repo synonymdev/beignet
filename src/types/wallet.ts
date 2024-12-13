@@ -1,16 +1,16 @@
+import { BIP32Interface } from 'bip32';
+import { ECPairInterface } from 'ecpair';
 import { Result } from '../utils';
 import {
 	EElectrumNetworks,
 	IHeader,
 	INewBlock,
 	Net,
+	Tls,
 	TServer,
-	TTxResult,
-	Tls
+	TTxResult
 } from './electrum';
-import { EFeeId, TGapLimitOptions } from './transaction';
-import { ECPairInterface } from 'ecpair';
-import { BIP32Interface } from 'bip32';
+import { ECoinSelect, EFeeId, TGapLimitOptions } from './transaction';
 
 export type TAvailableNetworks = 'bitcoin' | 'testnet' | 'regtest';
 export type TAddressType = 'p2wpkh' | 'p2sh' | 'p2pkh';
@@ -122,8 +122,8 @@ export enum EBoostType {
 
 export interface ISendTransaction {
 	outputs: IOutput[];
-	selectedInputs: IUtxo[]; // use this if you want to specify which inputs to use.
-	inputs: IUtxo[];
+	availableInputs: IUtxo[]; // inputs available to choose from.
+	inputs: IUtxo[]; // inputs to be used in the transaction.
 	changeAddress: string;
 	fiatAmount: number;
 	fee: number; //Total fee in sats
@@ -138,6 +138,7 @@ export interface ISendTransaction {
 	tags: string[];
 	slashTagsUrl?: string; // TODO: Remove after migration.
 	lightningInvoice?: string; // TODO: Remove after migration.
+	coinselect: ECoinSelect;
 }
 
 export interface IAddresses {

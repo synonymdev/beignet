@@ -1,4 +1,4 @@
-import { coinselect, maxFunds } from '@bitcoinerlab/coinselect';
+import { coinselect as cs, maxFunds } from '@bitcoinerlab/coinselect';
 import { DescriptorsFactory } from '@bitcoinerlab/descriptors';
 import ecc, * as secp256k1 from '@bitcoinerlab/secp256k1';
 import { BIP32Interface } from 'bip32';
@@ -11,6 +11,7 @@ import { getDefaultSendTransaction } from '../shapes';
 import {
 	EAddressType,
 	EBoostType,
+	ECoinSelect,
 	EFeeId,
 	IAddInput,
 	IAddresses,
@@ -71,7 +72,8 @@ export class Transaction {
 		utxos,
 		rbf = false,
 		satsPerByte = 1,
-		outputs
+		outputs,
+		coinselect = ECoinSelect.default
 	}: ISetupTransaction = {}): Promise<TSetupTransactionResponse> {
 		try {
 			const addressType = this._wallet.addressType;
@@ -81,31 +83,20 @@ export class Transaction {
 			const transaction = currentWallet.transaction;
 
 			// Gather required inputs.
-			let selectedInputs: IUtxo[] = [];
+			let availableInputs: IUtxo[] = [];
 			if (inputTxHashes) {
 				// If specified, filter for the desired tx_hash and push the utxo as an input.
-				selectedInputs = currentWallet.utxos.filter((utxo) => {
+				availableInputs = currentWallet.utxos.filter((utxo) => {
 					return inputTxHashes.includes(utxo.tx_hash);
 				});
 			} else if (utxos) {
-				selectedInputs = utxos;
-				// } else {
-				// 	selectedInputs = currentWallet.utxos;
+				availableInputs = utxos;
+			} else {
+				availableInputs = currentWallet.utxos;
 			}
 
-			selectedInputs = this.removeBlackListedUtxos(selectedInputs);
-
-			const inputs = this.removeBlackListedUtxos(currentWallet.utxos);
-
-			// if (!inputs.length) {
-			// 	// If inputs were previously selected, leave them.
-			// 	if (transaction.inputs.length > 0) {
-			// 		inputs = transaction.inputs;
-			// 	} else {
-			// 		// Otherwise, lets use our available utxo's.
-			// 		inputs = this.removeBlackListedUtxos(currentWallet.utxos);
-			// 	}
-			// }
+			availableInputs = this.removeBlackListedUtxos(availableInputs);
+			const inputs = this.removeBlackListedUtxos(availableInputs);
 
 			if (!inputs.length) {
 				return err('No inputs specified in setupTransaction.');
@@ -151,20 +142,21 @@ export class Transaction {
 				message: '',
 				transaction: {
 					...transaction,
-					selectedInputs,
+					availableInputs,
 					inputs,
 					outputs
 				}
 			});
 
 			const payload = {
-				selectedInputs,
+				availableInputs,
 				inputs,
 				changeAddress,
 				fee,
 				outputs,
 				rbf,
-				satsPerByte
+				satsPerByte,
+				coinselect
 			};
 
 			this._data = {
@@ -181,13 +173,14 @@ export class Transaction {
 		}
 	}
 
-	updateCoinselect = ({
+	recalculate = ({
+		transaction = this.data,
 		satsPerByte = this._data.satsPerByte
 	}: {
+		transaction?: ISendTransaction;
 		satsPerByte?: number;
 	}): Result<ISendTransaction> => {
-		const transaction = this._data;
-		const { max } = transaction;
+		const { availableInputs, coinselect } = transaction;
 
 		try {
 			const targets = transaction.outputs.map((output) => {
@@ -200,93 +193,62 @@ export class Transaction {
 				};
 			});
 
-			if (max && transaction.outputs.length !== 1) {
-				throw new Error('Max send requires a single output.');
-			}
+			let selection: ReturnType<typeof cs> = undefined;
 
-			let selection: ReturnType<typeof coinselect> = undefined;
+			const utxos = availableInputs.map((input) => {
+				return {
+					output: new Output({
+						network: networks[this._wallet.network],
+						descriptor: `addr(${input.address})`
+					}),
+					value: input.value
+				};
+			});
 
-			if (transaction.selectedInputs.length > 0) {
-				// use maxFunds algorithm if user selected inputs
-				const utxos = transaction.selectedInputs.map((input) => {
-					return {
-						output: new Output({
-							network: networks[this._wallet.network],
-							descriptor: `addr(${input.address})`
-						}),
-						value: input.value
-					};
+			if (coinselect === ECoinSelect.maxFunds) {
+				if (transaction.outputs.length !== 1) {
+					throw new Error('Max send requires a single output.');
+				}
+				const remainder = new Output({
+					network: networks[this._wallet.network],
+					descriptor: `addr(${transaction.outputs[0].address})`
+				});
+				selection = maxFunds({
+					utxos,
+					targets: [],
+					remainder,
+					feeRate: satsPerByte
+				});
+			} else if (coinselect === ECoinSelect.manual) {
+				const remainder = new Output({
+					network: networks[this._wallet.network],
+					descriptor: `addr(${transaction.changeAddress})`
 				});
 
-				if (max) {
-					const remainder = new Output({
-						network: networks[this._wallet.network],
-						descriptor: `addr(${transaction.outputs[0].address})`
-					});
-					selection = maxFunds({
-						utxos,
-						targets: [],
-						remainder,
-						feeRate: satsPerByte
-					});
-				} else {
-					const remainder = new Output({
-						network: networks[this._wallet.network],
-						descriptor: `addr(${transaction.changeAddress})`
-					});
-					selection = maxFunds({
-						utxos,
-						targets,
-						remainder,
-						feeRate: satsPerByte
-					});
-				}
+				selection = cs({
+					utxos,
+					targets,
+					remainder,
+					feeRate: satsPerByte
+				});
 			} else {
-				// use all available utxos
-				const utxos = transaction.inputs.map((input) => {
-					return {
-						output: new Output({
-							network: networks[this._wallet.network],
-							descriptor: `addr(${input.address})`
-						}),
-						value: input.value
-					};
+				const remainder = new Output({
+					network: networks[this._wallet.network],
+					descriptor: `addr(${transaction.changeAddress})`
 				});
-
-				if (max) {
-					const remainder = new Output({
-						network: networks[this._wallet.network],
-						descriptor: `addr(${transaction.outputs[0].address})`
-					});
-					selection = maxFunds({
-						utxos,
-						targets: [],
-						remainder,
-						feeRate: satsPerByte
-					});
-				} else {
-					const remainder = new Output({
-						network: networks[this._wallet.network],
-						descriptor: `addr(${transaction.changeAddress})`
-					});
-					selection = coinselect({
-						utxos,
-						targets,
-						remainder,
-						feeRate: satsPerByte
-					});
-				}
+				selection = cs({
+					utxos,
+					targets,
+					remainder,
+					feeRate: satsPerByte
+				});
 			}
 
 			if (selection === undefined) {
 				throw new Error('Unable to find a suitable selection.');
 			}
 
-			const inputs = (
-				transaction.selectedInputs.length > 0
-					? transaction.selectedInputs
-					: transaction.inputs
-			).filter((oi) => {
+			const inputs = availableInputs.filter((oi) => {
 				// Redundant check, just to make TS happy.
 				if (selection === undefined) {
 					throw new Error('Unable to find a suitable selection.');
@@ -356,6 +318,29 @@ export class Transaction {
 			);
 		});
 	}
+
+	getTotalFeeNew = ({
+		// message = '',
+		// fundingLightning = false
+		satsPerByte,
+		transaction = this.data
+	}: {
+		// message?: string;
+		// fundingLightning?: boolean;
+		satsPerByte: number;
+		transaction?: ISendTransaction;
+	}): number => {
+		const baseTransactionSize = TRANSACTION_DEFAULTS.recommendedBaseFee;
+		try {
+			const data = this.recalculate({ transaction, satsPerByte });
+			if (data.isErr()) {
+				throw new Error(data.error.message);
+			}
+			return data.value.fee;
+		} catch {
+			return baseTransactionSize * satsPerByte;
+		}
+	};
 
 	/**
 	 * Attempt to estimate the current fee for a given transaction and its UTXO's
@@ -1058,7 +1043,7 @@ export class Transaction {
 		satsPerByte: number;
 		selectedFeeId?: EFeeId;
 	}): Result<{ fee: number }> {
-		const updateRes = this.updateCoinselect({ satsPerByte });
+		const updateRes = this.recalculate({ satsPerByte });
 		if (updateRes.isErr()) return err(updateRes.error.message);
 		const transaction = updateRes.value;
 		transaction.selectedFeeId = selectedFeeId;

@@ -192,7 +192,7 @@ describe('Send', async function () {
 		// TODO: check tx inputs and outputs
 	});
 
-	it.only('two inputs - two outputs, only one input should be used', async () => {
+	it('two inputs - two outputs, only one input should be used', async () => {
 		const [a1, a2] = Object.values(wallet.data.addresses.p2wpkh).map(
 			(v) => v.address
 		);

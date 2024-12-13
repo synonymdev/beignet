@@ -28,6 +28,7 @@ export interface ISetupTransaction {
 	rbf?: boolean; // Enable or disable rbf
 	satsPerByte?: number; // Used to specify the fee rate in sats per vbyte
 	outputs?: IOutput[]; // Used to pre-specify outputs to use
+	coinselect?: ECoinSelect; // Used to specify the coin selection algorithm to use
 }
 
 export enum EFeeId {
@@ -65,3 +66,10 @@ export type TGapLimitOptions = {
 	lookAheadChange: number;
 	lookBehindChange: number;
 };
+
+// https://github.com/bitcoinerlab/coinselect#algorithms
+export enum ECoinSelect {
+	default = 'default',
+	maxFunds = 'maxFunds',
+	manual = 'manual' // use all transaction.availableUtxos
+}

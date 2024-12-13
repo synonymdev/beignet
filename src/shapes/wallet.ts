@@ -3,7 +3,8 @@ import {
 	TAddressTypeContent,
 	IHeader,
 	TAddressTypes,
-	IOnchainFees
+	IOnchainFees,
+	ECoinSelect
 } from '../types';
 import cloneDeep from 'lodash.clonedeep';
 import {
@@ -61,7 +62,7 @@ export const defaultAddressContent: Readonly<IAddress> = {
 export const defaultSendTransaction: ISendTransaction = {
 	outputs: [],
 	inputs: [],
-	selectedInputs: [],
+	availableInputs: [],
 	changeAddress: '',
 	fiatAmount: 0,
 	fee: 512,
@@ -74,7 +75,8 @@ export const defaultSendTransaction: ISendTransaction = {
 	max: false,
 	tags: [],
 	lightningInvoice: '',
-	selectedFeeId: EFeeId.none
+	selectedFeeId: EFeeId.none,
+	coinselect: ECoinSelect.default
 };
 
 export const getDefaultSendTransaction = (): ISendTransaction => {

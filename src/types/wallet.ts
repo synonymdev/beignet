@@ -122,6 +122,7 @@ export enum EBoostType {
 
 export interface ISendTransaction {
 	outputs: IOutput[];
+	selectedInputs: IUtxo[]; // use this if you want to specify which inputs to use.
 	inputs: IUtxo[];
 	changeAddress: string;
 	fiatAmount: number;

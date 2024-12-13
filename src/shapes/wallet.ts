@@ -61,6 +61,7 @@ export const defaultAddressContent: Readonly<IAddress> = {
 export const defaultSendTransaction: ISendTransaction = {
 	outputs: [],
 	inputs: [],
+	selectedInputs: [],
 	changeAddress: '',
 	fiatAmount: 0,
 	fee: 512,

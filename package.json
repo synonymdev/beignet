@@ -1,6 +1,6 @@
 {
   "name": "beignet",
-  "version": "0.0.50",
+  "version": "0.0.51",
   "description": "A self-custodial, JS Bitcoin wallet management library.",
   "main": "dist/index.js",
   "scripts": {
@@ -50,7 +50,7 @@
     "ecpair": "2.1.0",
     "lodash.clonedeep": "4.5.0",
     "net": "1.0.2",
-    "rn-electrum-client": "0.0.20"
+    "rn-electrum-client": "0.0.21"
   },
   "devDependencies": {
     "@types/chai": "4.3.0",

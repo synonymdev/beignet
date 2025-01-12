@@ -61,7 +61,7 @@ export const servers = {
 			host: '35.187.18.233',
 			ssl: 8900,
 			tcp: 8911,
-			protocol: EProtocol.tcp
+			protocol: EProtocol.ssl
 		}
 	],
 	[EAvailableNetworks.testnet]: [
@@ -69,7 +69,7 @@ export const servers = {
 			host: 'testnet.aranguren.org',
 			ssl: 51002,
 			tcp: 51001,
-			protocol: EProtocol.tcp
+			protocol: EProtocol.ssl
 		}
 	],
 	[EAvailableNetworks.regtest]: [
@@ -77,7 +77,7 @@ export const servers = {
 			host: '35.233.47.252',
 			ssl: 18484,
 			tcp: 18483,
-			protocol: EProtocol.tcp
+			protocol: EProtocol.ssl
 		}
 	]
 };

@@ -102,6 +102,7 @@ import { Wallet, generateMnemonic } from 'beignet';
 import net from 'net'
 import tls from 'tls'
 import { TStorage } from './wallet';
+import { ECoinSelectPreference } from "./transaction";
 
 // Generate a mnemonic phrase
 const mnemonic = generateMnemonic();
@@ -111,10 +112,10 @@ const passphrase = 'passphrase';
 
 // Connect to custom electrum server
 const servers: TServer = {
-	host: '35.233.47.252',
-	ssl: 18484,
-	tcp: 18483,
-	protocol: EProtocol.ssl,
+  host: '35.233.47.252',
+  ssl: 18484,
+  tcp: 18483,
+  protocol: EProtocol.ssl,
 };
 
 // Use a specific network (Defaults to mainnet)
@@ -128,8 +129,8 @@ const addressTypesToMonitor = [EAddressType.p2tr, EAddressType.p2wpkh];
 
 // Subscribe to server messages (TOnMessage)
 const onMessage: TOnMessage = (id, data) => {
-	console.log(id);
-	console.dir(data, { depth: null });
+  console.log(id);
+  console.dir(data, { depth: null });
 }
 
 // Disable startup messages. Messages resume once startup is complete. (Defaults to false)
@@ -137,34 +138,38 @@ const disableMessagesOnCreate = true;
 
 // Persist sessions by getting and setting data from storage
 const storage: TStorage = {
-	async getData<K extends keyof IWalletData>(
-		key: string
-	): Promise<Result<IWalletData[K]>> {
-		// Add your logic here
-	},
-	async setData<K extends keyof IWalletData>(
-		key: string,
-		value: IWalletData[K]
-	): Promise<Result<boolean>> {
-		// Add your logic here
-	}
+  async getData<K extends keyof IWalletData>(
+    key: string
+  ): Promise<Result<IWalletData[K]>> {
+    // Add your logic here
+  },
+  async setData<K extends keyof IWalletData>(
+    key: string,
+    value: IWalletData[K]
+  ): Promise<Result<boolean>> {
+    // Add your logic here
+  }
 };
+
+// Set the auto coin selection preference. (Defaults to ECoinSelectPreference.consolidate)
+const coinSelectPreference = ECoinSelectPreference.small;
 
 // Create a wallet instance
 const createWalletRes = await Wallet.create({
-	mnemonic,
-	passphrase,
-	electrumOptions: {
-		servers,
-		net,
-		tls
-	},
-	network,
-	onMessage,
-	storage, 
-    addressType,
-	addressTypesToMonitor,
-	disableMessagesOnCreate
+  mnemonic,
+  passphrase,
+  electrumOptions: {
+    servers,
+    net,
+    tls
+  },
+  network,
+  onMessage,
+  storage,
+  addressType,
+  addressTypesToMonitor,
+  disableMessagesOnCreate,
+  coinSelectPreference
 });
 if (createWalletRes.isErr()) return;
 const wallet = createWalletRes.value;
@@ -174,18 +179,18 @@ const utxos = wallet.listUtxos();
 
 // Send sats to multiple outputs
 const txs = [
-	{ address: 'address1', amount: 1000 },
-	{ address: 'address2', amount: 2000 },
-	{ address: 'address3', amount: 3000 },
+  { address: 'address1', amount: 1000 },
+  { address: 'address2', amount: 2000 },
+  { address: 'address3', amount: 3000 },
 ];
 const sendManyRes = await wallet.sendMany({ txs });
 
 // Sweep from a private key
 const sweepPrivateKeyRes = await wallet.sweepPrivateKey({
-	privateKey: 'privateKey',
-	toAddress: 'toAddress',
-	satsPerByte: 5,
-	broadcast: false
+  privateKey: 'privateKey',
+  toAddress: 'toAddress',
+  satsPerByte: 5,
+  broadcast: false
 });
 
 // Get tx history for a given address. { tx_hash: string; height: number; }[]

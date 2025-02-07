@@ -1,4 +1,9 @@
-import { EAvailableNetworks, generateMnemonic, Wallet } from '../src';
+import {
+	EAvailableNetworks,
+	ECoinSelectPreference,
+	generateMnemonic,
+	Wallet
+} from '../src';
 import { getData, onMessage, servers, setData } from './helpers';
 import * as repl from 'repl';
 import net from 'net';
@@ -26,7 +31,8 @@ const runExample = async (mnemonic = generateMnemonic()): Promise<void> => {
 			lookBehind: 5,
 			lookAheadChange: 5,
 			lookBehindChange: 5
-		}
+		},
+		coinSelectPreference: ECoinSelectPreference.small
 	});
 	if (createWalletResponse.isErr()) return;
 	const wallet = createWalletResponse.value;

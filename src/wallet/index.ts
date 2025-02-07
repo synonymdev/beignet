@@ -9,6 +9,7 @@ import {
 	EAddressType,
 	EAvailableNetworks,
 	EBoostType,
+	ECoinSelectPreference,
 	EFeeId,
 	EPaymentType,
 	EScanningStrategy,
@@ -135,6 +136,7 @@ export class Wallet {
 	private _disableMessagesOnCreate: boolean;
 
 	public addressTypesToMonitor: EAddressType[];
+	public coinSelectPreference: ECoinSelectPreference;
 	public isRefreshing: boolean;
 	public isSwitchingNetworks: boolean;
 	public readonly id: string;
@@ -161,6 +163,7 @@ export class Wallet {
 		name,
 		network = EAvailableNetworks.mainnet,
 		addressType = EAddressType.p2wpkh,
+		coinSelectPreference = ECoinSelectPreference.consolidate,
 		storage,
 		electrumOptions,
 		onMessage = (): null => null,
@@ -199,6 +202,7 @@ export class Wallet {
 		this.id = generateWalletId(this._seed);
 		this.name = name ?? this.id;
 		this.addressType = addressType;
+		this.coinSelectPreference = coinSelectPreference;
 		this.transaction = new Transaction({
 			wallet: this
 		});
@@ -301,6 +305,12 @@ export class Wallet {
 		} catch (e) {
 			return err(e);
 		}
+	}
+
+	public updateCoinSelectPreference(
+		coinSelectPreference: ECoinSelectPreference
+	): void {
+		this.coinSelectPreference = coinSelectPreference;
 	}
 
 	public async switchNetwork(
@@ -497,7 +507,9 @@ export class Wallet {
 						const getDataRes = await this._getData(walletDataKey);
 						if (getDataRes.isErr()) {
 							//dataResult = getDataRes?.value ?? walletData[key];
-							return err(dataResult.error.message);
+							return err(
+								dataResult?.error?.message ?? 'Error getting wallet data'
+							);
 						}
 						dataResult = getDataRes?.value;
 					} catch (e) {
@@ -2876,24 +2888,28 @@ export class Wallet {
 	 * @param {string} [message]
 	 * @param {Partial<ISendTransaction>} [transaction]
 	 * @param {boolean} [fundingLightning]
+	 * @param {coinSelectPreference} [ECoinSelectPreference]
 	 * @returns {Result<TGetTotalFeeObj>}
 	 */
 	public getFeeInfo({
 		satsPerByte = this.feeEstimates.normal,
 		message = '',
 		transaction,
-		fundingLightning = false
+		fundingLightning = false,
+		coinSelectPreference = this.coinSelectPreference
 	}: {
 		satsPerByte?: number;
 		message?: string;
 		transaction?: Partial<ISendTransaction>;
 		fundingLightning?: boolean;
+		coinSelectPreference?: ECoinSelectPreference;
 	} = {}): Result<TGetTotalFeeObj> {
 		return this.transaction.getTotalFeeObj({
 			satsPerByte,
 			message,
 			transaction,
-			fundingLightning
+			fundingLightning,
+			coinSelectPreference
 		});
 	}
 

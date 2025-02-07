@@ -1,4 +1,11 @@
-import { IOutput, ISendTransaction, IUtxo, IVin, IVout } from './wallet';
+import {
+	EAddressType,
+	IOutput,
+	ISendTransaction,
+	IUtxo,
+	IVin,
+	IVout
+} from './wallet';
 import { BIP32Interface } from 'bip32';
 import { Psbt } from 'bitcoinjs-lib';
 import { Result } from '../utils';
@@ -7,6 +14,7 @@ import { ECPairInterface } from 'ecpair';
 export interface ICreateTransaction {
 	transactionData?: ISendTransaction;
 	shuffleOutputs?: boolean;
+	runCoinSelect?: boolean;
 }
 
 export interface IAddInput {
@@ -65,3 +73,26 @@ export type TGapLimitOptions = {
 	lookAheadChange: number;
 	lookBehindChange: number;
 };
+
+export enum ECoinSelectPreference {
+	small = 'small',
+	large = 'large',
+	consolidate = 'consolidate',
+	firstInFirstOut = 'firstInFirstOut',
+	lastInFirstOut = 'lastInFirstOut'
+}
+
+export interface ICoinSelectResponse {
+	fee: number;
+	inputs: IUtxo[];
+	outputs: IOutput[];
+}
+
+export interface IAddressTypesIO {
+	inputs: {
+		[key in EAddressType]: number;
+	};
+	outputs: {
+		[key in EAddressType]: number;
+	};
+}

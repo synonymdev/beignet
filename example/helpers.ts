@@ -77,7 +77,7 @@ export const servers = {
 			host: '35.233.47.252',
 			ssl: 18484,
 			tcp: 18483,
-			protocol: EProtocol.ssl
+			protocol: EProtocol.tcp
 		}
 	]
 };

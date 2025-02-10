@@ -1,8 +1,11 @@
 import {
 	EAddressType,
 	EBoostType,
+	ECoinSelectPreference,
 	EFeeId,
 	IAddresses,
+	IAddressTypesIO,
+	ICoinSelectResponse,
 	IOutput,
 	ISendTransaction,
 	IUtxo,
@@ -174,6 +177,23 @@ export class Transaction {
 		}
 	}
 
+	public async applyAutoCoinSelect({
+		coinSelectRes
+	}: {
+		coinSelectRes: ICoinSelectResponse;
+	}): Promise<Result<ISendTransaction>> {
+		const data = {
+			...this._data,
+			inputs: coinSelectRes.inputs
+		};
+		this._data = data;
+
+		// Save the transaction data.
+		await this._wallet.saveWalletData('transaction', this._data);
+
+		return ok(data);
+	}
+
 	/**
 	 * This completely resets the send transaction state.
 	 * @returns {Promise<Result<string>>}
@@ -210,22 +230,40 @@ export class Transaction {
 	 * @param {string} [message]
 	 * @param {Partial<ISendTransaction>} [transaction]
 	 * @param {boolean} [fundingLightning]
+	 * @param {ECoinSelectPreference} [coinSelectPreference]
 	 * @returns {number}
 	 */
 	getTotalFee = ({
 		satsPerByte,
 		message = '',
 		transaction = this.data,
-		fundingLightning = false
+		fundingLightning = false,
+		coinSelectPreference = this._wallet.coinSelectPreference
 	}: {
 		satsPerByte: number;
 		message?: string;
 		transaction?: Partial<ISendTransaction>;
 		fundingLightning?: boolean;
+		coinSelectPreference?: ECoinSelectPreference;
 	}): number => {
 		const baseTransactionSize = TRANSACTION_DEFAULTS.recommendedBaseFee;
 		try {
-			const inputs = transaction.inputs || [];
+			let inputs = transaction.inputs || [];
+			if (
+				coinSelectPreference !== ECoinSelectPreference.consolidate &&
+				!transaction.max
+			) {
+				const coinSelectRes = this.autoCoinSelect({
+					inputs: transaction.inputs || [],
+					outputs: transaction.outputs || [],
+					satsPerByte,
+					message,
+					coinSelectPreference
+				});
+				if (coinSelectRes.isOk()) {
+					inputs = coinSelectRes.value.inputs;
+				}
+			}
 			const outputs = transaction.outputs || [];
 			const changeAddress = transaction.changeAddress;
 
@@ -271,21 +309,41 @@ export class Transaction {
 		satsPerByte = this._wallet.feeEstimates.normal,
 		message = '',
 		transaction = this.data,
-		fundingLightning = false
+		fundingLightning = false,
+		coinSelectPreference = this._wallet.coinSelectPreference
 	}: {
 		satsPerByte?: number;
 		message?: string;
 		transaction?: Partial<ISendTransaction>;
 		fundingLightning?: boolean;
+		coinSelectPreference?: ECoinSelectPreference;
 	} = {}): Result<TGetTotalFeeObj> => {
 		try {
 			if (!transaction.inputs?.length) {
 				this.setupTransaction({});
 				transaction = this.data;
 			}
-			const inputs = transaction.inputs || [];
-			const outputs = transaction.outputs || [];
 			const changeAddress = transaction.changeAddress;
+
+			let inputs = transaction.inputs || [];
+			const outputs = transaction.outputs || [];
+
+			if (
+				coinSelectPreference !== ECoinSelectPreference.consolidate &&
+				!transaction.max
+			) {
+				const coinSelectRes = this.autoCoinSelect({
+					inputs,
+					outputs,
+					satsPerByte,
+					message,
+					coinSelectPreference
+				});
+				if (coinSelectRes.isErr()) {
+					return err(coinSelectRes.error);
+				}
+				inputs = coinSelectRes.value.inputs;
+			}
 
 			if (!inputs.length) {
 				return ok({
@@ -374,20 +432,46 @@ export class Transaction {
 	 * Creates complete signed transaction using the transaction data store
 	 * @param {ISendTransaction} [transactionData]
 	 * @param {boolean} [shuffleOutputs]
+	 * @param {coinSelectPreference} [ECoinSelectPreference]
 	 * @returns {Promise<Result<{id: string, hex: string}>>}
 	 */
 	createTransaction = async ({
 		transactionData = this.data,
-		shuffleOutputs = true
+		shuffleOutputs = true,
+		runCoinSelect = false
 	}: ICreateTransaction = {}): Promise<Result<{ id: string; hex: string }>> => {
 		//Remove any outputs that are below the dust limit and apply them to the fee.
 		removeDustOutputs(transactionData.outputs);
 
+		let transaction = transactionData;
+		if (runCoinSelect) {
+			const coinSelectRes = this.autoCoinSelect({
+				inputs: transactionData.inputs,
+				outputs: transactionData.outputs,
+				satsPerByte: transactionData.satsPerByte,
+				message: transactionData.message,
+				coinSelectPreference: this._wallet.coinSelectPreference
+			});
+			if (coinSelectRes.isErr()) {
+				return err(coinSelectRes.error);
+			}
+			const coinSelectApplyRes = await this.applyAutoCoinSelect({
+				coinSelectRes: coinSelectRes.value
+			});
+			if (coinSelectApplyRes.isErr()) {
+				return err(coinSelectApplyRes.error);
+			}
+			transaction = {
+				...coinSelectApplyRes.value,
+				outputs: transactionData.outputs
+			};
+		}
+
 		const inputValue = this.getTransactionInputValue({
-			inputs: transactionData.inputs
+			inputs: transaction.inputs
 		});
 		const outputValue = this.getTransactionOutputValue({
-			outputs: transactionData.outputs
+			outputs: transaction.outputs
 		});
 		if (inputValue === 0) {
 			const message = 'No inputs to spend.';
@@ -401,7 +485,7 @@ export class Transaction {
 			return err(message);
 		}
 
-		const validateRes = validateTransaction(transactionData);
+		const validateRes = validateTransaction(transaction);
 		if (validateRes.isErr()) return err(validateRes.error.message);
 
 		try {
@@ -412,7 +496,7 @@ export class Transaction {
 
 			//Create PSBT before signing inputs
 			const psbtRes = await this.createPsbtFromTransactionData({
-				transactionData,
+				transactionData: transaction,
 				bip32Interface: bip32InterfaceRes.value,
 				shuffleTargets: shuffleOutputs
 			});
@@ -1305,6 +1389,173 @@ export class Transaction {
 			});
 
 			return ok(this.data);
+		} catch (e) {
+			return err(e);
+		}
+	}
+
+	/**
+	 * Selects coins for transaction construction based on provided parameters.
+	 * @param {IUtxo[]} inputs
+	 * @param {IOutput[]} outputs
+	 * @param {number} [satsPerByte]
+	 * @param {string} [message]
+	 * @param ECoinSelectPreference [coinSelectPreference]
+	 */
+	public autoCoinSelect({
+		inputs = [],
+		outputs = [],
+		satsPerByte = 1,
+		message = '',
+		coinSelectPreference = ECoinSelectPreference.small
+	}: {
+		inputs: IUtxo[];
+		outputs: IOutput[];
+		satsPerByte?: number;
+		message?: string;
+		coinSelectPreference?: ECoinSelectPreference;
+	}): Result<ICoinSelectResponse> {
+		try {
+			if (!inputs || !inputs?.length) {
+				return err('No inputs provided');
+			}
+			if (!outputs || !outputs?.length) {
+				return err('No outputs provided');
+			}
+			const amountToSend = outputs.reduce((acc, cur) => {
+				return acc + Number(cur?.value) || 0;
+			}, 0);
+
+			switch (coinSelectPreference) {
+				case 'large':
+					// Sort by the largest UTXO amount (Lowest fee, but reveals your largest UTXO's)
+					inputs.sort((a, b) => Number(b.value) - Number(a.value));
+					break;
+				case 'firstInFirstOut':
+					// Sort by oldest UTXOs first (lowest height), treating unconfirmed (height = 0 or undefined) as newest
+					inputs.sort((a, b) => {
+						const heightA = !a.height
+							? Number.MAX_SAFE_INTEGER
+							: Number(a.height);
+						const heightB = !b.height
+							? Number.MAX_SAFE_INTEGER
+							: Number(b.height);
+						return heightA - heightB;
+					});
+					break;
+				case 'lastInFirstOut':
+					// Sort by newest UTXOs first (highest height), treating unconfirmed (height = 0 or undefined) as newest
+					inputs.sort((a, b) => {
+						const heightA = !a.height
+							? Number.MAX_SAFE_INTEGER
+							: Number(a.height);
+						const heightB = !b.height
+							? Number.MAX_SAFE_INTEGER
+							: Number(b.height);
+						return heightB - heightA;
+					});
+					break;
+				case 'small':
+				default:
+					// Sort by the smallest UTXO amount (Highest fee, but hides your largest UTXO's)
+					inputs.sort((a, b) => Number(a.value) - Number(b.value));
+					break;
+			}
+
+			//Add UTXO's until we have more than the target amount to send.
+			let inputAmount = 0;
+			let newInputs: IUtxo[] = [];
+			const oldInputs: IUtxo[] = [];
+
+			//Consolidate UTXO's if unable to determine the amount to send.
+			if (coinSelectPreference === 'consolidate' || !amountToSend) {
+				//Add all inputs
+				newInputs = [...inputs];
+				inputAmount = newInputs.reduce((acc, cur) => {
+					return acc + Number(cur.value);
+				}, 0);
+			} else {
+				//Add only the necessary inputs based on the amountToSend.
+				inputs.forEach((input) => {
+					if (inputAmount < amountToSend) {
+						inputAmount += input.value;
+						newInputs.push(input);
+					} else {
+						oldInputs.push(input);
+					}
+				});
+
+				//The provided UTXO's do not have enough to cover the transaction.
+				if (
+					(amountToSend && inputAmount < amountToSend) ||
+					!newInputs?.length
+				) {
+					return err('Not enough funds.');
+				}
+			}
+
+			// Get all input and output address types for fee calculation.
+			const addressTypes = {
+				inputs: {},
+				outputs: {}
+			} as IAddressTypesIO;
+
+			newInputs.forEach(({ address }) => {
+				const validateResponse = getAddressInfo(address);
+				if (!validateResponse) {
+					return;
+				}
+				const type = validateResponse.type.toUpperCase();
+				if (type in addressTypes.inputs) {
+					addressTypes.inputs[type] = addressTypes.inputs[type] + 1;
+				} else {
+					addressTypes.inputs[type] = 1;
+				}
+			});
+
+			outputs.forEach(({ address }) => {
+				if (!address) {
+					return;
+				}
+				const validateResponse = getAddressInfo(address);
+				if (!validateResponse) {
+					return;
+				}
+				const type = validateResponse.type.toUpperCase();
+				if (type in addressTypes.outputs) {
+					addressTypes.outputs[type] = addressTypes.outputs[type] + 1;
+				} else {
+					addressTypes.outputs[type] = 1;
+				}
+			});
+
+			let baseFee = getByteCount(
+				addressTypes.inputs,
+				addressTypes.outputs,
+				message
+			);
+			if (satsPerByte < 2) {
+				const minByteCount = TRANSACTION_DEFAULTS.recommendedBaseFee;
+				if (baseFee < minByteCount) baseFee = minByteCount;
+			}
+			const fee = baseFee * satsPerByte;
+
+			//Ensure we can still cover the transaction with the previously selected UTXO's. Add more UTXO's if not.
+			const totalTxCost = amountToSend + fee;
+			if (amountToSend && inputAmount < totalTxCost) {
+				oldInputs.forEach((input) => {
+					if (inputAmount < totalTxCost) {
+						inputAmount += input.value;
+						newInputs.push(input);
+					}
+				});
+			}
+
+			//The provided UTXO's do not have enough to cover the transaction.
+			if (inputAmount < totalTxCost || !newInputs?.length) {
+				return err('Not enough funds');
+			}
+			return ok({ inputs: newInputs, outputs, fee });
 		} catch (e) {
 			return err(e);
 		}

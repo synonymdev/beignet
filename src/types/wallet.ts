@@ -8,7 +8,7 @@ import {
 	TTxResult,
 	Tls
 } from './electrum';
-import { EFeeId, TGapLimitOptions } from './transaction';
+import { ECoinSelectPreference, EFeeId, TGapLimitOptions } from './transaction';
 import { ECPairInterface } from 'ecpair';
 import { BIP32Interface } from 'bip32';
 
@@ -189,6 +189,7 @@ export interface IWallet {
 	passphrase?: string;
 	network?: EAvailableNetworks;
 	addressType?: EAddressType;
+	coinSelectPreference?: ECoinSelectPreference;
 	data?: IWalletData;
 	storage?: TStorage;
 	electrumOptions: {

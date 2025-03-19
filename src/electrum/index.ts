@@ -137,6 +137,8 @@ export class Electrum {
 			return err('Regtest requires that you pre-specify a server.');
 		}
 		const startResponse = await electrum.start({
+			clientName: 'beignet',
+			protocolVersion: '1.4',
 			network: electrumNetwork,
 			net: this.net,
 			tls: this.tls,
